@@ -1,0 +1,89 @@
+.darkTextCustom{
+    color: #173517 !important;
+}
+
+.greenBackground{
+    background-color: #5cb85c;
+    color: white;
+}
+
+.lightGreenBackground{
+   background-color: #99ff99;
+   color: #2f6a2f;
+}
+
+.tableHeadingBackground{
+    background-color: #2f6a2f;
+    color: white;
+}
+
+.tableBodyBackground{
+    background-color: #e8ffd2;
+    color: #1f471f;
+}
+
+.captionCustom{
+    color: #3e8e3e;
+    caption-side: top;
+}
+
+.footerCustom{
+    color: white;
+}
+
+.footerCustom a{
+    color:  #b8e0b8;
+}
+
+.footerCopyright{
+    background-color: #3e8e3e;
+    color: white;
+}
+
+hr{
+    border:1px solid #a6d8a6;
+    background-color: #a6d8a6;
+    margin-left:2%;
+    margin-right:2%;
+}
+.titleUnderline{
+    border:1px solid #a6d8a6;
+}
+
+.mainTitle{
+    color: #3e8e3e;
+    margin-left:2%;
+    margin-top:2%;
+}
+
+.decoratedTitle:after {
+    content: "";
+    display: inline-block;
+    width: 100%;
+    margin-left: .5em;
+    border-bottom: 1px #a6d8a6 solid;
+  }
+  
+.marginBefore{
+    margin-top: 1%;
+}
+
+.marginAter{
+    margin-bottom:1%;
+}
+
+.textMutedCustom{
+    color: #5fb95f !important;
+}
+
+.nav-item .active{
+    color: #1f471f !important;
+}
+
+.nav-item .nav-link{
+    color: #3e8e3e;
+}
+
+.nav-item .disabled{
+    color: #5fb95f !important;
+}
