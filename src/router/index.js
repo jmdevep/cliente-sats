@@ -10,6 +10,9 @@ const ListadoUsuario = () => import('@/components/usuario/ListadoUsuario');
 const IngresoTurno = () => import('@/components/empleado/IngresoTurno');
 const RegistroEmpleado = () => import('@/components/empleado/RegistroEmpleado');
 
+//Turno
+const CargaPlanillaTurnos= () => import('@/components/turno/CargaPlanillaTurnos')
+
 
 
 Vue.use(Router)
@@ -24,6 +27,7 @@ export default new Router({
     //Empleado
     {path: '/empleado/registro-empleado', name: 'RegistroEmpleado', component: RegistroEmpleado},
     {path: '/empleado/ingreso-turno', name: 'IngresoTurno', component: IngresoTurno},
+    {path: '/turno/carga-planilla-turnos', name: 'CargaPlanillaTurnos', component: CargaPlanillaTurnos},
     
   ]
 })

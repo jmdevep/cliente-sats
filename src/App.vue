@@ -12,7 +12,12 @@
                     <router-link to="/"><a class="nav-link" href="#">Inicio<span class="sr-only">(current)</span></a></router-link>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Turnos</a>
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Turnos
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <router-link to="/turno/carga-planilla-turnos"><a class="dropdown-item" href="#">Cargar planilla</a></router-link>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Eventos</a>
