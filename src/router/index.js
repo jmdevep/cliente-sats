@@ -20,6 +20,9 @@ const EditarEmpleado = () => import('@/components/empleado/EditarEmpleado');
 
 //Turno
 const PlanillaTurnos = () => import('@/components/turno/PlanillaTurnos');
+const CargaPlanillaTurnos= () => import('@/components/turno/CargaPlanillaTurnos')
+
+
 
 Vue.use(Router)
 
@@ -44,6 +47,7 @@ export default new Router({
     
     //Turno
     {path: '/turno/planilla-turnos', name: 'PlanillaTurnos', component: PlanillaTurnos},
+    {path: '/turno/carga-planilla-turnos', name: 'CargaPlanillaTurnos', component: CargaPlanillaTurnos},
     
   ]
 })

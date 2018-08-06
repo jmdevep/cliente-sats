@@ -15,6 +15,7 @@
                     Turnos
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <router-link to="/turno/cargar-planilla-turnos"><a class="dropdown-item" href="#">Cargar Planilla</a></router-link>                        
                     <router-link to="/turno/planilla-turnos"><a class="dropdown-item" href="#">Planilla de Turnos</a></router-link>
                     </div>
                 </li>
