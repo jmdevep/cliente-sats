@@ -4,16 +4,18 @@
         Usuarios
         </h1>
         <hr class="titleUnderline">
+        {{ resultadoOperacion }}
         <div class="row">
             <div class="col-sm-12">
                 <table class="table">
-                    <caption class="captionCustom"><h3>Lista de Usuarios</h3></caption>
+                    <caption class="captionCustom"><h3>Lista de Usuarios</h3> <i v-show="loading" class="fa fa-spinner fa-spin"></i> </caption>
                     <thead class="greenBackground">
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">ID</th>
                             <th scope="col">Nombre</th>
                             <th scope="col">Tipo de Usuario</th>
+                            <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="tableBodyBackground">
@@ -22,6 +24,10 @@
                             <td>{{ usuario.id }}</td>
                             <td>{{ usuario.nombre }}</td>
                             <td>{{ usuario.tipo.nombre }}</td>
+                            <td>
+                                <router-link :to="{ name: 'EditarUsuario', params: { usuario: usuario }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
+                                <router-link :to="{ name: 'EliminarUsuario', params: { usuario: usuario }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -50,6 +56,9 @@
 	 export default {
         name: 'ListadoUsuario',
         mounted(){
+            this.resultadoOperacion = this.$route.params.resultadoOperacion;
+
+            this.loading = true;
             axios.get('http://localhost:4567/api/usuario/lista-usuarios', {
                 params: {
                     condiciones: {
@@ -62,7 +71,8 @@
             })
         		.then((res)=>{
                     console.log(res);
-        			if(res.data.resultado = 'general_listado_hay_datos'){
+                    
+        			if(res.data.resultado == 100){
                         this.usuarios = res.data.listaUsuarios;
                         if(res.data.cantidadElementos <= this.tamanoPagina){
                             this.cantidadPaginas = 1;
@@ -72,11 +82,20 @@
                         console.log(this.cantidadPaginas);
                         this.indexActual = 1;
                     }
+                    this.loading = false;
         	});
 
-        	},
+        },
+            beforeCreate: function () {
+                var usuario = this.$session.get('usuario');
+                if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+                this.$router.push('/usuario/login')
+                } 
+        },
         data(){
             return{
+                resultadoOperacion: '',
+                loading: false,
                 usuarios: [],
                 tamanoPagina: 2,
                 indicePagina: 0,
@@ -87,6 +106,7 @@
         },
         methods: {
             cargarDatos(index){
+                this.loading = true;
                 console.log(index);
                 axios.get('http://localhost:4567/api/usuario/lista-usuarios', {
                 params: {
@@ -100,10 +120,11 @@
                 })
         		.then((res)=>{
                     console.log(res);
-        			if(res.data.resultado = 'general_listado_hay_datos'){
+        			if(res.data.resultado == 100){
                         this.usuarios = res.data.listaUsuarios;
                         this.indexActual = index;
                     }
+                    this.loading = false;
         	    });
             },
             cargarSiguiente(){

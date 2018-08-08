@@ -14,8 +14,10 @@
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
-                    <select v-model="usuario.tipo.id" @change="cambioSelect">
-                        <option value="" selected="selected">Tipo de Usuario</option>
+                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
+                    <p>{{ resultadoOperacion }}</p>
+                    <label>Seleccione el tipo de Usuario:</label>
+                    <select  class="form-control" v-model="usuario.tipo.id" @change="cambioSelect">
                         <option v-for="(tipo,index) in tiposUsuario" :key="index" v-bind:value="tipo.id">
                             {{ tipo.nombre }}
                         </option>
@@ -41,17 +43,21 @@
 	 export default {
         name: 'RegistroUsuario',
         mounted(){
+            this.loading = true;
             axios.get('http://localhost:4567/api/tipo-usuario/lista-tipos')
         		.then((res)=>{
                     console.log(res);
-        			if(res.data.resultado = 'general_listado_hay_datos'){
+        			if(res.data.resultado == 100){
                         this.tiposUsuario = res.data.tiposUsuario;
                     }
+                    this.loading = false;
         	});
-
+            
         	},
         data(){
             return{
+                loading: false,
+                resultadoOperacion: '',
                 erroresForm: [],
                 disabled: true,
             	usuario: {
@@ -94,20 +100,21 @@
                 }
             },
             registrarUsuario(){
+                this.loading = true;
                 if(this.checkForm()){
                     var params = this.usuario;
                     console.log(params);
                     axios.post('http://localhost:4567/api/usuario/agregar-usuario', params) 
                         .then((res)=>{
-                            console.log(res);
-                            if(res.resultado == "usuario_alta_existoso"){
-                                alert("Usuario agregado satisfactoriamente.");
+                            console.log(res.data.resultado);                            
+                            if(res.data.resultado == 1102){
+                                this.resultadoOperacion = "Usuario agregado satisfactoriamente.";
                                 this.limpiarCajas();
-                            } else if (res.resultado == "usuario_existe"){
-                                alert("Ya existe un usuario con ese nombre.");
+                            } else if (res.data.resultado == 1100){
+                                this.resultadoOperacion = "Ya existe un usuario con ese nombre.";
                             }
-
                         });
+                    this.loading = false;
                 }
 
             },

@@ -8,12 +8,14 @@
             <div class="card-header greenBackground">Registro de Empleados</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="registrarEmpleado()">
+                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
+                    <p v-if="resultadoOperacion">{{ resultadoOperacion }}</p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre </label>
                         <input type="text" class="form-control border-success" v-model="empleado.nombre" id="nombre" placeholder="Nombre">
@@ -25,7 +27,7 @@
                     <div class="form-group">
                         <label for="documento" class="darkTextCustom">Documento de Identidad</label>
                         <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="empleado.documento" id="documento" placeholder="Documento">
-                        <small id="emailHelp" class="form-text textMutedCustom">Ej: 4.864.007-6</small>                    
+                        <small id="emailHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>                    
                     </div>
                     <div class="form-group">
                         <label for="fechaNacimiento" class="darkTextCustom">Fecha de Nacimiento</label>
@@ -63,6 +65,8 @@
         	},
         data(){
             return{
+                loading: false,
+                resultadoOperacion: null,
                 erroresForm: [],
                 disabled: true,
             	empleado: {
@@ -80,6 +84,7 @@
         },
         methods: {
             verificarDisponibilidad() {
+                this.errorDisponibilidad = "Verificando..";
                 if(this.empleado.documento != ''){
                     axios.get('http://localhost:4567/api/empleado/existe-empleado', {
                         params: {
@@ -88,7 +93,7 @@
                     })
                         .then((res)=>{
                             console.log(res);
-                            if(res.data.existe == true){
+                            if(res.data.existe == true || res.data.resultado == '1300'){
                                 this.disabled = true;
                                 this.errorDisponibilidad = "Documento ya registrado.";
                             } else {
@@ -99,20 +104,21 @@
                 }
             },
             registrarEmpleado(){
+                this.loading = true;
                 if(this.checkForm()){
-                    var params = this.empeado;
+                    var params = this.empleado;
                     console.log(params);
                     axios.post('http://localhost:4567/api/empleado/agregar-empleado', params) 
                         .then((res)=>{
                             console.log(res);
-                            if(res.resultado == "empleado_alta_exsitoso"){
-                                alert("Empleado agregado satisfactoriamente.");
+                            if(res.data.resultado == 1302){
+                                this.resultadoOperacion = "Alta de empleado existosa.";
                                 this.limpiarCajas();
-                            } else {
-                                alert(res.resultado);
+                            } else if(res.data.resultado == 4){
+                                this.resultadoOperacion = "Error 0004, por favor comunicarse con soporte."
                             }
-
                         });
+                        this.loading = false;
                 }
 
             },
@@ -129,7 +135,7 @@
 
             checkForm() {
                 if (this.empleado.nombre && this.empleado.apellido && this.empleado.documento && this.empleado.fechaNacimiento && this.empleado.domicilio
-                    && this.emleado.telefono ) {
+                    && this.empleado.telefono ) {
                     return true;
                 }
 
