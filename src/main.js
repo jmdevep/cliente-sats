@@ -3,13 +3,38 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import VueSession from 'vue-session'
 
+
+var options = {
+  persist: true
+}
+
+
+
+Vue.use(VueSession, options)
 Vue.config.productionTip = false
 
+/*
+router.beforeEach((to, from, next) => {
+  const authRequired = to.matched.some((route) => route.meta.auth)
+  //const authed = store.state.user.isAuthorized
+  console.log(this)
+  if (authRequired) {
+    console.log("No existe Sesion");
+    next('/usuario/login');
+  } else {
+    console.log("Existe sesion");
+    next();
+  }
+})*/
+
 /* eslint-disable no-new */
+
 new Vue({
   el: '#app',
   router,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
 })
+
