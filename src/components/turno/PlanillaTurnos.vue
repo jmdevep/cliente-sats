@@ -7,7 +7,7 @@
         {{ resultadoOperacion }}
         <div class="row">
             <div class="col-sm-12">
-              <a @click="descargarPlanilla" href="#" class="btn btn-info" role="button">Descargar Planilla</a>
+              <a href="http://localhost:4567/api/turno/descargar-planilla" target="_blank" class="btn btn-info" role="button">Descargar Planilla</a>
             </div>
         </div>
     </div>

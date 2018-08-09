@@ -37,7 +37,10 @@
 	 export default {
         name: 'Login',
         mounted(){
-            
+            var usuario = this.$session.get('usuario');
+            if (this.$session.exists() && usuario != null) {
+                this.$router.push('/');
+            } 
         	},
         data(){
             return{
@@ -70,6 +73,7 @@
                                 this.disabled = true;
                                 this.$session.start();
                                 this.$session.set('usuario', res.data.usuario);
+                                window.location.reload();
                                 this.$router.push('/');
                             } else {
                                 this.resultadoOperacion = "Error en los datos de acceso.";                              
