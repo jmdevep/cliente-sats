@@ -27,7 +27,13 @@
         name: 'EliminarUsuario',
         mounted(){
             this.usuario = this.$route.params.usuario;
-        	},
+            },
+            beforeCreate: function () {
+                var usuario = this.$session.get('usuario');
+                if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+                this.$router.push('/usuario/login')
+                } 
+        },
         data(){
             return{
                 resultadoOperacion: '',
