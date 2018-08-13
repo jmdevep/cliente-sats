@@ -1,0 +1,12 @@
+{
+    "name": "cliente-sats",
+    "version": "1.0.0",
+    "description": "A Vue.js project",
+    "author": "jmdevep <julianmontesdeocacastillo@gmail.com>",
+    "private": true,
+    "scripts": {
+      "start": "node server.js",
+      "postinstall": "npm run build",
+      "heroku-postbuild": "npm install --only=dev --no-shrinkwrap && npm run build"
+    }
+}
