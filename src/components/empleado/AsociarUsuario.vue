@@ -104,7 +104,7 @@
                         id: idUsuario
                     }
                 };
-                console.log(params);
+                console.log(params); 
                 axios.post('https://servidor-sats.herokuapp.com/api/empleado/asociar-usuario', params) 
                     .then((res)=>{
                         console.log(res);
