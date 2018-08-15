@@ -16,6 +16,24 @@
                         </ul>
                     </p>
                     <p v-if="resultadoOperacion">{{ resultadoOperacion }}</p>
+                    <div v-if="roles.length" class="form-group">
+                        <label>Seleccione los roles del empleado:</label>
+                        <select id="roles" class="form-control" v-model="rolSeleccionado" @change="cambioSelect()">
+                            <option  v-for="(rol,index) in roles" :key="index" v-bind:value="rol" :disabled="rol.disabled">
+                                {{ rol.nombre }}
+                            </option>
+                        </select>
+                    </div>
+                    <p v-if="rolesSeleccionados.length">
+                        <b>Roles Seleccionados:</b>
+                        <ul>
+                            <li v-for="(rol, index) in rolesSeleccionados" :key="index">{{ rol.nombre }} 
+                                <a href="#" @click="removerRol(rol)">
+                                    - <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre </label>
                         <input type="text" class="form-control border-success" v-model="empleado.nombre" id="nombre" placeholder="Nombre">
@@ -61,7 +79,16 @@
 	 export default {
         name: 'RegistroEmpleado',
         mounted(){
-
+            this.loading = true;    
+            axios.get('http://localhost:4567/api/turno/lista-roles')
+        		.then((res)=>{
+                    console.log(res);
+        			if(res.data.resultado == 100){
+                        this.roles = res.data.roles;
+                        this.roles.forEach(function(obj) { obj.disabled = false; });
+                    }
+                    this.loading = false;
+        	});
         	},
         data(){
             return{
@@ -78,15 +105,31 @@
                     telefono: '',
                     vencimientoCarnetSalud: '',
                     vencimientoCarnetChofer: '',
+                    listaRoles: []
                 },
+                roles: [],
+                rolesSeleccionados: [],
+                rolSeleccionado: null,
             }
 
         },
         methods: {
+            cambioSelect(){
+                this.rolesSeleccionados.push(this.rolSeleccionado);
+                var indexRol = this.roles.findIndex((rol => rol.id == this.rolSeleccionado.id));
+                this.roles[indexRol].disabled = true;
+            },
+            removerRol(pRol){
+                this.rolesSeleccionados = this.rolesSeleccionados.filter(rol => rol.id != pRol.id);
+                var indexRol = this.roles.findIndex((rol => rol.id == pRol.id));
+                console.log(indexRol);
+                this.roles[indexRol].disabled = false;
+
+            },
             verificarDisponibilidad() {
                 this.errorDisponibilidad = "Verificando..";
                 if(this.empleado.documento != ''){
-                    axios.get('https://servidor-sats.herokuapp.com/api/empleado/existe-empleado', {
+                    axios.get('http://localhost:4567/api/empleado/existe-empleado', {
                         params: {
                         documento: this.empleado.documento,
                         }
@@ -106,9 +149,10 @@
             registrarEmpleado(){
                 this.loading = true;
                 if(this.checkForm()){
+                    this.empleado.listaRoles = this.rolesSeleccionados;
                     var params = this.empleado;
                     console.log(params);
-                    axios.post('https://servidor-sats.herokuapp.com/api/empleado/agregar-empleado', params) 
+                    axios.post('http://localhost:4567/api/empleado/agregar-empleado', params) 
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 1302){
@@ -123,6 +167,7 @@
 
             },
             limpiarCajas(){
+                
                 this.empleado.nombre = '';
                 this.empleado.apellido = '';
                 this.empleado.documento = '';

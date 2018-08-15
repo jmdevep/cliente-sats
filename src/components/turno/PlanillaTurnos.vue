@@ -7,7 +7,7 @@
         {{ resultadoOperacion }}
         <div class="row">
             <div class="col-sm-12">
-              <a href="https://servidor-sats.herokuapp.com/api/turno/descargar-planilla" target="_blank" class="btn btn-info" role="button">Descargar Planilla</a>
+              <a href="http://localhost:4567/api/turno/descargar-planilla" target="_blank" class="btn btn-info" role="button">Descargar Planilla</a>
             </div>
         </div>
     </div>
@@ -35,7 +35,7 @@
             descargarPlanilla(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('https://servidor-sats.herokuapp.com/api/turno/descargar-planilla')
+                axios.get('http://localhost:4567/api/turno/descargar-planilla')
         		.then((res)=>{
                     console.log(res);
         			

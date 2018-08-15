@@ -7,8 +7,15 @@
         {{ resultadoOperacion }}
         <div class="row">
             <div class="col-sm-12">
-                <table class="table">
-                    
+                <div v-if="roles.length" class="form-group">
+                    <label>Seleccione un rol para cargar los empleados:</label>
+                    <select id="roles" class="form-control" v-model="rolSeleccionado" @change="cambioSelect()">
+                        <option  v-for="(rol,index) in roles" :key="index" v-bind:value="rol">
+                            {{ rol.nombre }}
+                        </option>
+                    </select>
+                </div>
+                <table class="table">                   
                     <caption class="captionCustom"><h3>Lista de Empleados</h3></caption>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                     <thead class="greenBackground">
@@ -78,33 +85,17 @@
 	 export default {
         name: 'ListadoEmpleado',
         mounted(){
-            this.resultadoOperacion = this.$route.params.resultadoOperacion || '';        
-
-            this.loading = true;
-            axios.get('http://localhost:4567/api/empleado/lista-empleados', {
-                params: {
-                    condiciones: {
-                        orden: 'DESC',
-                        tamanoPagina: this.tamanoPagina,
-                        indicePagina: this.indicePagina,
-                        campo: 'nombre',
-                    },
-                }
-            })
+            this.loading = true;    
+            axios.get('http://localhost:4567/api/turno/lista-roles')
         		.then((res)=>{
                     console.log(res);
         			if(res.data.resultado == 100){
-                        this.empleados = res.data.listaEmpleados;
-                        if(res.data.cantidadElementos <= this.tamanoPagina){
-                            this.cantidadPaginas = 1;
-                        } else {
-                            this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
-                        }
-                        console.log(this.cantidadPaginas);
-                        this.indexActual = 1;
+                        this.roles = res.data.roles;
+                        this.roles.forEach(function(obj) { obj.disabled = false; });
                     }
                     this.loading = false;
         	});
+        	
 
         	},
         data(){
@@ -115,10 +106,14 @@
                 indicePagina: 0,
                 cantidadPaginas: 0,
                 indexActual: 0,
+                roles: [],
             }
 
         },
         methods: {
+            cambioSelect(){
+                
+            },
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);

@@ -42,9 +42,9 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
-                    <li v-if="this.$session.exists() && this.$session.get('usuario') != null" class="nav-item"><a class="nav-link" href="#"><span class="glyphicon glyphicon-user"></span>{{ usuario.nombre }}</a></li>
-                    <li v-if="this.$session.exists() && this.$session.get('usuario') != null" class="nav-item"><a class="nav-link" href="#" @click="logout()"><span class="glyphicon glyphicon-log-in"></span>Cerrar Sesión</a></li>       
-                    <li v-if="this.$session.exists() == false" class="nav-item"><router-link to="/usuario/login"><a class="nav-link" href="#"><span class="glyphicon glyphicon-log-in"></span>Iniciar Sesión</a></router-link></li>                    
+                    <li v-if="this.$session.exists() && this.$session.get('usuario') != null" class="nav-item"><a class="nav-link" href="#"><i class="fas fa-user-md"></i> {{ usuario.nombre }}</a></li>
+                    <li v-if="this.$session.exists() && this.$session.get('usuario') != null" class="nav-item"><a class="nav-link" href="#" @click="logout()"><i class="fas fa-sign-in-alt"></i> Cerrar Sesión</a></li>       
+                    <li v-if="this.$session.exists() == false" class="nav-item"><router-link to="/usuario/login"><a class="nav-link" href="#"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a></router-link></li>                    
                 </ul>   
             </div>
         </nav>  

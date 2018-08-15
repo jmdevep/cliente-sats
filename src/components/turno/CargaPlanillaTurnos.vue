@@ -27,7 +27,7 @@ import axios from 'axios';
           let formData = new FormData();
           formData.append('archivo', this.archivo);
 
-          axios.post('https://servidor-sats.herokuapp.com/api/turno/cargar-planilla',
+          axios.post('http://localhost:4567/api/turno/cargar-planilla',
             formData,
             {
                 headers: {

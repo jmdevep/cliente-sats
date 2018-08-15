@@ -66,7 +66,7 @@
                 if(this.usuario.nombre != ''){
                     var params = this.usuario;
                     console.log(params);
-                    axios.post('https://servidor-sats.herokuapp.com/api/usuario/validar-usuario', params)
+                    axios.post('http://localhost:4567/api/usuario/validar-usuario', params)
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 1110){
