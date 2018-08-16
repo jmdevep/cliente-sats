@@ -19,7 +19,7 @@ const AsociarUsuario = () => import('@/components/empleado/AsociarUsuario');
 const EditarEmpleado = () => import('@/components/empleado/EditarEmpleado');
 
 //Turno
-const PlanillaTurnos = () => import('@/components/turno/PlanillaTurnos');
+const DescargaPlanillaTurnos = () => import('@/components/turno/DescargaPlanillaTurnos');
 const CargaPlanillaTurnos= () => import('@/components/turno/CargaPlanillaTurnos')
 
 
@@ -46,7 +46,7 @@ export default new Router({
     {path: '/empleado/asociar-usuario', name: 'AsociarUsuario', component: AsociarUsuario},
     
     //Turno
-    {path: '/turno/planilla-turnos', name: 'PlanillaTurnos', component: PlanillaTurnos},
+    {path: '/turno/descarga-planilla-turnos', name: 'DescargaPlanillaTurnos', component: DescargaPlanillaTurnos},
     {path: '/turno/carga-planilla-turnos', name: 'CargaPlanillaTurnos', component: CargaPlanillaTurnos},
     
   ]
