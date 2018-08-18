@@ -25,6 +25,9 @@ const CargaPlanillaTurnos= () => import('@/components/turno/CargaPlanillaTurnos'
 
 //Cliente
 const RegistroPersona = () => import('@/components/cliente/RegistroPersona');
+const ListadoPersona = () => import('@/components/cliente/ListadoPersona');
+const EditarPersona = () => import('@/components/cliente/EditarPersona');
+const EliminarPersona = () => import('@/components/cliente/EliminarPersona');
 
 
 Vue.use(Router)
@@ -54,6 +57,10 @@ export default new Router({
 
     //Persona
     {path: '/persona/registro-persona', name: 'RegistroPersona', component: RegistroPersona},
+    {path: '/persona/listado-persona', name: 'ListadoPersona', component: ListadoPersona},
+    {path: '/persona/editar-persona', name: 'EditarPersona', component: EditarPersona},
+    {path: '/persona/eliminar-persona', name: 'EliminarPersona', component: EliminarPersona},
+    
     
   ]
 })

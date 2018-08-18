@@ -46,6 +46,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <router-link to="/persona/registro-persona"><a class="dropdown-item" href="#">Registrar</a></router-link>
+                        <router-link to="/persona/listado-persona"><a class="dropdown-item" href="#">Listado</a></router-link>
                         </div>
                     </li>
                 </ul>

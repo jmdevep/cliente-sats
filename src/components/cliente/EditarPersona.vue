@@ -5,7 +5,7 @@
         </h1>
         <hr class="titleUnderline">
         <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Registro de Persona</div>
+            <div class="card-header greenBackground">Editar Persona</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="registrarPersona()">
                     <p v-if="erroresForm.length">
@@ -14,7 +14,6 @@
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
-
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                     <p>{{ resultadoOperacion }}</p>
                     <div class="form-group">
@@ -48,10 +47,11 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'RegistroPersona',
+        name: 'EditarPersona',
         mounted(){
-
-            },
+            this.persona = this.$route.params.persona;
+            this.documentoOriginal = this.$route.params.persona.documento;
+        },
         beforeCreate: function () {
             var usuario = this.$session.get('usuario');
             if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
@@ -63,7 +63,7 @@
                 loading: false,
                 resultadoOperacion: '',
                 erroresForm: [],
-                disabled: true,
+                disabled: false,
             	persona: {
                     nombre: '',
                     direccion: '',
@@ -72,12 +72,12 @@
                     fechaNacimiento: '',
                 },
                 errorDisponibilidad: '',
+                documentoOriginal: '',
             }
-
         },
         methods: {
             verificarDisponibilidad() {
-                if(this.persona.documento != ''){
+                if(this.persona.documento != '' && this.persona.documento != this.persona.documentoOriginal){
                     axios.get('http://localhost:4567/api/cliente/existe-persona', {
                         params: {
                             rut: this.persona.documento,
@@ -100,14 +100,14 @@
                 if(this.checkForm()){
                     var params = this.persona;
                     console.log(params);
-                    axios.post('http://localhost:4567/api/cliente/agregar-persona', params) 
+                    axios.post('http://localhost:4567/api/cliente/modificar-persona', params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5302){
-                                this.resultadoOperacion = "Persona agregada satisfactoriamente.";
+                            if(res.data.resultado == 5304){
+                                this.resultadoOperacion = "Persona modificada satisfactoriamente.";
                                 this.limpiarCajas();
-                            } else if (res.data.resultado == 1100){
-                                this.resultadoOperacion = "Ya existe una persona con ese documento.";
+                            } else {
+                                this.resultadoOperacion = "Error";
                             }
                         });
                     this.loading = false;
