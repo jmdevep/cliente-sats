@@ -40,6 +40,14 @@
                         <router-link to="/empleado/listado-empleado"><a class="dropdown-item" href="#">Listado</a></router-link>
                         </div>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Personas
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <router-link to="/persona/registro-persona"><a class="dropdown-item" href="#">Registrar</a></router-link>
+                        </div>
+                    </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <li v-if="this.$session.exists() && this.$session.get('usuario') != null" class="nav-item"><a class="nav-link" href="#"><i class="fas fa-user-md"></i> {{ usuario.nombre }}</a></li>

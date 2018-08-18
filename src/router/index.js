@@ -23,6 +23,9 @@ const DescargaPlanillaTurnos = () => import('@/components/turno/DescargaPlanilla
 const CargaPlanillaTurnos= () => import('@/components/turno/CargaPlanillaTurnos')
 
 
+//Cliente
+const RegistroPersona = () => import('@/components/cliente/RegistroPersona');
+
 
 Vue.use(Router)
 
@@ -48,6 +51,9 @@ export default new Router({
     //Turno
     {path: '/turno/descarga-planilla-turnos', name: 'DescargaPlanillaTurnos', component: DescargaPlanillaTurnos},
     {path: '/turno/carga-planilla-turnos', name: 'CargaPlanillaTurnos', component: CargaPlanillaTurnos},
+
+    //Persona
+    {path: '/persona/registro-persona', name: 'RegistroPersona', component: RegistroPersona},
     
   ]
 })
