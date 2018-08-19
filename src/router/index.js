@@ -28,6 +28,12 @@ const RegistroPersona = () => import('@/components/cliente/RegistroPersona');
 const ListadoPersona = () => import('@/components/cliente/ListadoPersona');
 const EditarPersona = () => import('@/components/cliente/EditarPersona');
 const EliminarPersona = () => import('@/components/cliente/EliminarPersona');
+const RegistroEmpresa = () => import('@/components/cliente/RegistroEmpresa');
+const ListadoEmpresa = () => import('@/components/cliente/ListadoEmpresa');
+const EliminarEmpresa = () => import('@/components/cliente/EliminarEmpresa');
+const EditarEmpresa = () => import('@/components/cliente/EditarEmpresa');
+
+
 
 
 Vue.use(Router)
@@ -60,6 +66,12 @@ export default new Router({
     {path: '/persona/listado-persona', name: 'ListadoPersona', component: ListadoPersona},
     {path: '/persona/editar-persona', name: 'EditarPersona', component: EditarPersona},
     {path: '/persona/eliminar-persona', name: 'EliminarPersona', component: EliminarPersona},
+
+    //Empresa
+    {path: '/empresa/registro-empresa', name: 'RegistroEmpresa', component: RegistroEmpresa},
+    {path: '/empresa/listado-empresa', name: 'ListadoEmpresa', component: ListadoEmpresa},
+    {path: '/empresa/eliminar-empresa', name: 'EliminarEmpresa', component: EliminarEmpresa},
+    {path: '/empresa/editar-empresa', name: 'EditarEmpresa', component: EditarEmpresa},
     
     
   ]

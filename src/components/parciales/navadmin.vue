@@ -49,6 +49,15 @@
                         <router-link to="/persona/listado-persona"><a class="dropdown-item" href="#">Listado</a></router-link>
                         </div>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Empresas
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <router-link to="/empresa/registro-empresa"><a class="dropdown-item" href="#">Registrar</a></router-link>
+                        <router-link to="/empresa/listado-empresa"><a class="dropdown-item" href="#">Listado</a></router-link>
+                        </div>
+                    </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <li v-if="this.$session.exists() && this.$session.get('usuario') != null" class="nav-item"><a class="nav-link" href="#"><i class="fas fa-user-md"></i> {{ usuario.nombre }}</a></li>

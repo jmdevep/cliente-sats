@@ -5,9 +5,9 @@
         </h1>
         <hr class="titleUnderline">
         <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Registro de Empresa</div>
+            <div class="card-header greenBackground">Modificar de Empresa</div>
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="registrarEmpresa()">
+                <form v-on:submit.prevent="modificarEmpresa()">
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
@@ -33,7 +33,7 @@
                         <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="empresa.rut" id="rut" placeholder="RUT">
                         <small id="emailHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>
                     </div>
-                    <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore tableHeadingBackground">
+                    <input type="submit" :disabled="disabled" value="Modificar" class="btn marginBefore tableHeadingBackground">
                 </form>
             </div>
         </div>
@@ -43,9 +43,10 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'RegistroEmpresa',
+        name: 'EditarEmpresa',
         mounted(){
-
+            this.empresa = this.$route.params.empresa;
+            this.rutOriginal = this.$route.params.empresa.rut;
             },
         beforeCreate: function () {
             var usuario = this.$session.get('usuario');
@@ -58,7 +59,7 @@
                 loading: false,
                 resultadoOperacion: '',
                 erroresForm: [],
-                disabled: true,
+                disabled: false,
             	empresa: {
                     nombre: '',
                     direccion: '',
@@ -71,7 +72,7 @@
         },
         methods: {
             verificarDisponibilidad() {
-                if(this.empresa.rut != ''){
+                if(this.empresa.rut != '' && this.empresa.rut != this.rutOriginal ){
                     axios.get('http://localhost:4567/api/cliente/existe-empresa', {
                         params: {
                         rut: this.empresa.rut,
@@ -89,18 +90,19 @@
                     });
                 }
             },
-            registrarEmpresa(){
+            modificarEmpresa(){
                 this.loading = true;
                 if(this.checkForm()){
                     var params = this.empresa;
                     console.log(params);
-                    axios.post('http://localhost:4567/api/cliente/agregar-empresa', params) 
+                    axios.post('http://localhost:4567/api/cliente/modificar-empresa', params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5202){
+                            if(res.data.resultado == 5204){
                                 this.resultadoOperacion = "Empresa agregada satisfactoriamente.";
                                 this.limpiarCajas();
-                            } else if (res.data.resultado == 5303){
+                                this.$router.push({ name: 'ListadoEmpresa', params: { resultadoOperacion: "Empresa modificada satisfactoriamente." }});                                                                                            
+                            } else if (res.data.resultado == 5205){
                                 this.resultadoOperacion = "Ya existe una empresa con ese rut.";
                             }
                         });
