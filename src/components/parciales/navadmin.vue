@@ -47,6 +47,9 @@
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <router-link to="/persona/registro-persona"><a class="dropdown-item" href="#">Registrar</a></router-link>
                         <router-link to="/persona/listado-persona"><a class="dropdown-item" href="#">Listado</a></router-link>
+                        <router-link to="/cliente/carga-planilla-clientes"><a class="dropdown-item" href="#">Cargar clientes por planilla</a></router-link>
+                        <router-link to="/cliente/registro-plan"><a class="dropdown-item" href="#">Registrar plan</a></router-link>
+                        <router-link to="/cliente/registro-descuento"><a class="dropdown-item" href="#">Registrar descuento</a></router-link>
                         </div>
                     </li>
                     <li class="nav-item dropdown">
