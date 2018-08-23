@@ -165,13 +165,24 @@
         },
         methods: {
             descargarPlanilla(){
+                console.log(JSON.stringify(this.empleadosRequest));
                 this.loading = true;
-                axios.get('http://localhost:4567/api/turno/descargar-planilla', {
-                    params: { empleados: this.empleadosSeleccionados}})
-        		    .then((res)=>{
+                axios({
+                    url: 'http://localhost:4567/api/turno/descargar-planilla', 
+                    params: { empleados: this.empleadosRequest},
+                    method: 'GET',
+                    responseType: 'blob',
+                    headers: {'Access-Control-Allow-Origin': '*'}
+                })
+                .then((res)=>{
                     console.log(res);
-        			
-        	        });
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'turnos.xls'); //or any other extension
+                    document.body.appendChild(link);
+                    link.click();
+                });
             },
             quitarEmpleado(empleado){
                 this.empleados.push(empleado);
@@ -182,12 +193,15 @@
                 this.empleadosSeleccionados.push(empleado);
                 var emp = {
                     nombre: empleado.nombre,
-                    rol: this.rolSeleccionado.descripcion,
+                    listaRoles: [
+                         {
+                            descripcion: this.rolSeleccionado.descripcion
+                        }
+                    ],
                     id: empleado.id
                 }
                 this.empleadosRequest.push(emp);
                 this.empleados = this.empleados.filter(emp => emp.id != empleado.id);
-                console.log(this.empleadosRequest);
             },
             cambioSelect(){
                 this.cargarDatos(1);
