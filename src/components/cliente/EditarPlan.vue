@@ -5,9 +5,9 @@
         </h1>
         <hr class="titleUnderline">
         <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Registro de Plan</div>
+            <div class="card-header greenBackground">Editar Plan</div>
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="registrarPlan()">
+                <form v-on:submit.prevent="modificarPlan()">
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
@@ -46,9 +46,12 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'RegistroPlan',
+        name: 'EditarPlan',
         mounted(){
+            this.plan = this.$route.params.plan;
+            this.nombreOriginal = this.$route.params.plan.nombre;
             this.loading = true;    
+            console.log(this.plan);
             axios.get('http://localhost:4567/api/cliente/lista-descuentos')
             .then((res)=>{
                 console.log(res);
@@ -58,19 +61,22 @@
                 }
                 this.loading = false;
         	});
+            //this.usuario = this.$router.params.usuario;
+            //console.log(this.usuario);
+            console.log(this.$route.params.plan);
+            this.plan = this.$route.params.plan;
             },
         beforeCreate: function () {
-            var usuario = this.$session.get('usuario');
-            if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+            if (!this.$session.exists()) {
             this.$router.push('/usuario/login')
-            } 
+            }
         },
         data(){
             return{
                 loading: false,
                 resultadoOperacion: '',
                 erroresForm: [],
-                disabled: true,
+                disabled: false,
             	plan: {
                     id: 0,
                     nombre: '',
@@ -96,14 +102,18 @@
                 },
                 errorDisponibilidad: '',
                 descuentos:[],
-                descuentoSeleccionado: null,
+                nombreOriginal: '',
             }
-
         },
         methods: {
-            verificarDisponibilidad() {
-                if(this.plan != null && this.plan.nombre != ''){
-                    console.log("nombre -" + this.plan.nombre)
+            cambioSelect () {
+
+            },
+             verificarDisponibilidad() {
+                 console.log(this.nombreOriginal);
+                 console.log(this.plan.nombre);
+                if(this.plan != null && this.plan.nombre != '' && this.nombreOriginal != this.plan.nombre){
+                    this.loading = true;
                     axios.get('http://localhost:4567/api/cliente/existe-plan', {
                         params: {
                         nombre: this.plan.nombre,
@@ -119,28 +129,29 @@
                                 this.disabled = false;                              
                             }
                     });
+                    this.loading = false;
+                }
+                else if(this.nombreOriginal == this.plan.nombre){
+                    this.errorDisponibilidad = "Sin cambios.";
+                    this.disabled = false;
                 }
             },
-            registrarPlan(){
-                this.loading = true;
+            modificarPlan(){
                 if(this.checkForm()){
                     var params = this.plan;
                     console.log(params);
-                    axios.post('http://localhost:4567/api/cliente/agregar-plan', params) 
+                    axios.post('http://localhost:4567/api/cliente/modificar-plan', params) 
                         .then((res)=>{
-                            console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5402){
-                                this.resultadoOperacion = "Plan agregado satisfactoriamente.";
+                            console.log(res);
+                            if(res.data.resultado == 5400){
+                            this.$router.push({ name: 'ListadoPlan', params: { resultadoOperacion: "Plan modificado satisfactoriamente." }});
                                 this.limpiarCajas();
-                            } else if (res.data.resultado == 5303){
-                                this.resultadoOperacion = "Ya existe un plan con ese nombre.";
-                            }
-                            else if(res.data.resultado == 4){
-                                this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
+                            } else if (res.data.resultado == 5401){
+                                this.resultadoOperacion = "El plan seleccionado no existe.";
                             }
                         });
                 }
-                this.loading = false;
+
             },
             limpiarCajas(){
                 this.plan.id = 0;
@@ -171,7 +182,7 @@
                 this.erroresForm = [];
             },
             checkForm() {
-                limpiarMensajes();
+                this.limpiarMensajes();
 
                 if (this.plan.nombre && this.plan.cuota && this.plan.cuota >= 0 && this.plan.descuento && this.plan.descuento.id != 0) {
                     return true;

@@ -33,7 +33,7 @@
                         <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="empresa.rut" id="rut" placeholder="RUT">
                         <small id="emailHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>
                     </div>
-                    <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore tableHeadingBackground">
+                    <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore btn-success">
                 </form>
             </div>
         </div>

@@ -50,6 +50,8 @@
                         <router-link to="/cliente/carga-planilla-clientes"><a class="dropdown-item" href="#">Cargar clientes por planilla</a></router-link>
                         <router-link to="/cliente/registro-plan"><a class="dropdown-item" href="#">Registrar plan</a></router-link>
                         <router-link to="/cliente/registro-descuento"><a class="dropdown-item" href="#">Registrar descuento</a></router-link>
+                        <router-link to="/cliente/listado-plan"><a class="dropdown-item" href="#">Listado planes</a></router-link>
+                        <router-link to="/cliente/listado-descuento"><a class="dropdown-item" href="#">Listado descuentos</a></router-link>
                         </div>
                     </li>
                     <li class="nav-item dropdown">
