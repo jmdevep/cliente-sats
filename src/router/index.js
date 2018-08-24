@@ -36,6 +36,12 @@ const CargaPlanillaClientes = () => import('@/components/cliente/CargaPlanillaCl
 const RegistroPlan = () => import('@/components/cliente/RegistroPlan');
 const RegistroDescuento = () => import('@/components/cliente/RegistroDescuento');
 
+//Servicio
+const RegistroServicio = () => import('@/components/servicio/RegistroServicio');
+const ListadoServicio = () => import('@/components/servicio/ListadoServicio');
+const EliminarServicio = () => import('@/components/servicio/EliminarServicio');
+const EditarServicio = () => import('@/components/servicio/EditarServicio');
+
 
 Vue.use(Router)
 
@@ -78,6 +84,11 @@ export default new Router({
     {path: '/cliente/registro-plan', name: 'RegistroPlan', component: RegistroPlan},
     {path: '/cliente/registro-descuento', name: 'RegistroDescuento', component: RegistroDescuento},
     
+    //Servicio
+    {path: '/servicio/registro-servicio', name: 'RegistroServicio', component: RegistroServicio},
+    {path: '/servicio/listado-servicio', name: 'ListadoServicio', component: ListadoServicio},
+    {path: '/servicio/eliminar-servicio', name: 'EliminarServicio', component: EliminarServicio},
+    {path: '/servicio/editar-servicio', name: 'EditarServicio', component: EditarServicio},
     
   ]
 })
