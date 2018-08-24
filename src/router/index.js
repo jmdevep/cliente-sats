@@ -42,6 +42,13 @@ const ListadoServicio = () => import('@/components/servicio/ListadoServicio');
 const EliminarServicio = () => import('@/components/servicio/EliminarServicio');
 const EditarServicio = () => import('@/components/servicio/EditarServicio');
 
+//Localidad
+const RegistroLocalidad = () => import('@/components/localidad/RegistroLocalidad');
+const ListadoLocalidad = () => import('@/components/localidad/ListadoLocalidad');
+const EliminarLocalidad = () => import('@/components/localidad/EliminarLocalidad');
+const EditarLocalidad = () => import('@/components/localidad/EditarLocalidad');
+
+
 
 Vue.use(Router)
 
@@ -89,6 +96,12 @@ export default new Router({
     {path: '/servicio/listado-servicio', name: 'ListadoServicio', component: ListadoServicio},
     {path: '/servicio/eliminar-servicio', name: 'EliminarServicio', component: EliminarServicio},
     {path: '/servicio/editar-servicio', name: 'EditarServicio', component: EditarServicio},
+
+    //Localidad
+    {path: '/localidad/registro-localidad', name: 'RegistroLocalidad', component: RegistroLocalidad},
+    {path: '/localidad/listado-localidad', name: 'ListadoLocalidad', component: ListadoLocalidad},
+    {path: '/localidad/eliminar-localidad', name: 'EliminarLocalidad', component: EliminarLocalidad},
+    {path: '/localidad/editar-localidad', name: 'EditarLocalidad', component: EditarLocalidad},
     
   ]
 })
