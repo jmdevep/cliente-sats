@@ -161,10 +161,9 @@
                             } else if(res.data.resultado == 4){
                                 this.resultadoOperacion = "Error 0004, por favor comunicarse con soporte."
                             }
-                        });
-                        this.loading = false;
+                        });  
                 }
-
+                this.loading = false;
             },
             limpiarCajas(){
                 
@@ -177,14 +176,16 @@
                 this.empleado.vencimientoCarnetSalud = '';
                 this.empleado.vencimientoCarnetChofer = '';
             },
-
+            limpiarMensajes(){
+                this.resultadoOperacion = "";
+                this.erroresForm = [];
+            },
             checkForm() {
+                limpiarMensajes();
                 if (this.empleado.nombre && this.empleado.apellido && this.empleado.documento && this.empleado.fechaNacimiento && this.empleado.domicilio
                     && this.empleado.telefono ) {
                     return true;
                 }
-
-                this.erroresForm = [];
 
                 if (!this.empleado.nombre) {
                     this.erroresForm.push('Nombre requerido.');
@@ -204,7 +205,6 @@
                 if (!this.empleado.telefono) {
                     this.erroresForm.push('Teléfono requerido.');
                 }
-
                 this.disabled = false;
                 return false;
             }

@@ -5,9 +5,9 @@
         </h1>
         <hr class="titleUnderline">
         <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Registro de descuento</div>
+            <div class="card-header greenBackground">Modificar descuento</div>
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="registrarDescuento()">
+                <form v-on:submit.prevent="modificarDescuento()">
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
@@ -25,7 +25,7 @@
                         <label for="porcentaje" class="darkTextCustom">Porcentaje de descuento</label>
                         <input type="text" class="form-control border-success" v-model="descuento.porcentaje" id="porcentaje" placeholder="Porcentaje descuento">
                     </div>
-                    <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore btn-success">
+                    <input type="submit" :disabled="disabled" value="Modificar" class="btn marginBefore btn-success">
                 </form>
             </div>
         </div>
@@ -35,35 +35,53 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'RegistroDescuento',
+        name: 'EditarMotivo',
         mounted(){
-
+            this.descuento = this.$route.params.descuento;
+            this.nombreOriginal = this.$route.params.descuento.motivo;
+            //this.loading = true;    
+            console.log(this.descuento);
+            /*axios.get('http://localhost:4567/api/cliente/lista-descuentos')
+            .then((res)=>{
+                console.log(res);
+                if(res.data.resultado == 100){
+                    this.descuentos = res.data.descuentos;
+                    this.descuentos.forEach(function(obj) { obj.disabled = false; });
+                }
+                this.loading = false;
+        	});
+            console.log(this.$route.params.plan);
+            this.plan = this.$route.params.plan;*/
             },
         beforeCreate: function () {
-            var usuario = this.$session.get('usuario');
-            if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+            if (!this.$session.exists()) {
             this.$router.push('/usuario/login')
-            } 
+            }
         },
         data(){
             return{
                 loading: false,
                 resultadoOperacion: '',
                 erroresForm: [],
-                disabled: true,
+                disabled: false,
             	descuento: {
                     id: 0,
                     motivo: '',
                     porcentaje: '',
                 },
                 errorDisponibilidad: '',
+                nombreOriginal: '',
             }
-
         },
         methods: {
-            verificarDisponibilidad() {
-                if(this.descuento != null && this.descuento.motivo != ''){
-                    console.log("motivo -" + this.descuento.motivo)
+            cambioSelect () {
+
+            },
+             verificarDisponibilidad() {
+                 console.log(this.nombreOriginal);
+                 console.log(this.descuento.motivo);
+                if(this.descuento != null && this.descuento.motivo != '' && this.nombreOriginal != this.descuento.motivo){
+                    this.loading = true;
                     axios.get('http://localhost:4567/api/cliente/existe-descuento', {
                         params: {
                         motivo: this.descuento.motivo,
@@ -79,36 +97,35 @@
                                 this.disabled = false;                              
                             }
                     });
+                    this.loading = false;
+                }
+                else if(this.nombreOriginal == this.descuento.motivo){
+                    this.errorDisponibilidad = "Sin cambios.";
+                    this.disabled = false;
                 }
             },
-            registrarDescuento(){
-                this.loading = true;
+            modificarDescuento(){
                 if(this.checkForm()){
                     var params = this.descuento;
                     console.log(params);
-                    axios.post('http://localhost:4567/api/cliente/agregar-descuento', params) 
+                    axios.post('http://localhost:4567/api/cliente/modificar-descuento', params) 
                         .then((res)=>{
-                            console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5452){
-                                this.resultadoOperacion = "Descuento agregado satisfactoriamente.";
+                            console.log(res);
+                            if(res.data.resultado == 5450){
+                            this.$router.push({ name: 'ListadoDescuento', params: { resultadoOperacion: "Descuento modificado satisfactoriamente." }});
                                 this.limpiarCajas();
-                            } else if (res.data.resultado == 5453){
-                                this.resultadoOperacion = "Ya existe un descuento con ese motivo.";
-                            }
-                            else if(res.data.resultado == 4){
-                                this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
+                            } else if (res.data.resultado == 5451){
+                                this.resultadoOperacion = "El descuento seleccionado no existe.";
                             }
                         });
                 }
-                this.loading = false;
             },
             limpiarCajas(){
                 this.descuento = {
                     id: 0,
                     motivo: '',
-                    porcentaje: 0,
+                    porcentaje: '',
                 },
-                this.erroresForm = [];
                 this.errorDisponibilidad = '';
             },
             limpiarMensajes(){
@@ -116,7 +133,7 @@
                 this.erroresForm = [];
             },
             checkForm() {
-                limpiarMensajes();
+                this.limpiarMensajes();
                 if (this.descuento.motivo && this.descuento.porcentaje && this.descuento.porcentaje >= 0 && this.descuento.porcentaje <= 100) {
                     return true;
                 }
@@ -134,7 +151,6 @@
                 this.disabled = false;
                 return false;
             }
-    
         },    
     }
 </script>
