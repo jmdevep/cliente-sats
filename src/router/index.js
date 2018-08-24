@@ -34,6 +34,8 @@ const EliminarEmpresa = () => import('@/components/cliente/EliminarEmpresa');
 const EditarEmpresa = () => import('@/components/cliente/EditarEmpresa');
 const CargaPlanillaClientes = () => import('@/components/cliente/CargaPlanillaClientes');
 const RegistroPlan = () => import('@/components/cliente/RegistroPlan');
+
+//Descuentos y planes
 const RegistroDescuento = () => import('@/components/cliente/RegistroDescuento');
 const ListadoPlan = () => import('@/components/cliente/ListadoPlan');
 const ListadoDescuento = () => import('@/components/cliente/ListadoDescuento');
@@ -41,6 +43,20 @@ const EliminarPlan = () => import('@/components/cliente/EliminarPlan');
 const EditarPlan = () => import('@/components/cliente/EditarPlan');
 const EliminarDescuento = () => import('@/components/cliente/EliminarDescuento');
 const EditarDescuento = () => import('@/components/cliente/EditarDescuento');
+
+//Servicio
+const RegistroServicio = () => import('@/components/servicio/RegistroServicio');
+const ListadoServicio = () => import('@/components/servicio/ListadoServicio');
+const EliminarServicio = () => import('@/components/servicio/EliminarServicio');
+const EditarServicio = () => import('@/components/servicio/EditarServicio');
+
+//Localidad
+const RegistroLocalidad = () => import('@/components/localidad/RegistroLocalidad');
+const ListadoLocalidad = () => import('@/components/localidad/ListadoLocalidad');
+const EliminarLocalidad = () => import('@/components/localidad/EliminarLocalidad');
+const EditarLocalidad = () => import('@/components/localidad/EditarLocalidad');
+
+
 
 Vue.use(Router)
 
@@ -89,6 +105,17 @@ export default new Router({
     {path: '/cliente/eliminar-descuento', name: 'EliminarDescuento', component: EliminarDescuento},
     {path: '/cliente/editar-descuento', name: 'EditarDescuento', component: EditarDescuento},
     
+    //Servicio
+    {path: '/servicio/registro-servicio', name: 'RegistroServicio', component: RegistroServicio},
+    {path: '/servicio/listado-servicio', name: 'ListadoServicio', component: ListadoServicio},
+    {path: '/servicio/eliminar-servicio', name: 'EliminarServicio', component: EliminarServicio},
+    {path: '/servicio/editar-servicio', name: 'EditarServicio', component: EditarServicio},
+
+    //Localidad
+    {path: '/localidad/registro-localidad', name: 'RegistroLocalidad', component: RegistroLocalidad},
+    {path: '/localidad/listado-localidad', name: 'ListadoLocalidad', component: ListadoLocalidad},
+    {path: '/localidad/eliminar-localidad', name: 'EliminarLocalidad', component: EliminarLocalidad},
+    {path: '/localidad/editar-localidad', name: 'EditarLocalidad', component: EditarLocalidad},
     
   ]
 })
