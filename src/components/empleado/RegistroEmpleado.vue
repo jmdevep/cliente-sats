@@ -80,7 +80,7 @@
         name: 'RegistroEmpleado',
         mounted(){
             this.loading = true;    
-            axios.get('http://localhost:4567/api/turno/lista-roles')
+            axios.get('https://servidor-sats.herokuapp.com/api/turno/lista-roles')
         		.then((res)=>{
                     console.log(res);
         			if(res.data.resultado == 100){
@@ -129,7 +129,7 @@
             verificarDisponibilidad() {
                 this.errorDisponibilidad = "Verificando..";
                 if(this.empleado.documento != ''){
-                    axios.get('http://localhost:4567/api/empleado/existe-empleado', {
+                    axios.get('https://servidor-sats.herokuapp.com/api/empleado/existe-empleado', {
                         params: {
                         documento: this.empleado.documento,
                         }
@@ -152,7 +152,7 @@
                     this.empleado.listaRoles = this.rolesSeleccionados;
                     var params = this.empleado;
                     console.log(params);
-                    axios.post('http://localhost:4567/api/empleado/agregar-empleado', params) 
+                    axios.post('https://servidor-sats.herokuapp.com/api/empleado/agregar-empleado', params) 
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 1302){

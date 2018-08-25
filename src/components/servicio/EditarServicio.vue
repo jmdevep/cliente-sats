@@ -61,7 +61,7 @@
                 if(this.checkForm()){
                     var params = this.servicio;
                     console.log(params);
-                    axios.post('http://localhost:4567/api/servicio/modificar-servicio', params) 
+                    axios.post('https://servidor-sats.herokuapp.com/api/servicio/modificar-servicio', params) 
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 5504){

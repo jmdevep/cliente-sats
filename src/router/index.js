@@ -33,16 +33,19 @@ const ListadoEmpresa = () => import('@/components/cliente/ListadoEmpresa');
 const EliminarEmpresa = () => import('@/components/cliente/EliminarEmpresa');
 const EditarEmpresa = () => import('@/components/cliente/EditarEmpresa');
 const CargaPlanillaClientes = () => import('@/components/cliente/CargaPlanillaClientes');
-const RegistroPlan = () => import('@/components/cliente/RegistroPlan');
 
-//Descuentos y planes
-const RegistroDescuento = () => import('@/components/cliente/RegistroDescuento');
-const ListadoPlan = () => import('@/components/cliente/ListadoPlan');
-const ListadoDescuento = () => import('@/components/cliente/ListadoDescuento');
-const EliminarPlan = () => import('@/components/cliente/EliminarPlan');
-const EditarPlan = () => import('@/components/cliente/EditarPlan');
-const EliminarDescuento = () => import('@/components/cliente/EliminarDescuento');
-const EditarDescuento = () => import('@/components/cliente/EditarDescuento');
+
+//Descuento
+const EliminarDescuento = () => import('@/components/descuento/EliminarDescuento');
+const EditarDescuento = () => import('@/components/descuento/EditarDescuento');
+const RegistroDescuento = () => import('@/components/descuento/RegistroDescuento');
+const ListadoDescuento = () => import('@/components/descuento/ListadoDescuento');
+
+//Plan
+const RegistroPlan = () => import('@/components/plan/RegistroPlan');
+const ListadoPlan = () => import('@/components/plan/ListadoPlan');
+const EliminarPlan = () => import('@/components/plan/EliminarPlan');
+const EditarPlan = () => import('@/components/plan/EditarPlan');
 
 //Servicio
 const RegistroServicio = () => import('@/components/servicio/RegistroServicio');
@@ -94,17 +97,19 @@ export default new Router({
     {path: '/empresa/listado-empresa', name: 'ListadoEmpresa', component: ListadoEmpresa},
     {path: '/empresa/eliminar-empresa', name: 'EliminarEmpresa', component: EliminarEmpresa},
 
-    //Cliente
+    //Descuento
     {path: '/cliente/carga-planilla-clientes', name: 'CargaPlanillaClientes', component: CargaPlanillaClientes},
-    {path: '/cliente/registro-plan', name: 'RegistroPlan', component: RegistroPlan},
-    {path: '/cliente/registro-descuento', name: 'RegistroDescuento', component: RegistroDescuento},
-    {path: '/cliente/listado-plan', name: 'ListadoPlan', component: ListadoPlan},
-    {path: '/cliente/listado-descuento', name: 'ListadoDescuento', component: ListadoDescuento},
-    {path: '/cliente/eliminar-plan', name: 'EliminarPlan', component: EliminarPlan},
-    {path: '/cliente/editar-plan', name: 'EditarPlan', component: EditarPlan},
-    {path: '/cliente/eliminar-descuento', name: 'EliminarDescuento', component: EliminarDescuento},
-    {path: '/cliente/editar-descuento', name: 'EditarDescuento', component: EditarDescuento},
+    {path: '/descuento/registro-descuento', name: 'RegistroDescuento', component: RegistroDescuento},
+    {path: '/descuento/listado-descuento', name: 'ListadoDescuento', component: ListadoDescuento},
+    {path: '/descuento/eliminar-descuento', name: 'EliminarDescuento', component: EliminarDescuento},
+    {path: '/descuento/editar-descuento', name: 'EditarDescuento', component: EditarDescuento},
     
+    //Plan
+    {path: '/plan/eliminar-plan', name: 'EliminarPlan', component: EliminarPlan},
+    {path: '/plan/editar-plan', name: 'EditarPlan', component: EditarPlan},
+    {path: '/plan/listado-plan', name: 'ListadoPlan', component: ListadoPlan},
+    {path: '/plan/registro-plan', name: 'RegistroPlan', component: RegistroPlan},
+
     //Servicio
     {path: '/servicio/registro-servicio', name: 'RegistroServicio', component: RegistroServicio},
     {path: '/servicio/listado-servicio', name: 'ListadoServicio', component: ListadoServicio},

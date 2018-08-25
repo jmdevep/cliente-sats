@@ -1,44 +1,30 @@
 <template>
     <div>
         <h1 class="mainTitle">
-        Cliente
+        Clientes
         </h1>
         <hr class="titleUnderline">
         {{ resultadoOperacion }}
         <div class="row">
             <div class="col-sm-12">
                 <table class="table">
-                    <caption class="captionCustom"><h3>Lista de Planes</h3> <i v-show="loading" class="fa fa-spinner fa-spin"></i> </caption>
+                    <caption class="captionCustom"><h3>Lista de Descuentos</h3> <i v-show="loading" class="fa fa-spinner fa-spin"></i> </caption>
                     <thead class="greenBackground">
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Nombre plan</th>
-                            <th scope="col">Valor cuota</th>
-                            <th scope="col">Convenio</th>
-                            <th scope="col">Descuento</th>
+                            <th scope="col">Motivo</th>
+                            <th scope="col">Porcentaje</th>
                             <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="tableBodyBackground">
-                        <tr v-for="(plan, index) in planes" :key="index">
+                        <tr v-for="(descuento, index) in descuentos" :key="index">
                             <th scope="row">{{ index + 1 }}</th>
-                            <td>{{ plan.nombre }}</td>
-                            <td>{{ plan.cuota }}</td>
-                            <template v-if="plan.convenio == null || plan.convenio.id == 0">
-                                <td>--</td> 
-                            </template>   
-                            <template v-else>
-                                <td>{{ plan.convenio.nombreDescriptivo }}</td>   
-                            </template>
-                            <template v-if="plan.descuento == null">
-                                <td>--</td> 
-                            </template>   
-                            <template v-else>
-                                <td>-{{ plan.descuento.porcentaje }}%</td>
-                            </template>
+                            <td>{{ descuento.motivo }}</td>
+                            <td>{{ descuento.porcentaje }}</td>
                             <td>
-                                <router-link :to="{ name: 'EditarPlan', params: { plan: plan }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
-                                <router-link :to="{ name: 'EliminarPlan', params: { plan: plan }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>
+                                <router-link :to="{ name: 'EditarDescuento', params: { descuento: descuento }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
+                                <router-link :to="{ name: 'EliminarDescuento', params: { descuento: descuento }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>
                             </td>
                         </tr>
                     </tbody>
@@ -66,18 +52,18 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'ListadoPlan',
+        name: 'ListadoDescuento',
         mounted(){
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
-            axios.get('http://localhost:4567/api/cliente/lista-planes', {
+            axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-descuentos', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
                         tamanoPagina: this.tamanoPagina,
                         indicePagina: this.indicePagina,
-                        campo: 'nombre_plan',
+                        campo: 'motivo_descuento',
                     },
                 }
             })
@@ -85,7 +71,7 @@
                     console.log(res);
                     
         			if(res.data.resultado == 100){
-                        this.planes = res.data.planes;
+                        this.descuentos = res.data.descuentos;
                         if(res.data.cantidadElementos <= this.tamanoPagina){
                             this.cantidadPaginas = 1;
                         } else {
@@ -95,7 +81,9 @@
                         this.indexActual = 1;
                     }
                     this.loading = false;
+                    console.log(this.descuentos);
         	});
+
         },
             beforeCreate: function () {
                 var usuario = this.$session.get('usuario');
@@ -107,24 +95,25 @@
             return{
                 resultadoOperacion: '',
                 loading: false,
-                planes: [],
+                descuentos: [],
                 tamanoPagina: 2,
                 indicePagina: 0,
                 cantidadPaginas: 0,
                 indexActual: 0,
             }
+
         },
         methods: {
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('http://localhost:4567/api/cliente/lista-planes', {
+                axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-descuentos', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
                         tamanoPagina: this.tamanoPagina,
                         indicePagina: index -1,
-                        campo: 'nombre_plan',
+                        campo: 'nombre',
                     },
                 }
                 })
@@ -133,9 +122,9 @@
                     console.log(res);
                     console.log(res.data.resultado);
         			if(res.data.resultado == 100){
-                        this.planes = res.data.planes;
-                        console.log(this.planes);
-                        console.log(res.data.planes);
+                        this.descuentos = res.data.descuentos;
+                        console.log(this.descuentos);
+                        console.log(res.data.descuentos);
                         this.indexActual = index;
                     }
                     this.loading = false;

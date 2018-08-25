@@ -57,7 +57,7 @@
         mounted(){
             this.empleado = this.$route.params.empleado;
             this.loading = true;
-            axios.get('http://localhost:4567/api/usuario/lista-usuarios-asociar', {
+            axios.get('https://servidor-sats.herokuapp.com/api/usuario/lista-usuarios-asociar', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -105,7 +105,7 @@
                     }
                 };
                 console.log(params); 
-                axios.post('http://localhost:4567/api/empleado/asociar-usuario', params) 
+                axios.post('https://servidor-sats.herokuapp.com/api/empleado/asociar-usuario', params) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 1){
@@ -118,7 +118,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('http://localhost:4567/api/usuario/lista-usuarios-asociar', {
+                axios.get('https://servidor-sats.herokuapp.com/api/usuario/lista-usuarios-asociar', {
                 params: {
                     condiciones: {
                         orden: 'DESC',

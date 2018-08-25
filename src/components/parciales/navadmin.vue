@@ -48,10 +48,17 @@
                         <router-link to="/persona/registro-persona"><a class="dropdown-item" href="#">Registrar</a></router-link>
                         <router-link to="/persona/listado-persona"><a class="dropdown-item" href="#">Listado</a></router-link>
                         <router-link to="/cliente/carga-planilla-clientes"><a class="dropdown-item" href="#">Cargar clientes por planilla</a></router-link>
-                        <router-link to="/cliente/registro-plan"><a class="dropdown-item" href="#">Registrar plan</a></router-link>
-                        <router-link to="/cliente/registro-descuento"><a class="dropdown-item" href="#">Registrar descuento</a></router-link>
-                        <router-link to="/cliente/listado-plan"><a class="dropdown-item" href="#">Listado planes</a></router-link>
-                        <router-link to="/cliente/listado-descuento"><a class="dropdown-item" href="#">Listado descuentos</a></router-link>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Planes
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <router-link to="/plan/registro-plan"><a class="dropdown-item" href="#">Registrar plan</a></router-link>
+                        <router-link to="/descuento/registro-descuento"><a class="dropdown-item" href="#">Registrar descuento</a></router-link>
+                        <router-link to="/plan/listado-plan"><a class="dropdown-item" href="#">Listado planes</a></router-link>
+                        <router-link to="/descuento/listado-descuento"><a class="dropdown-item" href="#">Listado descuentos</a></router-link>
                         </div>
                     </li>
                     <li class="nav-item dropdown">

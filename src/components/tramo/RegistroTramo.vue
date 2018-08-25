@@ -45,7 +45,7 @@
         name: 'RegistroTramo',
         mounted(){
             this.loading = true;
-            axios.get('http://localhost:4567/api/localidad/lista-localidades')
+            axios.get('https://servidor-sats.herokuapp.com/api/localidad/lista-localidades')
         		.then((res)=>{
                     console.log(res);
         			if(res.data.resultado == 100){
@@ -89,7 +89,7 @@
             },
             verificarDisponibilidad() {
                 if(this.usuario.nombre != ''){
-                    axios.get('http://localhost:4567/api/usuario/existe-usuario', {
+                    axios.get('https://servidor-sats.herokuapp.com/api/usuario/existe-usuario', {
                         params: {
                         nombreUsuario: this.usuario.nombre,
                         }
@@ -111,7 +111,7 @@
                 if(this.checkForm()){
                     var params = this.usuario;
                     console.log(params);
-                    axios.post('http://localhost:4567/api/usuario/agregar-usuario', params) 
+                    axios.post('https://servidor-sats.herokuapp.com/api/usuario/agregar-usuario', params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 1102){
