@@ -46,6 +46,7 @@ const RegistroPlan = () => import('@/components/plan/RegistroPlan');
 const ListadoPlan = () => import('@/components/plan/ListadoPlan');
 const EliminarPlan = () => import('@/components/plan/EliminarPlan');
 const EditarPlan = () => import('@/components/plan/EditarPlan');
+const AsociarCliente = () => import('@/components/plan/AsociarCliente');
 
 //Servicio
 const RegistroServicio = () => import('@/components/servicio/RegistroServicio');
@@ -59,7 +60,12 @@ const ListadoLocalidad = () => import('@/components/localidad/ListadoLocalidad')
 const EliminarLocalidad = () => import('@/components/localidad/EliminarLocalidad');
 const EditarLocalidad = () => import('@/components/localidad/EditarLocalidad');
 
-
+//Convenio
+const ListadoConvenio = () => import('@/components/convenio/ListadoConvenio');
+const ListadoEmpresaSinConvenio = () => import('@/components/convenio/ListadoEmpresaSinConvenio');
+const RegistroConvenio = () => import('@/components/convenio/RegistroConvenio');
+const EliminarConvenio = () => import('@/components/convenio/EliminarConvenio');
+const EditarConvenio = () => import('@/components/convenio/EditarConvenio');
 
 Vue.use(Router)
 
@@ -109,6 +115,7 @@ export default new Router({
     {path: '/plan/editar-plan', name: 'EditarPlan', component: EditarPlan},
     {path: '/plan/listado-plan', name: 'ListadoPlan', component: ListadoPlan},
     {path: '/plan/registro-plan', name: 'RegistroPlan', component: RegistroPlan},
+    {path: '/plan/asociar-cliente', name: 'AsociarCliente', component: AsociarCliente},
 
     //Servicio
     {path: '/servicio/registro-servicio', name: 'RegistroServicio', component: RegistroServicio},
@@ -121,6 +128,13 @@ export default new Router({
     {path: '/localidad/listado-localidad', name: 'ListadoLocalidad', component: ListadoLocalidad},
     {path: '/localidad/eliminar-localidad', name: 'EliminarLocalidad', component: EliminarLocalidad},
     {path: '/localidad/editar-localidad', name: 'EditarLocalidad', component: EditarLocalidad},
+
+    //Convenio
+    {path: '/convenio/listado-convenio', name: 'ListadoConvenio', component: ListadoConvenio},
+    {path: '/convenio/listado-empresa-sin-convenio', name: 'ListadoEmpresaSinConvenio', component: ListadoEmpresaSinConvenio},
+    {path: '/convenio/registro-convenio', name: 'RegistroConvenio', component: RegistroConvenio},
+    {path: '/convenio/eliminar-convenio', name: 'EliminarConvenio', component: EliminarConvenio},
+    {path: '/convenio/editar-convenio', name: 'EditarConvenio', component: EditarConvenio},
     
   ]
 })

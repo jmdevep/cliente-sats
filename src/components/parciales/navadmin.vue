@@ -59,6 +59,7 @@
                         <router-link to="/descuento/registro-descuento"><a class="dropdown-item" href="#">Registrar descuento</a></router-link>
                         <router-link to="/plan/listado-plan"><a class="dropdown-item" href="#">Listado planes</a></router-link>
                         <router-link to="/descuento/listado-descuento"><a class="dropdown-item" href="#">Listado descuentos</a></router-link>
+                        <router-link to="/plan/asociar-cliente"><a class="dropdown-item" href="#">Asociar cliente</a></router-link>
                         </div>
                     </li>
                     <li class="nav-item dropdown">
@@ -86,6 +87,16 @@
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <router-link to="/localidad/registro-localidad"><a class="dropdown-item" href="#">Registrar</a></router-link>
                         <router-link to="/localidad/listado-localidad"><a class="dropdown-item" href="#">Listado</a></router-link>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Convenios
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <!--<router-link to="/cliente/registro-localidad"><a class="dropdown-item" href="#">Registrar</a></router-link>-->
+                        <router-link to="/convenio/listado-convenio"><a class="dropdown-item" href="#">Listado</a></router-link>
+                        <router-link to="/convenio/listado-empresa-sin-convenio"><a class="dropdown-item" href="#">Registro</a></router-link>
                         </div>
                     </li>
                 </ul>

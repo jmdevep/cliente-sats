@@ -5,9 +5,9 @@
         </h1>
         <hr class="titleUnderline">
         <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Editar convenio</div>
+            <div class="card-header greenBackground">Registro de Convenio</div>
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="modificarConvenio()">
+                <form v-on:submit.prevent="registrarConvenio()">
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
@@ -43,10 +43,10 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'EditarConvenio',
+        name: 'RegistroConvenio',
         mounted(){ 
-            this.convenio= this.$route.params.convenio;
-            this.nombreOriginal = this.$route.params.convenio.nombreDescriptivo;
+            this.convenio.empresa = this.$route.params.empresa;
+            console.log(this.empresa);
             },
         beforeCreate: function () {
             var usuario = this.$session.get('usuario');
@@ -59,7 +59,7 @@
                 loading: false,
                 resultadoOperacion: '',
                 erroresForm: [],
-                disabled: false,
+                disabled: true,
             	convenio: {
                     id: 0,
                     nombreDescriptivo: '',
@@ -74,13 +74,14 @@
                     },
                 },
                 errorDisponibilidad: '',
-                nombreOriginal: '',
+                convenios:[],
+                convenioSeleccionado: null,
             }
 
         },
         methods: {
             verificarDisponibilidad() {
-                if(this.convenio != null && this.convenio.nombreDescriptivo != '' && this.convenio.nombreDescriptivo != this.nombreOriginal){
+                if(this.convenio != null && this.convenio.nombreDescriptivo != ''){
                     console.log("nombre -" + this.convenio.nombreDescriptivo)
                     axios.get('http://localhost:4567/api/cliente/existe-convenio', {
                         params: {
@@ -98,26 +99,22 @@
                             }
                     });
                 }
-                else if(this.convenio.nombreDescriptivo == this.nombreOriginal){
-                    this.errorDisponibilidad = "Sin cambios.";    
-                    this.disabled = false;     
-                }
             },
-            modificarConvenio(){
+            registrarConvenio(){
                 this.loading = true;
                 if(this.checkForm()){
                     var params = this.convenio;
                     console.log(params);
-                    axios.post('http://localhost:4567/api/cliente/modificar-convenio', params) 
+                    axios.post('http://localhost:4567/api/cliente/agregar-convenio', params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5420 || res.data.resultado == 5424){
-                                this.$router.push({ name: 'ListadoConvenio', params: { resultadoOperacion: "Convenio modificado satisfactoriamente." }});  
-                            } else if (res.data.resultado == 5421 || res.data.resultado == 5425){
-                                
+                            if(res.data.resultado == 5422){
+                                this.$router.push({ name: 'ListadoConvenio', params: { resultadoOperacion: "Convenio creado satisfactoriamente." }});  
+                                this.limpiarCajas();
+                            } else if (res.data.resultado == 5423 || res.data.resultado == 5420){
                                 this.resultadoOperacion = "Ya existe un convenio con ese nombre.";
                             }
-                            else{
+                            else if(res.data.resultado == 4){
                                 this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
                             }
                         });
@@ -146,6 +143,7 @@
             },
             checkForm() {
                 this.limpiarMensajes();
+
                 if (this.convenio.nombreDescriptivo && this.convenio.fechaInicio && this.convenio.empresa && this.convenio.empresa.id != 0) {
                     return true;
                 }
