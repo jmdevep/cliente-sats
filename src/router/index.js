@@ -47,6 +47,8 @@ const ListadoPlan = () => import('@/components/plan/ListadoPlan');
 const EliminarPlan = () => import('@/components/plan/EliminarPlan');
 const EditarPlan = () => import('@/components/plan/EditarPlan');
 const AsociarCliente = () => import('@/components/plan/AsociarCliente');
+const RegistroSociedad = () => import('@/components/plan/RegistroSociedad');
+const EliminarSociedad = () => import('@/components/plan/EliminarSociedad');
 
 //Servicio
 const RegistroServicio = () => import('@/components/servicio/RegistroServicio');
@@ -66,6 +68,7 @@ const ListadoEmpresaSinConvenio = () => import('@/components/convenio/ListadoEmp
 const RegistroConvenio = () => import('@/components/convenio/RegistroConvenio');
 const EliminarConvenio = () => import('@/components/convenio/EliminarConvenio');
 const EditarConvenio = () => import('@/components/convenio/EditarConvenio');
+
 
 Vue.use(Router)
 
@@ -116,6 +119,8 @@ export default new Router({
     {path: '/plan/listado-plan', name: 'ListadoPlan', component: ListadoPlan},
     {path: '/plan/registro-plan', name: 'RegistroPlan', component: RegistroPlan},
     {path: '/plan/asociar-cliente', name: 'AsociarCliente', component: AsociarCliente},
+    {path: '/plan/registro-sociedad', name: 'RegistroSociedad', component: RegistroSociedad},
+    {path: '/plan/eliminar-sociedad', name: 'EliminarSociedad', component: EliminarSociedad},
 
     //Servicio
     {path: '/servicio/registro-servicio', name: 'RegistroServicio', component: RegistroServicio},

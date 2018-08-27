@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1 class="mainTitle">
-        Asociar plan
+        Socios
         </h1>
         <hr class="titleUnderline">
         {{ resultadoOperacion }}
@@ -12,7 +12,6 @@
                     <thead class="greenBackground">
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">ID</th>
                             <th scope="col">Nombre</th>
                             <th scope="col">Documento</th>
                             <th scope="col">Acciones</th>
@@ -23,44 +22,67 @@
                             <th scope="row">{{ index + 1 }}</th>
                             <td>{{ empresa.nombre }}</td>
                             <td>{{ empresa.rut }}</td>
-                            <template v-if="empresa.plan && empresa.plan.id != 0">
-                                <router-link :to="{ name: 'EditarEmpresa', params: { cliente: empresa }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
-                            <router-link :to="{ name: 'EliminarEmpresa', params: { cliente: empresa }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>
+                            <td>
+                            <template v-if="empresa.sociedad && empresa.sociedad.id != 0">
+                                <router-link :to="{ name: 'AgregarSocioGrupo', params: { cliente: empresa }}"><a href="#" class="btn btn-info" role="button">Agregar socio grupal</a></router-link>
+                                <router-link :to="{ name: 'EliminarSociedad', params: { cliente: empresa }}"><a href="#" class="btn btn-danger" role="button">Desasociar</a></router-link>
                             </template>   
                             <template v-else>
-                                <td>
-                                    <router-link :to="{ name: 'AsociarUsuario', params: { cliente: empresa }}"><a href="#" class="btn btn-info" role="button">Asociar</a></router-link>                                                                                            
-                                </td>   
+                                    <router-link :to="{ name: 'RegistroSociedad', params: { cliente: empresa }}"><a href="#" class="btn btn-info" role="button">Asociar individualmente</a></router-link>                                                                                            
                             </template>
+                            </td> 
                         </tr>
+                    </tbody>
+                    <ul class="pagination">
+                    <li class="page-item" v-bind:class="{ 'disabled' : (indexActualEmpresas==1) }">
+                    <a @click="cargarAnteriorEmpresas()" class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Anterior</span>
+                    </a>
+                    </li> 
+                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActualEmpresas) }" v-for="index in cantidadPaginasEmpresas" :key="index"><a @click="cargarDatosEmpresas(index)" class="page-link" href="#">{{ index }}</a></li>
+                    <li class="page-item"  v-bind:class="{ 'disabled' : (indexActualEmpresas==cantidadPaginasEmpresas) }">
+                    <a @click="cargarSiguienteEmpresas()" class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Siguiente</span>
+                    </a>
+                    </li>
+                </ul>
+                    <thead class="greenBackground">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Documento</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tableBodyBackground">
                         <tr v-for="(persona, index) in personas" :key="index">
                             <th scope="row">{{ index + 1 }}</th>
                             <td>{{ persona.nombre }}</td>
                             <td>{{ persona.documento }}</td>
                             <td>
-                                <template v-if="persona.plan && persona.plan.id != 0">
-                                    <router-link :to="{ name: 'EditarEmpresa', params: { cliente: persona }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
-                                <router-link :to="{ name: 'EliminarEmpresa', params: { cliente: persona }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>
+                                <template v-if="persona.sociedad && persona.sociedad.id != 0">
+                                    <router-link :to="{ name: 'AgregarSocioGrupo', params: { cliente: persona }}"><a href="#" class="btn btn-info" role="button">Agregar socio grupal</a></router-link>
+                                    <router-link :to="{ name: 'EliminarSociedad', params: { cliente: persona }}"><a href="#" class="btn btn-danger" role="button">Desasociar</a></router-link>
                                 </template>   
                                 <template v-else>
-                                    <td>
-                                        <router-link :to="{ name: 'AsociarUsuario', params: { cliente: persona }}"><a href="#" class="btn btn-info" role="button">Asociar</a></router-link>                                                                                            
-                                    </td>   
+                                    <router-link :to="{ name: 'RegistroSociedad', params: { cliente: persona }}"><a href="#" class="btn btn-info" role="button">Asociar individualmente</a></router-link>                                                                                              
                                 </template>
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <ul class="pagination">
-                    <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==1) }">
-                    <a @click="cargarAnterior()" class="page-link" href="#" aria-label="Previous">
+                    <li class="page-item" v-bind:class="{ 'disabled' : (indexActualPersonas==1) }">
+                    <a @click="cargarAnteriorPersonas()" class="page-link" href="#" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                         <span class="sr-only">Anterior</span>
                     </a>
                     </li> 
-                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="cargarDatos(index)" class="page-link" href="#">{{ index }}</a></li>
-                    <li class="page-item"  v-bind:class="{ 'disabled' : (indexActual==cantidadPaginas) }">
-                    <a @click="cargarSiguiente()" class="page-link" href="#" aria-label="Next">
+                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActualPersonas) }" v-for="index in cantidadPaginasPersonas" :key="index"><a @click="cargarDatosPersonas(index)" class="page-link" href="#">{{ index }}</a></li>
+                    <li class="page-item"  v-bind:class="{ 'disabled' : (indexActualPersonas==cantidadPaginasPersonas) }">
+                    <a @click="cargarSiguientePersonas()" class="page-link" href="#" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                         <span class="sr-only">Siguiente</span>
                     </a>
@@ -74,17 +96,17 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'ListadoEmpresa',
+        name: 'AsociarCliente',
         mounted(){
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
-            axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-empresas', {
+            axios.get('http://localhost:4567/api/cliente/lista-empresas', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
                         tamanoPagina: this.tamanoPagina,
-                        indicePagina: this.indicePagina,
+                        indicePagina: this.indexActualEmpresas,
                         campo: 'nombre',
                     },
                 }
@@ -95,21 +117,22 @@
         			if(res.data.resultado == 100){
                         this.empresas = res.data.listadoEmpresas;
                         if(res.data.cantidadElementos <= this.tamanoPagina){
-                            this.cantidadPaginas = 1;
+                            this.cantidadPaginasEmpresas = 1;
                         } else {
-                            this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
+                            this.cantidadElementosEmpresas = res.data.cantidadElementos;
+                            this.cantidadPaginasEmpresas = Math.ceil(this.cantidadElementosEmpresas / this.tamanoPagina);                            
                         }
-                        console.log(this.cantidadPaginas);
-                        this.indexActual = 1;
+                        console.log(this.cantidadPaginasEmpresas);
+                        this.indexActualEmpresas = 1;
                     }
                     this.loading = false;
         	});
-            axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-personas', {
+            axios.get('http://localhost:4567/api/cliente/lista-personas', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
                         tamanoPagina: this.tamanoPagina,
-                        indicePagina: this.indicePagina,
+                        indicePagina: this.indexActualPersonas,
                         campo: 'nombre_persona',
                     },
                 }
@@ -118,7 +141,13 @@
                     console.log(res);
         			if(res.data.resultado == 100){
                         this.personas = res.data.listaPersonas;
-                        this.indexActual = 1;
+                        this.indexActualPersonas = 1;
+                        if(res.data.cantidadElementos <= this.tamanoPagina){
+                            this.cantidadPaginasPersonas = 1;
+                        } else {
+                            this.cantidadElementosPersonas = res.data.cantidadElementos;
+                            this.cantidadPaginasPersonas = Math.ceil(this.cantidadElementosPersonas / this.tamanoPagina);                            
+                        }
                     }
                     this.loading = false;
         	    });
@@ -136,22 +165,28 @@
                 empresas: [],
                 personas: [],
                 tamanoPagina: 2,
-                indicePagina: 0,
-                cantidadPaginas: 0,
-                indexActual: 0,
+                indicePaginaEmpresas: 0,
+                indicePaginaPersonas: 0,
+                cantidadPaginasEmpresas: 0,
+                cantidadPaginasPersonas: 0,
+                indexActualEmpresas: 0,
+                indexActualPersonas: 0,
+                cantidadElementosEmpresas: 0,
+                cantidadElementosPersonas: 0,
             }
 
         },
         methods: {
-            cargarDatos(index){
+            cargarDatosEmpresas(index){
                 this.loading = true;
+                this.indexActualEmpresas = index;
                 console.log(index);
-                axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-empresas', {
+                axios.get('http://localhost:4567/api/cliente/lista-empresas', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
                         tamanoPagina: this.tamanoPagina,
-                        indicePagina: this.indicePagina,
+                        indicePagina: this.indexActualEmpresas,
                         campo: 'nombre_empresa',
                     },
                 }
@@ -164,15 +199,19 @@
                         this.empresas = res.data.listadoEmpresas;
                         console.log(this.empresas);
                         console.log(res.data.listadoEmpresas);
-                        this.indexActual = index;
                     }
                 });
-                axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-personas', {
+                this.loading = false;
+            },
+            cargarDatosPersonas(index){
+                this.loading = true;
+                this.indicePaginaPersonas = index;
+                axios.get('http://localhost:4567/api/cliente/lista-personas', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
                         tamanoPagina: this.tamanoPagina,
-                        indicePagina: index -1,
+                        indicePagina: indicePaginaPersonas,
                         campo: 'nombre_persona',
                     },
                 }
@@ -181,16 +220,21 @@
                     console.log(res);
         			if(res.data.resultado == 100){
                         this.personas = res.data.listaPersonas;
-                        this.indexActual = index;
                     }
-                    this.loading = false;
-        	    });
+                });
+                this.loading = false;
             },
-            cargarSiguiente(){
-                this.cargarDatos(this.indexActual + 1);
+            cargarSiguienteEmpresas(){
+                this.cargarDatos(this.indexActualEmpresas + 1);
             },
-            cargarAnterior(){
-                this.cargarDatos(this.indexActual - 1);
+            cargarSiguientePersonas(){
+                this.cargarDatos(this.indexActualPersonas + 1);
+            },
+            cargarAnteriorEmpresas(){
+                this.cargarDatos(this.indexActualEmpresas - 1);
+            },
+            cargarAnteriorPersonas(){
+                this.cargarDatos(this.indexActualPersonas - 1);
             }   
         },    
     }
