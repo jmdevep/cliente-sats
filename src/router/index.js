@@ -21,6 +21,7 @@ const EditarEmpleado = () => import('@/components/empleado/EditarEmpleado');
 //Turno
 const DescargaPlanillaTurnos = () => import('@/components/turno/DescargaPlanillaTurnos');
 const CargaPlanillaTurnos= () => import('@/components/turno/CargaPlanillaTurnos')
+const ListadoTurno= () => import('@/components/turno/ListadoTurno')
 
 
 //Cliente
@@ -100,6 +101,7 @@ export default new Router({
     //Turno
     {path: '/turno/descarga-planilla-turnos', name: 'DescargaPlanillaTurnos', component: DescargaPlanillaTurnos},
     {path: '/turno/carga-planilla-turnos', name: 'CargaPlanillaTurnos', component: CargaPlanillaTurnos},
+    {path: '/turno/listado-turno', name: 'ListadoTurno', component: ListadoTurno},
 
     //Persona
     {path: '/persona/registro-persona', name: 'RegistroPersona', component: RegistroPersona},
