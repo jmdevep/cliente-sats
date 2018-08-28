@@ -64,7 +64,7 @@
                             <td>
                                 <template v-if="persona.sociedad && persona.sociedad.id != 0">
                                     <router-link :to="{ name: 'AgregarSocioGrupo', params: { cliente: persona }}"><a href="#" class="btn btn-info" role="button">Agregar socio grupal</a></router-link>
-                                    <router-link :to="{ name: 'EliminarSociedad', params: { cliente: persona }}"><a href="#" class="btn btn-danger" role="button">Desasociar</a></router-link>
+                                    <a href="#" class="btn btn-danger" role="button" v-on:click="convertirPersonaEnCliente(persona)">Desasociar</a>
                                 </template>   
                                 <template v-else>
                                     <router-link :to="{ name: 'RegistroSociedad', params: { cliente: persona }}"><a href="#" class="btn btn-info" role="button">Asociar individualmente</a></router-link>                                                                                              
@@ -223,6 +223,28 @@
                     }
                 });
                 this.loading = false;
+            },
+            convertirPersonaEnCliente(persona){
+                var cliente = {
+                    id: persona.id,
+                    nombre: persona.nombre,
+                    direccion: persona.direccion,
+                    telefono: persona.telefono,
+                    fechaIngreso: persona.fechaIngreso,
+                    sociedad:persona.sociedad,
+                };
+                this.$router.replace({name: "EliminarSociedad", params: {cliente: cliente}});
+            },
+            convertirEmpresaEnCliente(empresa){
+                var cliente = {
+                    id: empresa.id,
+                    nombre: empresa.nombre,
+                    direccion: empresa.direccion,
+                    telefono: empresa.telefono,
+                    fechaIngreso: empresa.fechaIngreso,
+                    sociedad:empresa.sociedad,
+                };
+                this.$router.replace({name: "EliminarSociedad", params: {cliente: cliente}});
             },
             cargarSiguienteEmpresas(){
                 this.cargarDatos(this.indexActualEmpresas + 1);

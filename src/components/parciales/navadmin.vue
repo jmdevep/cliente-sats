@@ -17,6 +17,7 @@
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <router-link to="/turno/carga-planilla-turnos"><a class="dropdown-item" href="#">Cargar Planilla <i class="fas fa-upload"></i></a></router-link>                        
                         <router-link to="/turno/descarga-planilla-turnos"><a class="dropdown-item" href="#">Descargar Planilla <i class="fas fa-download"></i></a></router-link>
+                        <router-link to="/turno/listado-turno"><a class="dropdown-item" href="#">Ver turnos<i class="fas fa-download"></i></a></router-link>
                         </div>
                     </li>
                     <li class="nav-item">
