@@ -1,55 +1,33 @@
 <template>
     <div>
         <h1 class="mainTitle">
-        Empleados
+        Tramos
         </h1>
         <hr class="titleUnderline">
         {{ resultadoOperacion }}
         <div class="row">
             <div class="col-sm-12">
                 <table class="table">
-                    
-                    <caption class="captionCustom"><h3>Lista de Empleados</h3></caption>
-                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
+                    <caption class="captionCustom"><h3>Lista de Tramos</h3> <i v-show="loading" class="fa fa-spinner fa-spin"></i> </caption>
                     <thead class="greenBackground">
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">ID</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Apellido</th>
-                            <th scope="col">Documento</th>
-                            <th scope="col">Domicilio</th>
-                            <th scope="col">Telefono</th>
-                            <th scope="col">Carnet de Salud</th>
-                            <th scope="col">Carnet de Chofer</th>
-                            <th scope="col">Usuario</th>                            
+                            <th scope="col">Origen</th>
+                            <th scope="col">Destino</th>
+                            <th scope="col">Kilómetros</th>
                             <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="tableBodyBackground">
-                        <tr v-for="(empleado, index) in empleados" :key="index">
+                        <tr v-for="(tramo, index) in tramos" :key="index">
                             <th scope="row">{{ index + 1 }}</th>
-                            <td>{{ empleado.id }}</td>
-                            <td>{{ empleado.nombre }}</td>
-                            <td>{{ empleado.apellido }}</td>
-                            <td>{{ empleado.documento }}</td>
-                            <td>{{ empleado.domicilio }}</td>
-                            <td>{{ empleado.telefono }}</td>
-                            <td>{{ empleado.vencimientoCarnetSalud }}</td>
-                            <td>{{ empleado.vencimientoCarnetChofer }}</td>
-                            <template v-if="empleado.usuario.id != 0">
-                                <td>{{ empleado.usuario.id }}</td> 
-                            </template>   
-                            <template v-else>
-                                <td>
-                                    <router-link :to="{ name: 'AsociarUsuario', params: { empleado: empleado }}"><a href="#" class="btn btn-info" role="button">Asociar</a></router-link>                                                                                            
-                                </td>   
-                            </template>
+                            <td>{{ tramo.localidadOrigen.nombre }}</td>
+                            <td>{{ tramo.localidadDestino.nombre }}</td>
+                            <td>{{ tramo.cantidadKm }}</td>
                             <td>
-                                <router-link :to="{ name: 'EditarEmpleado', params: { empleado: empleado }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
-                                <router-link :to="{ name: 'EliminarEmpleado', params: { empleado: empleado }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>                                
+                                <router-link :to="{ name: 'EditarTramo', params: { tramo: tramo }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
+                                <router-link :to="{ name: 'EliminarTramo', params: { tramo: tramo }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>
                             </td>
- 
                         </tr>
                     </tbody>
                 </table>
@@ -76,12 +54,12 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'ListadoEmpleado',
+        name: 'ListadoTramo',
         mounted(){
-            this.resultadoOperacion = this.$route.params.resultadoOperacion || '';        
+            this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
-            axios.get('http://localhost:4567/api/empleado/lista-empleados', {
+            axios.get('http://localhost:4567/api/tramo/lista-tramos', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -93,8 +71,9 @@
             })
         		.then((res)=>{
                     console.log(res);
+                    
         			if(res.data.resultado == 100){
-                        this.empleados = res.data.listaEmpleados;
+                        this.tramos = res.data.listaTramos;
                         if(res.data.cantidadElementos <= this.tamanoPagina){
                             this.cantidadPaginas = 1;
                         } else {
@@ -106,11 +85,18 @@
                     this.loading = false;
         	});
 
-        	},
+        },
+            beforeCreate: function () {
+                var usuario = this.$session.get('usuario');
+                if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+                this.$router.push('/usuario/login')
+                } 
+        },
         data(){
             return{
                 resultadoOperacion: '',
-                empleados: [],
+                loading: false,
+                tramos: [],
                 tamanoPagina: 2,
                 indicePagina: 0,
                 cantidadPaginas: 0,
@@ -122,7 +108,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('http://localhost:4567/api/empleado/lista-empleados', {
+                axios.get('http://localhost:4567/api/tramo/lista-tramos', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -135,7 +121,7 @@
         		.then((res)=>{
                     console.log(res);
         			if(res.data.resultado == 100){
-                        this.empleados = res.data.listaEmpleados;
+                        this.tramos = res.data.listaTramos;
                         this.indexActual = index;
                     }
                     this.loading = false;

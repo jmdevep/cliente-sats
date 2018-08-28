@@ -69,6 +69,12 @@ const RegistroConvenio = () => import('@/components/convenio/RegistroConvenio');
 const EliminarConvenio = () => import('@/components/convenio/EliminarConvenio');
 const EditarConvenio = () => import('@/components/convenio/EditarConvenio');
 
+//Tramo
+const RegistroTramo = () => import('@/components/tramo/RegistroTramo');
+const ListadoTramo = () => import('@/components/tramo/ListadoTramo');
+const EliminarTramo = () => import('@/components/tramo/EliminarTramo');
+const EditarTramo =  () => import('@/components/tramo/EditarTramo');
+
 
 Vue.use(Router)
 
@@ -140,6 +146,14 @@ export default new Router({
     {path: '/convenio/registro-convenio', name: 'RegistroConvenio', component: RegistroConvenio},
     {path: '/convenio/eliminar-convenio', name: 'EliminarConvenio', component: EliminarConvenio},
     {path: '/convenio/editar-convenio', name: 'EditarConvenio', component: EditarConvenio},
+
+    //Tramo
+    {path: '/tramo/registro-tramo', name: 'RegistroTramo', component: RegistroTramo},
+    {path: '/tramo/listado-tramo', name: 'ListadoTramo', component: ListadoTramo},
+    {path: '/tramo/eliminar-tramo', name: 'EliminarTramo', component: EliminarTramo},
+    {path: '/tramo/editar-tramo', name: 'EditarTramo', component: EditarTramo},
+
+    
     
   ]
 })

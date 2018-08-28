@@ -78,7 +78,7 @@
         methods: {
             verificarDisponibilidad() {
                 if(this.persona.documento != ''){
-                    axios.get('https://servidor-sats.herokuapp.com/api/cliente/existe-persona', {
+                    axios.get('http://localhost:4567/api/cliente/existe-persona', {
                         params: {
                             rut: this.persona.documento,
                         }
@@ -100,7 +100,7 @@
                 if(this.checkForm()){
                     var params = this.persona;
                     console.log(params);
-                    axios.post('https://servidor-sats.herokuapp.com/api/cliente/agregar-persona', params) 
+                    axios.post('http://localhost:4567/api/cliente/agregar-persona', params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5302){

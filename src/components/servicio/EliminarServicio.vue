@@ -47,7 +47,7 @@
         },
         methods: {
             eliminarServicio(){
-                axios.delete('https://servidor-sats.herokuapp.com/api/servicio/eliminar-servicio', {data: { id: this.servicio.id }}) 
+                axios.delete('http://localhost:4567/api/servicio/eliminar-servicio', {data: { id: this.servicio.id }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5500){
