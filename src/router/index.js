@@ -85,6 +85,7 @@ const PrincipalEmpleado = () => import('@/components/empleado/PrincipalEmpleado'
 const PrincipalCliente = () => import('@/components/cliente/PrincipalCliente')
 const PrincipalEvento  = () => import('@/components/evento/PrincipalEvento')
 const PrincipalTramo = () => import('@/components/tramo/PrincipalTramo')
+const PrincipalTurno = () => import('@/components/turno/PrincipalTurno')
 const PrincipalPlan = () => import('@/components/plan/PrincipalPlan')
 
 Vue.use(Router)
@@ -173,6 +174,7 @@ export default new Router({
     {path: '/cliente/principal-cliente', name: 'PrincipalCliente', component: PrincipalCliente},
     {path: '/evento/principal-evento', name: 'PrincipalEvento', component: PrincipalEvento},
     {path: '/tramo/principal-tramo', name: 'PrincipalTramo', component: PrincipalTramo},
+    {path: '/turno/principal-turno', name: 'PrincipalTurno', component: PrincipalTurno},
     {path: '/plan/principal-plan', name: 'PrincipalPlan', component: PrincipalPlan},
     
     

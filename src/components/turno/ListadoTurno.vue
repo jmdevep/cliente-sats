@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Turnos
-        </h1>
-        <hr class="titleUnderline">
         {{ resultadoOperacion }}
 
         <div class="row">

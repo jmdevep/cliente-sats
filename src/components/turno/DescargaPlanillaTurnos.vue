@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Empleados
-        </h1>
-        <hr class="titleUnderline">
         {{ resultadoOperacion }}
         <i v-show="loading" class="fa fa-spinner fa-spin"></i>        
         <div class="row">
