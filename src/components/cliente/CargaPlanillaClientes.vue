@@ -1,9 +1,5 @@
 <template>
   <div class="container">
-      <h1 class="mainTitle">
-        Clientes
-        </h1>
-        <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Carga de planilla</div>
             <div class="large-12 medium-12 small-12 cell">

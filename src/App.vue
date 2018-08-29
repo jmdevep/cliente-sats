@@ -16,9 +16,18 @@ export default {
       navadmin
   }
 }
+
+window.setInterval(function(){
+  $('li.active').removeClass('active').removeClass('show');
+}, 1000);
+
 </script>
 
 <style>
+.tab {
+  margin-top: 20px;
+}
+
 .dropdown-toggle::after {
     display:none;
 }
@@ -111,5 +120,5 @@ hr{
 
 .nav-item .disabled{
     color: #5fb95f !important;
-}
+} 
 </style>

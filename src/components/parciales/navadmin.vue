@@ -23,23 +23,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Eventos</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Usuarios
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <router-link to="/usuario/registro-usuario"><a class="dropdown-item" href="#">Registrar</a></router-link>
-                        <router-link to="/usuario/listado-usuario"><a class="dropdown-item" href="#">Listado</a></router-link>
-                        </div>
+                    <li class="nav-item">
+                        <router-link to="/empleado/principal-empleado"><a class="nav-link" href="#">Empleados</a></router-link>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Empleados
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <router-link to="/empleado/registro-empleado"><a class="dropdown-item" href="#">Registrar</a></router-link>
-                        <router-link to="/empleado/listado-empleado"><a class="dropdown-item" href="#">Listado</a></router-link>
-                        </div>
+                    <li class="nav-item">
+                        <router-link to="/cliente/principal-cliente"><a class="nav-link" href="#">Clientes</a></router-link>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

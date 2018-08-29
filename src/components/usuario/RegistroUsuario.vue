@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Usuarios
-        </h1>
-        <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Registro de Usuarios</div>
             <div class="card-body darkTextCustom">

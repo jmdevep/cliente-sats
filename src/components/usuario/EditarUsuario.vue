@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Usuarios
-        </h1>
-        <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Modificar Usuario</div>
             {{resultadoOperacion}}
@@ -118,7 +114,7 @@
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 1100){
-                            this.$router.push({ name: 'ListadoUsuario', params: { resultadoOperacion: "Usuario modificado satisfactoriamente." }});
+                            this.$router.push({ name: 'PrincipalEmpleado', params: { resultadoOperacion: "Usuario modificado satisfactoriamente." }});
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 1101){
                                 this.resultadoOperacion = "El usuario seleccionado no existe.";

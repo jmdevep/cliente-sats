@@ -1,9 +1,6 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Personas 
-        </h1>
-        <hr class="titleUnderline">
+
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Registro de Persona</div>
             <div class="card-body darkTextCustom">

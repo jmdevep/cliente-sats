@@ -5,7 +5,6 @@ import App from './App'
 import router from './router'
 import VueSession from 'vue-session'
 
-
 var options = {
   persist: true
 }
@@ -14,7 +13,6 @@ var options = {
 
 Vue.use(VueSession, options)
 Vue.config.productionTip = false
-
 /*
 router.beforeEach((to, from, next) => {
   const authRequired = to.matched.some((route) => route.meta.auth)

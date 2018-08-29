@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Empresa 
-        </h1>
-        <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Modificar de Empresa</div>
             <div class="card-body darkTextCustom">
@@ -100,7 +96,7 @@
                             if(res.data.resultado == 5204){
                                 this.resultadoOperacion = "Empresa agregada satisfactoriamente.";
                                 this.limpiarCajas();
-                                this.$router.push({ name: 'ListadoEmpresa', params: { resultadoOperacion: "Empresa modificada satisfactoriamente." }});                                                                                            
+                                this.$router.push({ name: 'PrincipalCliente', params: { resultadoOperacion: "Empresa modificada satisfactoriamente." }});                                                                                            
                             } else if (res.data.resultado == 5205){
                                 this.resultadoOperacion = "Ya existe una empresa con ese rut.";
                             }

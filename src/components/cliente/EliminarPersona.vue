@@ -45,7 +45,7 @@
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5300){
-                            this.$router.push({ name: 'ListadoPersona', params: { resultadoOperacion: "Persona eliminada satisfactoriamente." }});                            
+                            this.$router.push({ name: 'PrincipalCliente', params: { resultadoOperacion: "Persona eliminada satisfactoriamente." }});                            
                         } else if (res.data.resultado == 5301){
                             this.resultadoOperacion = "La persona seleccionada existe.";
                         }

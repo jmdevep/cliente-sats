@@ -1,9 +1,6 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Personas 
-        </h1>
-        <hr class="titleUnderline">
+
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Editar Persona</div>
             <div class="card-body darkTextCustom">
@@ -104,7 +101,7 @@
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5304){
-                                this.resultadoOperacion = "Persona modificada satisfactoriamente.";
+                            this.$router.push({ name: 'PrincipalCliente', params: { resultadoOperacion: "Empresa modificada satisfactoriamente." }});                            
                                 this.limpiarCajas();
                             } else {
                                 this.resultadoOperacion = "Error";

@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Empleados
-        </h1>
-        <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Seguro desea eliminar este empleado?</div>
             <div class="card-body darkTextCustom">
@@ -45,7 +41,7 @@
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 1300){
-                            this.$router.push({ name: 'ListadoEmpleado', params: { resultadoOperacion: "Empleado eliminado satisfactoriamente." }});                            
+                            this.$router.push({ name: 'PrincipalEmpleado', params: { resultadoOperacion: "Empleado eliminado satisfactoriamente." }});                            
                         } else if (res.data.resultado == 1301){
                             this.resultadoOperacion = "El empleado seleccionado no existe.";
                         }

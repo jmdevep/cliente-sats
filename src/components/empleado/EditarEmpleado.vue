@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Empleados
-        </h1>
-        <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Modificar Empleado</div>
             <div class="card-body darkTextCustom">
@@ -49,7 +45,7 @@
                         <label for="vencimientoCarnetChofer" class="darkTextCustom">Vencimiento Libreta de Conducir</label>
                         <input type="date" class="form-control border-success" v-model="empleado.vencimientoCarnetChofer" id="vencimientoCarnetChofer" placeholder="2019-12-05">
                     </div>
-                    <input type="submit" :disabled="disabled" value="Modificar" class="btn marginBefore tableHeadingBackground">
+                    <input type="submit" value="Modificar" class="btn marginBefore tableHeadingBackground">
                 </form>
             </div>
         </div>
@@ -117,7 +113,7 @@
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 1304){
-                                this.$router.push({ name: 'ListadoEmpleado', params: { resultadoOperacion: "Empleado modificado satisfactoriamente." }});                                                            
+                                this.$router.push({ name: 'PrincipalEmpleado', params: { resultadoOperacion: "Empleado modificado satisfactoriamente." }});                                                            
                             } else if(res.data.resultado == 4){
                                 this.resultadoOperacion = "Error 0004."
                             }

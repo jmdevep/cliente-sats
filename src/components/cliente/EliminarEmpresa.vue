@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Empresa
-        </h1>
-        <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Seguro desea eliminar esta empresa?</div>
             <div class="card-body darkTextCustom">
@@ -45,7 +41,7 @@
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5200){
-                            this.$router.push({ name: 'ListadoEmpresa', params: { resultadoOperacion: "Empresa eliminada satisfactoriamente." }});                            
+                            this.$router.push({ name: 'PrincipalCliente', params: { resultadoOperacion: "Empresa eliminada satisfactoriamente." }});                            
                         } else if (res.data.resultado == 5201){
                             this.resultadoOperacion = "La empresa seleccionada existe.";
                         }

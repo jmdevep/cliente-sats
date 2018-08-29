@@ -109,7 +109,7 @@
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 1){
-                            this.$router.push({ name: 'ListadoEmpleado', params: { resultadoOperacion: "Usuario asociado satisfactoriamente." }});
+                            this.$router.push({ name: 'PrincipalEmpleado', params: { resultadoOperacion: "Usuario asociado satisfactoriamente." }});
                         } else if (res.data.resultado == 1101){
                             this.resultadoOperacion = "El usuario seleccionado no existe.";
                         }
