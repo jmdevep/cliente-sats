@@ -1,9 +1,6 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Sociedades
-        </h1>
-        <hr class="titleUnderline">
+
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Nuevo socio</div>
             <div class="card-body darkTextCustom">
@@ -168,7 +165,7 @@
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5422){
-                                this.$router.push({ name: 'AsociarCliente', params: { resultadoOperacion: "Cliente asociado satisfactoriamente." }});  
+                                this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Cliente asociado satisfactoriamente." }});  
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 5423 || res.data.resultado == 5420){
                                 this.resultadoOperacion = "El cliente ya se encuentra asociado.";

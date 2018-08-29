@@ -1,8 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Servicios
-        </h1>
         <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Seguro desea eliminar este servicio?</div>
@@ -51,7 +48,7 @@
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5500){
-                            this.$router.push({ name: 'ListadoServicio', params: { resultadoOperacion: "Servicio eliminado satisfactoriamente." }});
+                            this.$router.push({ name: 'PrincipalEvento', params: { resultadoOperacion: "Servicio eliminado satisfactoriamente." }});
                         } else if (res.data.resultado == 5501){
                             this.resultadoOperacion = "El Servicio seleccionado ya no existe.";
                         }

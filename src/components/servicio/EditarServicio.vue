@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Servicios
-        </h1>
-        <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Modificar Servicio</div>
             <div class="card-body darkTextCustom">
@@ -65,7 +61,7 @@
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 5504){
-                            this.$router.push({ name: 'ListadoServicio', params: { resultadoOperacion: "Servicio modificado satisfactoriamente." }});
+                            this.$router.push({ name: 'PrincipalEvento', params: { resultadoOperacion: "Servicio modificado satisfactoriamente." }});
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 5505){
                                 this.resultadoOperacion = "Error en la modificación.";

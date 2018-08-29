@@ -1,9 +1,6 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Usuarios
-        </h1>
-        <hr class="titleUnderline">
+
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">¿Seguro desea eliminar este plan?</div>
             {{ resultadoOperacion }}
@@ -70,7 +67,7 @@
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5400){
-                            this.$router.push({ name: 'ListadoPlan', params: { resultadoOperacion: "Plan eliminado satisfactoriamente." }});
+                            this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Plan eliminado satisfactoriamente." }});
                         } else if (res.data.resultado == 5401){
                             this.resultadoOperacion = "El plan seleccionado no existe.";
                         }

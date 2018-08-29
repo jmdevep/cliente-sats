@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Socios
-        </h1>
-        <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">¿Seguro desea desasociar este cliente? Podrá ser asociado nuevamente a otro plan.</div>
             <div class="card-body darkTextCustom">
@@ -75,7 +71,7 @@
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5420){
-                            this.$router.push({ name: 'AsociarCliente', params: { resultadoOperacion: "Cliente desasociado satisfactoriamente." }});                            
+                            this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Cliente desasociado satisfactoriamente." }});                            
                         } else if (res.data.resultado == 5421){
                             this.resultadoOperacion = "El cliente no se encuentra asociado a ese plan.";
                         }

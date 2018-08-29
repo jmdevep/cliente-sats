@@ -178,7 +178,7 @@
                 this.erroresForm = [];
             },
             checkForm() {
-                limpiarMensajes();
+                this.limpiarMensajes();
                 if (this.empleado.nombre && this.empleado.apellido && this.empleado.documento && this.empleado.fechaNacimiento && this.empleado.domicilio
                     && this.empleado.telefono ) {
                     return true;

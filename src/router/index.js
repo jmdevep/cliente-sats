@@ -83,6 +83,9 @@ const RegistroEvento = () => import('@/components/evento/RegistroEvento');
 //Principales
 const PrincipalEmpleado = () => import('@/components/empleado/PrincipalEmpleado')
 const PrincipalCliente = () => import('@/components/cliente/PrincipalCliente')
+const PrincipalEvento  = () => import('@/components/evento/PrincipalEvento')
+const PrincipalTramo = () => import('@/components/tramo/PrincipalTramo')
+const PrincipalPlan = () => import('@/components/plan/PrincipalPlan')
 
 Vue.use(Router)
 
@@ -162,17 +165,15 @@ export default new Router({
     {path: '/tramo/eliminar-tramo', name: 'EliminarTramo', component: EliminarTramo},
     {path: '/tramo/editar-tramo', name: 'EditarTramo', component: EditarTramo},
 
-
     //Evento
     {path: '/evento/registro-evento', name: 'RegistroEvento', component: RegistroEvento},
-
 
     //Principales
     {path: '/empleado/principal-empleado', name: 'PrincipalEmpleado', component: PrincipalEmpleado},
     {path: '/cliente/principal-cliente', name: 'PrincipalCliente', component: PrincipalCliente},
-    
-    
-
+    {path: '/evento/principal-evento', name: 'PrincipalEvento', component: PrincipalEvento},
+    {path: '/tramo/principal-tramo', name: 'PrincipalTramo', component: PrincipalTramo},
+    {path: '/plan/principal-plan', name: 'PrincipalPlan', component: PrincipalPlan},
     
     
   ]
