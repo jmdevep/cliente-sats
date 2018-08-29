@@ -107,7 +107,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-convenios', {
+                axios.get('http://localhost:4567/api/cliente/lista-convenios', {
                 params: {
                     condiciones: {
                         orden: 'DESC',

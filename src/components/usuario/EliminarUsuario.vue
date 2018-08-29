@@ -52,7 +52,7 @@
         },
         methods: {
             eliminarUsuario(){
-                axios.delete('https://servidor-sats.herokuapp.com/api/usuario/eliminar-usuario', {data: { id: this.usuario.id }}) 
+                axios.delete('http://localhost:4567/api/usuario/eliminar-usuario', {data: { id: this.usuario.id }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 1100){

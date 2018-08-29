@@ -41,7 +41,7 @@
         },
         methods: {
             eliminarEmpresa(){
-                axios.delete('https://servidor-sats.herokuapp.com/api/cliente/eliminar-empresa', {data: { id: this.empresa.id }}) 
+                axios.delete('http://localhost:4567/api/cliente/eliminar-empresa', {data: { id: this.empresa.id }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5200){

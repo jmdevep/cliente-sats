@@ -5,9 +5,9 @@
         </h1>
         <hr class="titleUnderline">
         <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Registro de Tramos</div>
+            <div class="card-header greenBackground">Modificar Tramo</div>
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="registrarTramo()">
+                <form v-on:submit.prevent="modificarTramo()">
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
@@ -46,7 +46,7 @@
                         <label for="nombre" class="darkTextCustom">Cantidad de Kilómetros</label>
                         <input type="number" class="form-control border-success" v-model="tramo.cantidadKm" id="cantidadKm" placeholder="Cantidad km">
                     </div>
-                    <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore tableHeadingBackground">
+                    <input type="submit" :disabled="disabled" value="Modificar" class="btn marginBefore tableHeadingBackground">
                 </form>
             </div>
         </div>
@@ -56,10 +56,15 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'RegistroTramo',
+        name: 'EditarTramo',
         mounted(){
+            this.tramo = this.$route.params.tramo;
+            this.tramo.localidadOrigen.disabled = true;
+            this.tramo.localidadDestino.disabled = true;
+    
+
             this.loading = true;
-                       axios.get('http://localhost:4567/api/localidad/lista-localidades', {
+            axios.get('http://localhost:4567/api/localidad/lista-localidades', {
                 params: {
 
                 }
@@ -72,7 +77,8 @@
                     }
                     this.loading = false;
         	});
-            
+                    this.cambioSelectOrigen();
+            this.cambioSelectDestino();
             },
         beforeCreate: function () {
             var usuario = this.$session.get('usuario');
@@ -114,21 +120,21 @@
                 this.localidades[index].disabled = false;
                 this.tramo.localidadDestino = null;
             },
-            registrarTramo(){
+            modificarTramo(){
                 this.loading = true;
                 if(this.checkForm()){
                     this.tramo.localidadOrigen.disabled = undefined;
                     this.tramo.localidadDestino.disabled = undefined;
                     var params = this.tramo;
                     console.log(params);
-                    axios.post('http://localhost:4567/api/tramo/agregar-tramo', params) 
+                    axios.post('http://localhost:4567/api/tramo/modificar-tramo', params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5702){
-                                this.resultadoOperacion = "Tramo agregado satisfactoriamente.";
-                                this.limpiarCajas();
-                            } else if (res.data.resultado == 5703){
-                                this.resultadoOperacion = "Ya existe un tramo con esas localidades.";
+                            if(res.data.resultado == 5704){
+                                this.$router.push({ name: 'ListadoTramo', params: { resultadoOperacion: "Tramo modificado satisfactoriamente." }});                            
+
+                            } else if (res.data.resultado == 5705){
+                                this.resultadoOperacion = "Error, ya existe un tramo con el mismo origen y destino.";
                             }
                         });
                     this.loading = false;
