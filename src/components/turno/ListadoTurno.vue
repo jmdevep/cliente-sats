@@ -5,6 +5,99 @@
         </h1>
         <hr class="titleUnderline">
         {{ resultadoOperacion }}
+
+        <div class="row">
+            <div class="col-sm-12">
+                <template v-if="turnosActivos.length > 0">
+                    <table class="table">
+                        <caption class="captionCustom"><h3>Turno activo</h3> <i v-show="loading" class="fa fa-spinner fa-spin"></i> </caption>
+                        <thead class="greenBackground">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Inicio turno</th>
+                                <th scope="col">Fin turno</th>
+                                <th scope="col">Tipo turno</th>
+                                <th scope="col">Empleado</th>
+                                <th scope="col">Documento</th>
+                                <th scope="col">Rol</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody v-for="(turno, index) in turnosActivos" :key="index" class="tableBodyBackground">
+                            <tr v-for="(puesto, index) in turno.puestos" :key="index">
+                                <th scope="row">{{ index + 1 }}</th>
+                                <td>{{ turno.inicio }}</td>
+                                <td>{{ turno.fin }}</td>
+                                <template v-if="puesto.tipo == 1">
+                                    <td>Guardia</td>
+                                </template>
+                                <template v-if="puesto.tipo == 2">
+                                    <td>Retén</td>
+                                </template>
+                                <template v-else>
+                                    <td>--</td>
+                                </template>
+                                <td>{{ puesto.empleado.apellido }}, {{ puesto.empleado.nombre }}</td>
+                                <td>{{ puesto.empleado.documento }}</td>
+                                <td>{{ puesto.rol.nombre }}</td>
+                                <td>{{ puesto.estado }}</td>
+                                <td>
+                                    <router-link :to="{ name: 'MarcarTurno', params: { turno: turno, puesto: puesto, ingreso: false, activacionReten: false }}"><a href="#" class="btn btn-info" role="button">Marcar ingreso</a></router-link>
+                                </td>
+                                <template v-if="puesto.tipo == 2">
+                                    <td colspan="9"><router-link :to="{ name: 'MarcarTurno', params: { turno: turno, puesto: puesto, ingreso: false, activacionReten: true }}"><a href="#" class="btn btn-info" role="button">Marcar activación retén</a></router-link></td>
+                                </template>
+                            </tr>
+                        </tbody>
+                    </table>
+                </template>
+                <template v-else-if="turnosActivables.length > 0">
+                    <table class="table">
+                        <caption class="captionCustom"><h3>Marcar ingreso</h3> <i v-show="loading" class="fa fa-spinner fa-spin"></i> </caption>
+                        <thead class="greenBackground">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Inicio turno</th>
+                                <th scope="col">Fin turno</th>
+                                <th scope="col">Tipo turno</th>
+                                <th scope="col">Empleado</th>
+                                <th scope="col">Documento</th>
+                                <th scope="col">Rol</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody v-for="(turno, index) in turnosActivables" :key="index" class="tableBodyBackground">
+                            <tr v-for="(puesto, index) in turno.puestos" :key="index">
+                                <th scope="row">{{ index + 1 }}</th>
+                                <td>{{ turno.inicio }}</td>
+                                <td>{{ turno.fin }}</td>
+                                <template v-if="puesto.tipo == 1">
+                                    <td>Guardia</td>
+                                </template>
+                                <template v-if="puesto.tipo == 2">
+                                    <td>Retén</td>
+                                </template>
+                                <template v-else>
+                                    <td>--</td>
+                                </template>
+                                <td>{{ puesto.empleado.apellido }}, {{ puesto.empleado.nombre }}</td>
+                                <td>{{ puesto.empleado.documento }}</td>
+                                <td>{{ puesto.rol.nombre }}</td>
+                                <td>{{ puesto.estado }}</td>
+                                <td>
+                                    <router-link :to="{ name: 'MarcarTurno', params: { turno: turno, puesto: puesto, ingreso: true, activacionReten: false }}"><a href="#" class="btn btn-info" role="button">Marcar ingreso</a></router-link>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </template>
+                <template v-else>
+                    No hay turnos activos ni planeados cerca de esta hora.
+                </template>
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm-12">
                 <table class="table">
@@ -15,6 +108,8 @@
                             <th scope="col">Inicio turno</th>
                             <th scope="col">Fin turno</th>
                             <th scope="col">Tipo turno</th>
+                            <th scope="col">Empleado</th>
+                            <th scope="col">Documento</th>
                             <th scope="col">Rol</th>
                             <th scope="col">Estado</th>
                             <th scope="col">Acciones</th>
@@ -23,8 +118,8 @@
                     <tbody v-for="(turno, index) in turnos" :key="index" class="tableBodyBackground">
                         <tr v-for="(puesto, index) in turno.puestos" :key="index">
                             <th scope="row">{{ index + 1 }}</th>
-                            <td>{{ turno.fechaInicio }}</td>
-                            <td>{{ turno.fechaFin }}</td>
+                            <td>{{ turno.inicio }}</td>
+                            <td>{{ turno.fin }}</td>
                             <template v-if="puesto.tipo == 1">
                                 <td>Guardia</td>
                             </template>
@@ -34,9 +129,17 @@
                             <template v-else>
                                 <td>--</td>
                             </template>
+                            <td>{{ puesto.empleado.apellido }}, {{ puesto.empleado.nombre }}</td>
+                            <td>{{ puesto.empleado.documento }}</td>
+                            <td>{{ puesto.rol.nombre }}</td>
                             <td>{{ puesto.estado }}</td>
                             <td>
-                                <router-link :to="{ name: 'RegistroConvenio', params: { empresa: empresa }}"><a href="#" class="btn btn-info" role="button">Nuevo convenio</a></router-link>
+                            <template v-if="puesto.fin">
+                                <router-link :to="{ name: 'EditarPuesto', params: { turno: turno, puesto: puesto }}"><a href="#" class="btn btn-info" role="button">Modificar</a></router-link>
+                            </template>   
+                            <template v-else>
+                                <router-link :to="{ name: 'RegistroSociedad', params: { cliente: empresa }}"><a href="#" class="btn btn-info" role="button">Asociar individualmente</a></router-link>                                                                                            
+                            </template>
                             </td>
                         </tr>
                     </tbody>
@@ -69,6 +172,56 @@
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
+            axios.get('http://localhost:4567/api/turno/lista-turnos-activos', {
+                params: {
+                    condiciones: {
+                        campo: 'id_empleado',
+                        valor: '7',
+                        fechaInicio: new Date(),
+                        fechaFin: new Date(),
+                    },
+                }
+            })
+        		.then((res)=>{
+                    console.log(res);
+                    
+        			if(res.data.resultado == 100){
+                        this.turnosActivos = res.data.listaTurnos;
+                        if(res.data.cantidadElementos <= this.tamanoPagina){
+                            this.cantidadPaginas = 1;
+                        } else {
+                            this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
+                        }
+                        console.log(this.cantidadPaginas);
+                        this.indexActual = 1;
+                    }
+                    this.loading = false;
+        	});
+            axios.get('http://localhost:4567/api/turno/lista-turnos-activables', {
+                params: {
+                    condiciones: {
+                        campo: 'id_empleado',
+                        valor: '7',
+                        fechaInicio: new Date(),
+                        fechaFin: new Date(),
+                    },
+                }
+            })
+        		.then((res)=>{
+                    console.log(res);
+                    
+        			if(res.data.resultado == 100){
+                        this.turnosActivables = res.data.listaTurnos;
+                        if(res.data.cantidadElementos <= this.tamanoPagina){
+                            this.cantidadPaginas = 1;
+                        } else {
+                            this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
+                        }
+                        console.log(this.cantidadPaginas);
+                        this.indexActual = 1;
+                    }
+                    this.loading = false;
+        	});
             axios.get('http://localhost:4567/api/turno/lista-turnos', {
                 params: {
                     condiciones: {
@@ -86,7 +239,7 @@
                     console.log(res);
                     
         			if(res.data.resultado == 100){
-                        this.empresas = res.data.listaTurnos;
+                        this.turnos = res.data.listaTurnos;
                         if(res.data.cantidadElementos <= this.tamanoPagina){
                             this.cantidadPaginas = 1;
                         } else {
@@ -110,6 +263,8 @@
                 resultadoOperacion: '',
                 loading: false,
                 turnos: [],
+                turnosActivables: [],
+                turnosActivos: [],
                 tamanoPagina: 2,
                 indicePagina: 0,
                 cantidadPaginas: 0,
@@ -121,6 +276,48 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
+                axios.get('http://localhost:4567/api/turno/lista-turnos-activos', {
+                params: {
+                    condiciones: {
+                        campo: 'id_empleado',
+                        valor : '7',
+                        fechaInicio: new Date(),
+                        fechaFin: new Date(),
+                    },
+                }
+                })
+        		.then((res)=>{
+                    console.log("SI ANDA ESTO");
+                    console.log(res);
+                    console.log(res.data.resultado);
+        			if(res.data.resultado == 100){
+                        this.turnosActivos = res.data.listaTurnos;
+                        console.log(this.turnos);
+                        console.log(res.data.listaTurnos);
+                        this.indexActual = index;
+                    }
+        	    });
+                axios.get('http://localhost:4567/api/turno/lista-turnos-activables', {
+                params: {
+                    condiciones: {
+                        campo: 'id_empleado',
+                        valor : '7',
+                        fechaInicio: new Date(),
+                        fechaFin: new Date(),
+                    },
+                }
+                })
+        		.then((res)=>{
+                    console.log("SI ANDA ESTO");
+                    console.log(res);
+                    console.log(res.data.resultado);
+        			if(res.data.resultado == 100){
+                        this.turnosActivables = res.data.listaTurnos;
+                        console.log(this.turnos);
+                        console.log(res.data.listaTurnos);
+                        this.indexActual = index;
+                    }
+        	    });
                 axios.get('http://localhost:4567/api/turno/lista-turnos', {
                 params: {
                     condiciones: {
@@ -139,13 +336,13 @@
                     console.log(res);
                     console.log(res.data.resultado);
         			if(res.data.resultado == 100){
-                        this.empresas = res.data.listaTurnos;
+                        this.turnos = res.data.listaTurnos;
                         console.log(this.turnos);
                         console.log(res.data.listaTurnos);
                         this.indexActual = index;
                     }
-                    this.loading = false;
         	    });
+                this.loading = false;
             },
             cargarSiguiente(){
                 this.cargarDatos(this.indexActual + 1);
