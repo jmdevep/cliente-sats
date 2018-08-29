@@ -48,7 +48,7 @@
         },
         methods: {
             eliminarDescuento(){
-                axios.delete('http://localhost:4567/api/cliente/eliminar-descuento', {data: { id: this.descuento.id }}) 
+                axios.delete('https://servidor-sats.herokuapp.com/api/cliente/eliminar-descuento', {data: { id: this.descuento.id }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5450){

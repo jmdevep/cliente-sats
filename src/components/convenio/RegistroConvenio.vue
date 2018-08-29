@@ -83,7 +83,7 @@
             verificarDisponibilidad() {
                 if(this.convenio != null && this.convenio.nombreDescriptivo != ''){
                     console.log("nombre -" + this.convenio.nombreDescriptivo)
-                    axios.get('http://localhost:4567/api/cliente/existe-convenio', {
+                    axios.get('https://servidor-sats.herokuapp.com/api/cliente/existe-convenio', {
                         params: {
                         nombre: this.convenio.nombreDescriptivo,
                         }
@@ -105,7 +105,7 @@
                 if(this.checkForm()){
                     var params = this.convenio;
                     console.log(params);
-                    axios.post('http://localhost:4567/api/cliente/agregar-convenio', params) 
+                    axios.post('https://servidor-sats.herokuapp.com/api/cliente/agregar-convenio', params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5422){

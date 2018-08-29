@@ -71,7 +71,7 @@
         },
         methods: {
             eliminarSocio(){
-                axios.delete('http://localhost:4567/api/cliente/eliminar-sociedad', {data: { cliente: this.cliente }}) 
+                axios.delete('https://servidor-sats.herokuapp.com/api/cliente/eliminar-sociedad', {data: { cliente: this.cliente }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5420){

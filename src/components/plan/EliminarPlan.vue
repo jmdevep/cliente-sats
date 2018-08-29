@@ -66,7 +66,7 @@
         },
         methods: {
             eliminarPlan(){
-                axios.delete('http://localhost:4567/api/cliente/eliminar-plan', {data: { id: this.plan.id }}) 
+                axios.delete('https://servidor-sats.herokuapp.com/api/cliente/eliminar-plan', {data: { id: this.plan.id }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5400){

@@ -64,7 +64,7 @@
             verificarDisponibilidad() {
                 if(this.descuento != null && this.descuento.motivo != ''){
                     console.log("motivo -" + this.descuento.motivo)
-                    axios.get('http://localhost:4567/api/cliente/existe-descuento', {
+                    axios.get('https://servidor-sats.herokuapp.com/api/cliente/existe-descuento', {
                         params: {
                         motivo: this.descuento.motivo,
                         }
@@ -86,7 +86,7 @@
                 if(this.checkForm()){
                     var params = this.descuento;
                     console.log(params);
-                    axios.post('http://localhost:4567/api/cliente/agregar-descuento', params) 
+                    axios.post('https://servidor-sats.herokuapp.com/api/cliente/agregar-descuento', params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5452){

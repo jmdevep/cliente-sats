@@ -101,7 +101,7 @@
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
-            axios.get('http://localhost:4567/api/cliente/lista-empresas', {
+            axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-empresas', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -127,7 +127,7 @@
                     }
                     this.loading = false;
         	});
-            axios.get('http://localhost:4567/api/cliente/lista-personas', {
+            axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-personas', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -181,7 +181,7 @@
                 this.loading = true;
                 this.indexActualEmpresas = index;
                 console.log(index);
-                axios.get('http://localhost:4567/api/cliente/lista-empresas', {
+                axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-empresas', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -206,7 +206,7 @@
             cargarDatosPersonas(index){
                 this.loading = true;
                 this.indicePaginaPersonas = index;
-                axios.get('http://localhost:4567/api/cliente/lista-personas', {
+                axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-personas', {
                 params: {
                     condiciones: {
                         orden: 'DESC',

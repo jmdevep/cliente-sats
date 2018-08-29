@@ -172,7 +172,7 @@
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
-            axios.get('http://localhost:4567/api/turno/lista-turnos-activos', {
+            axios.get('https://servidor-sats.herokuapp.com/api/turno/lista-turnos-activos', {
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
@@ -197,7 +197,7 @@
                     }
                     this.loading = false;
         	});
-            axios.get('http://localhost:4567/api/turno/lista-turnos-activables', {
+            axios.get('https://servidor-sats.herokuapp.com/api/turno/lista-turnos-activables', {
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
@@ -222,7 +222,7 @@
                     }
                     this.loading = false;
         	});
-            axios.get('http://localhost:4567/api/turno/lista-turnos', {
+            axios.get('https://servidor-sats.herokuapp.com/api/turno/lista-turnos', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -276,7 +276,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('http://localhost:4567/api/turno/lista-turnos-activos', {
+                axios.get('https://servidor-sats.herokuapp.com/api/turno/lista-turnos-activos', {
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
@@ -297,7 +297,7 @@
                         this.indexActual = index;
                     }
         	    });
-                axios.get('http://localhost:4567/api/turno/lista-turnos-activables', {
+                axios.get('https://servidor-sats.herokuapp.com/api/turno/lista-turnos-activables', {
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
@@ -318,7 +318,7 @@
                         this.indexActual = index;
                     }
         	    });
-                axios.get('http://localhost:4567/api/turno/lista-turnos', {
+                axios.get('https://servidor-sats.herokuapp.com/api/turno/lista-turnos', {
                 params: {
                     condiciones: {
                         orden: 'DESC',

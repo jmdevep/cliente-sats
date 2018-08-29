@@ -42,7 +42,7 @@
         },
         methods: {
             eliminarTramo(){
-                axios.delete('http://localhost:4567/api/tramo/eliminar-tramo', {data: { id: this.tramo.id }}) 
+                axios.delete('https://servidor-sats.herokuapp.com/api/tramo/eliminar-tramo', {data: { id: this.tramo.id }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5700){

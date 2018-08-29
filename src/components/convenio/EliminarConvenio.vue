@@ -41,7 +41,7 @@
         },
         methods: {
             eliminarConvenio(){
-                axios.delete('http://localhost:4567/api/cliente/eliminar-convenio', {data: { id: this.convenio.id }}) 
+                axios.delete('https://servidor-sats.herokuapp.com/api/cliente/eliminar-convenio', {data: { id: this.convenio.id }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5420){

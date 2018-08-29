@@ -57,7 +57,7 @@
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
-            axios.get('http://localhost:4567/api/cliente/lista-descuentos', {
+            axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-descuentos', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -107,7 +107,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('http://localhost:4567/api/cliente/lista-descuentos', {
+                axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-descuentos', {
                 params: {
                     condiciones: {
                         orden: 'DESC',

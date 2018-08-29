@@ -13,7 +13,7 @@
 	 export default {
         name: 'IngresoTurno',
         mounted(){
-			axios.get('http://localhost:4567/api/turnos/turnos-activacion', {
+			axios.get('https://servidor-sats.herokuapp.com/api/turnos/turnos-activacion', {
 				params: {
 					idEmpleado: 4,
 			  }

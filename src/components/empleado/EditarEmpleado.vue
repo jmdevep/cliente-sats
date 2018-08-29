@@ -85,7 +85,7 @@
                 
                 if(this.empleado.documento != '' && this.documentoOriginal != this.empleado.documento){
                     this.errorDisponibilidad = "Verificando..";
-                    axios.get('http://localhost:4567/api/empleado/existe-empleado', {
+                    axios.get('https://servidor-sats.herokuapp.com/api/empleado/existe-empleado', {
                         params: {
                         documento: this.empleado.documento,
                         }
@@ -109,7 +109,7 @@
                 if(this.checkForm()){
                     var params = this.empleado;
                     console.log(params);
-                    axios.post('http://localhost:4567/api/empleado/modificar-empleado', params) 
+                    axios.post('https://servidor-sats.herokuapp.com/api/empleado/modificar-empleado', params) 
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 1304){
