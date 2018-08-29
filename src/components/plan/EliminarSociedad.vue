@@ -71,7 +71,7 @@
         },
         methods: {
             eliminarSocio(){
-                axios.post('http://localhost:4567/api/cliente/eliminar-sociedad', {data: { cliente: this.cliente }}) 
+                axios.delete('http://localhost:4567/api/cliente/eliminar-sociedad', {data: { cliente: this.cliente }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5420){
