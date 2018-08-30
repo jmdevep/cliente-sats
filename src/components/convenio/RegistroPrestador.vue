@@ -1,13 +1,13 @@
 <template>
     <div>
         <h1 class="mainTitle">
-        Convenios
+        Prestadores
         </h1>
         <hr class="titleUnderline">
         <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Registro de Convenio</div>
+            <div class="card-header greenBackground">Registro de prestador</div>
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="registrarConvenio()">
+                <form v-on:submit.prevent="registrarPrestador()">
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
@@ -17,21 +17,13 @@
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                     <p>{{ resultadoOperacion }}</p>
                     <div class="form-group">
-                        <label for="nombre" class="darkTextCustom">Empresa</label>
-                        <input type="text"  class="form-control border-success" v-model="convenio.empresa.nombre" id="nombre" disabled="true" >
-                    </div>
-                    <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre descriptivo</label>
-                        <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="convenio.nombreDescriptivo" id="nombre" placeholder="Nombre descriptivo">
+                        <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="prestador.nombreDescriptivo" id="nombre" placeholder="Nombre descriptivo">
                         <small id="nameHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>
                     </div>
                     <div class="form-group">
-                        <label for="fechaInicio" class="darkTextCustom">Fecha de Inicio</label>
-                        <input type="date" class="form-control border-success" v-model="convenio.fechaInicio" id="fechaInicio" placeholder="2019-12-05">
-                    </div>
-                    <div class="form-group">
-                        <label for="fechaFin" class="darkTextCustom">Fecha de Fin</label>
-                        <input type="date" class="form-control border-success" v-model="convenio.fechaFin" id="fechaFin" placeholder="2019-12-05">
+                        <label for="convenio" class="darkTextCustom">Tiene convenio</label>
+                        <input type="checkbox" class="form-control border-success" id="convenio" v-model="checked">
                     </div>
                     <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore btn-success">
                 </form>
@@ -43,10 +35,8 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'RegistroConvenio',
+        name: 'RegistroPrestador',
         mounted(){ 
-            this.convenio.empresa = this.$route.params.empresa;
-            console.log(this.empresa);
             },
         beforeCreate: function () {
             var usuario = this.$session.get('usuario');
@@ -60,39 +50,29 @@
                 resultadoOperacion: '',
                 erroresForm: [],
                 disabled: true,
-            	convenio: {
+            	prestador: {
                     id: 0,
                     nombreDescriptivo: '',
-                    fechaInicio: '',
-                    fechaFin: '',
-                    empresa:{
-                        id: 0,
-                        nombre: '',
-                        direccion: '',
-                        telefono: '',
-                        rut: '',
-                    },
+                    esprestador: '',
                 },
                 errorDisponibilidad: '',
-                convenios:[],
-                convenioSeleccionado: null,
             }
 
         },
         methods: {
             verificarDisponibilidad() {
-                if(this.convenio != null && this.convenio.nombreDescriptivo != ''){
-                    console.log("nombre -" + this.convenio.nombreDescriptivo)
-                    axios.get('https://servidor-sats.herokuapp.com/api/cliente/existe-convenio', {
+                if(this.prestador && this.prestador.nombreDescriptivo != ''){
+                    console.log("nombre -" + this.prestador.nombreDescriptivo)
+                    axios.get('http://localhost:4567/api/cliente/existe-prestador', {
                         params: {
-                        nombre: this.convenio.nombreDescriptivo,
+                        nombre: this.prestador.nombreDescriptivo,
                         }
                     })
                         .then((res)=>{
                             console.log(res);
                             if(res.data.existe == true){
                                 this.disabled = true;
-                                this.errorDisponibilidad = "Ya existe un convenio registrado con ese nombre.";
+                                this.errorDisponibilidad = "Ya existe un prestador registrado con ese nombre.";
                             } else {
                                 this.errorDisponibilidad = "Nombre disponible.";    
                                 this.disabled = false;                              
@@ -100,19 +80,19 @@
                     });
                 }
             },
-            registrarConvenio(){
+            registrarPrestador(){
                 this.loading = true;
                 if(this.checkForm()){
-                    var params = this.convenio;
+                    var params = this.prestador;
                     console.log(params);
-                    axios.post('https://servidor-sats.herokuapp.com/api/cliente/agregar-convenio', params) 
+                    axios.post('http://localhost:4567/api/cliente/agregar-prestador', params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5422){
-                                this.$router.push({ name: 'ListadoConvenio', params: { resultadoOperacion: "Convenio creado satisfactoriamente." }});  
+                                this.$router.push({ name: 'ListadoPrestador', params: { resultadoOperacion: "Prestador creado satisfactoriamente." }});  
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 5423 || res.data.resultado == 5420){
-                                this.resultadoOperacion = "Ya existe un convenio con ese nombre.";
+                                this.resultadoOperacion = "Ya existe un prestador con ese nombre.";
                             }
                             else if(res.data.resultado == 4){
                                 this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
@@ -122,7 +102,7 @@
                 this.loading = false;
             },
             limpiarCajas(){
-                this.convenio = {
+                this.prestador = {
                     id: 0,
                     nombreDescriptivo: '',
                     fechaInicio: '',
@@ -144,18 +124,12 @@
             checkForm() {
                 this.limpiarMensajes();
 
-                if (this.convenio.nombreDescriptivo && this.convenio.fechaInicio && this.convenio.empresa && this.convenio.empresa.id != 0) {
+                if (this.prestador.nombreDescriptivo) {
                     return true;
                 }
 
-                if (!this.convenio.nombreDescriptivo) {
+                if (!this.prestador.nombreDescriptivo) {
                     this.erroresForm.push('Nombre descriptivo requerido.');
-                }
-                if (!this.convenio.fechaInicio) {
-                    this.erroresForm.push('Fecha de inicio requerida.');
-                }
-                if(!this.convenio.empresa || this.convenio.empresa.id == 0){
-                    this.erroresForm.push('Debe seleccionar una empresa.');
                 }
                 
                 this.disabled = false;

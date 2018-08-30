@@ -1,13 +1,13 @@
 <template>
     <div>
         <h1 class="mainTitle">
-        Convenios
+        Prestadores
         </h1>
         <hr class="titleUnderline">
         <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Editar convenio</div>
+            <div class="card-header greenBackground">Editar prestador</div>
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="modificarConvenio()">
+                <form v-on:submit.prevent="modificarPrestador()">
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
@@ -16,22 +16,14 @@
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                     <p>{{ resultadoOperacion }}</p>
-                    <div class="form-group">
-                        <label for="nombre" class="darkTextCustom">Empresa</label>
-                        <input type="text"  class="form-control border-success" v-model="convenio.empresa.nombre" id="nombre" disabled="true" >
-                    </div>
-                    <div class="form-group">
+                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre descriptivo</label>
-                        <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="convenio.nombreDescriptivo" id="nombre" placeholder="Nombre descriptivo">
+                        <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="prestador.nombreDescriptivo" id="nombre" placeholder="Nombre descriptivo">
                         <small id="nameHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>
                     </div>
                     <div class="form-group">
-                        <label for="fechaInicio" class="darkTextCustom">Fecha de Inicio</label>
-                        <input type="date" class="form-control border-success" v-model="convenio.fechaInicio" id="fechaInicio" placeholder="2019-12-05">
-                    </div>
-                    <div class="form-group">
-                        <label for="fechaFin" class="darkTextCustom">Fecha de Fin</label>
-                        <input type="date" class="form-control border-success" v-model="convenio.fechaFin" id="fechaFin" placeholder="2019-12-05">
+                        <label for="convenio" class="darkTextCustom">Tiene convenio</label>
+                        <input type="checkbox" class="form-control border-success" id="convenio" v-model="checked">
                     </div>
                     <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore btn-success">
                 </form>
@@ -43,10 +35,10 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'EditarConvenio',
+        name: 'Editarprestador',
         mounted(){ 
-            this.convenio= this.$route.params.convenio;
-            this.nombreOriginal = this.$route.params.convenio.nombreDescriptivo;
+            this.prestador= this.$route.params.prestador;
+            this.nombreOriginal = this.$route.params.prestador.nombreDescriptivo;
             },
         beforeCreate: function () {
             var usuario = this.$session.get('usuario');
@@ -60,18 +52,11 @@
                 resultadoOperacion: '',
                 erroresForm: [],
                 disabled: false,
-            	convenio: {
+            	prestador: {
                     id: 0,
                     nombreDescriptivo: '',
-                    fechaInicio: '',
-                    fechaFin: '',
-                    empresa:{
-                        id: 0,
-                        nombre: '',
-                        direccion: '',
-                        telefono: '',
-                        rut: '',
-                    },
+                    activo: '',
+                    esConvenio: '',
                 },
                 errorDisponibilidad: '',
                 nombreOriginal: '',
@@ -80,42 +65,42 @@
         },
         methods: {
             verificarDisponibilidad() {
-                if(this.convenio != null && this.convenio.nombreDescriptivo != '' && this.convenio.nombreDescriptivo != this.nombreOriginal){
-                    console.log("nombre -" + this.convenio.nombreDescriptivo)
-                    axios.get('https://servidor-sats.herokuapp.com/api/cliente/existe-convenio', {
+                if(this.prestador && this.prestador.nombreDescriptivo && this.prestador.nombreDescriptivo != this.nombreOriginal){
+                    console.log("nombre -" + this.prestador.nombreDescriptivo)
+                    axios.get('http://localhost:4567/api/cliente/existe-prestador', {
                         params: {
-                        nombre: this.convenio.nombreDescriptivo,
+                        nombre: this.prestador.nombreDescriptivo,
                         }
                     })
                         .then((res)=>{
                             console.log(res);
                             if(res.data.existe == true){
                                 this.disabled = true;
-                                this.errorDisponibilidad = "Ya existe un convenio registrado con ese nombre.";
+                                this.errorDisponibilidad = "Ya existe un prestador registrado con ese nombre.";
                             } else {
                                 this.errorDisponibilidad = "Nombre disponible.";    
                                 this.disabled = false;                              
                             }
                     });
                 }
-                else if(this.convenio.nombreDescriptivo == this.nombreOriginal){
+                else if(this.prestador.nombreDescriptivo == this.nombreOriginal){
                     this.errorDisponibilidad = "Sin cambios.";    
                     this.disabled = false;     
                 }
             },
-            modificarConvenio(){
+            modificarPrestador(){
                 this.loading = true;
                 if(this.checkForm()){
-                    var params = this.convenio;
+                    var params = this.prestador;
                     console.log(params);
-                    axios.post('https://servidor-sats.herokuapp.com/api/cliente/modificar-convenio', params) 
+                    axios.post('http://localhost:4567/api/cliente/modificar-prestador', params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5420 || res.data.resultado == 5424){
-                                this.$router.push({ name: 'ListadoConvenio', params: { resultadoOperacion: "Convenio modificado satisfactoriamente." }});  
+                                this.$router.push({ name: 'ListadoPrestador', params: { resultadoOperacion: "Prestador modificado satisfactoriamente." }});  
                             } else if (res.data.resultado == 5421 || res.data.resultado == 5425){
                                 
-                                this.resultadoOperacion = "Ya existe un convenio con ese nombre.";
+                                this.resultadoOperacion = "Ya existe un prestador con ese nombre.";
                             }
                             else{
                                 this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
@@ -125,18 +110,11 @@
                 this.loading = false;
             },
             limpiarCajas(){
-                this.convenio = {
+                this.prestador = {
                     id: 0,
                     nombreDescriptivo: '',
-                    fechaInicio: '',
-                    fechaFin: '',
-                    empresa:{
-                        id: 0,
-                        nombre: '',
-                        direccion: '',
-                        telefono: '',
-                        rut: '',
-                    },
+                    activo: '',
+                    esConvenio: '',
                 }
                 this.errorDisponibilidad = '';
             },
@@ -146,18 +124,12 @@
             },
             checkForm() {
                 this.limpiarMensajes();
-                if (this.convenio.nombreDescriptivo && this.convenio.fechaInicio && this.convenio.empresa && this.convenio.empresa.id != 0) {
+                if (this.prestador.nombreDescriptivo && this.prestador.fechaInicio && this.prestador.empresa && this.prestador.empresa.id != 0) {
                     return true;
                 }
 
-                if (!this.convenio.nombreDescriptivo) {
+                if (!this.prestador.nombreDescriptivo) {
                     this.erroresForm.push('Nombre descriptivo requerido.');
-                }
-                if (!this.convenio.fechaInicio) {
-                    this.erroresForm.push('Fecha de inicio requerida.');
-                }
-                if(!this.convenio.empresa || this.convenio.empresa.id == 0){
-                    this.erroresForm.push('Debe seleccionar una empresa.');
                 }
                 
                 this.disabled = false;

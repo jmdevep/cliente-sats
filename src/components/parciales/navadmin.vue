@@ -80,12 +80,12 @@
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Convenios
+                        Prestadores
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <!--<router-link to="/cliente/registro-localidad"><a class="dropdown-item" href="#">Registrar</a></router-link>-->
-                        <router-link to="/convenio/listado-convenio"><a class="dropdown-item" href="#">Listado</a></router-link>
-                        <router-link to="/convenio/listado-empresa-sin-convenio"><a class="dropdown-item" href="#">Registro</a></router-link>
+                        <router-link to="/prestador/listado-prestador"><a class="dropdown-item" href="#">Listado</a></router-link>
+                        <router-link to="/prestador/listado-empresa-sin-prestador"><a class="dropdown-item" href="#">Registro</a></router-link>
                         </div>
                     </li>
                 </ul>
