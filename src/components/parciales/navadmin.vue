@@ -32,11 +32,10 @@
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <!--<router-link to="/cliente/registro-localidad"><a class="dropdown-item" href="#">Registrar</a></router-link>-->
                         <router-link to="/prestador/listado-prestador"><a class="dropdown-item" href="#">Listado</a></router-link>
-                        <router-link to="/prestador/listado-empresa-sin-prestador"><a class="dropdown-item" href="#">Registro</a></router-link>
+                        <router-link to="/prestador/registro-prestador"><a class="dropdown-item" href="#">Registro</a></router-link>
                         </div>
                      <li class="nav-item">
                         <router-link to="/plan/principal-plan"><a class="nav-link" href="#">Planes</a></router-link>
-
                     </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">

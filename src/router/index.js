@@ -154,7 +154,6 @@ export default new Router({
 
     //prestador
     {path: '/prestador/listado-prestador', name: 'ListadoPrestador', component: ListadoPrestador},
-    {path: '/prestador/listado-empresa-sin-prestador', name: 'ListadoEmpresaSinprestador', component: ListadoEmpresaSinprestador},
     {path: '/prestador/registro-prestador', name: 'RegistroPrestador', component: RegistroPrestador},
     {path: '/prestador/eliminar-prestador', name: 'EliminarPrestador', component: EliminarPrestador},
     {path: '/prestador/editar-prestador', name: 'EditarPrestador', component: EditarPrestador},

@@ -35,7 +35,7 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'Editarprestador',
+        name: 'EditarPrestador',
         mounted(){ 
             this.prestador= this.$route.params.prestador;
             this.nombreOriginal = this.$route.params.prestador.nombreDescriptivo;
@@ -65,7 +65,7 @@
         },
         methods: {
             verificarDisponibilidad() {
-                if(this.prestador && this.prestador.nombreDescriptivo && this.prestador.nombreDescriptivo != this.nombreOriginal){
+                if(this.prestador && this.prestador.nombreDescriptivo != null && this.prestador.nombreDescriptivo != this.nombreOriginal){
                     console.log("nombre -" + this.prestador.nombreDescriptivo)
                     axios.get('http://localhost:4567/api/cliente/existe-prestador', {
                         params: {
@@ -124,7 +124,7 @@
             },
             checkForm() {
                 this.limpiarMensajes();
-                if (this.prestador.nombreDescriptivo && this.prestador.fechaInicio && this.prestador.empresa && this.prestador.empresa.id != 0) {
+                if (this.prestador.nombreDescriptivo && this.prestador.id != 0) {
                     return true;
                 }
 

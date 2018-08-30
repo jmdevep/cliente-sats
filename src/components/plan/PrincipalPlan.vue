@@ -26,7 +26,7 @@
 
     import ListadoPlan from './ListadoPlan.vue'
     import RegistroPlan from './RegistroPlan.vue' 
-    import RegistroSociedad from './RegistroSociedad.vue'
+    import AsociarCliente from './AsociarCliente.vue'
     import AgregarSocioGrupo from './AgregarSocioGrupo.vue'
     import ListadoDescuento from '../descuento/ListadoDescuento.vue'
     import RegistroDescuento from '../descuento/RegistroDescuento.vue'
@@ -40,7 +40,7 @@
          components: {
             ListadoPlan,
             RegistroPlan,
-            RegistroSociedad,
+            AsociarCliente,
             ListadoDescuento,
             RegistroDescuento
         },
@@ -50,7 +50,7 @@
             tabs: [
                 { component: ListadoPlan, title: 'Lista Planes' },
                 { component: RegistroPlan, title: 'Registrar Plan'},
-                { component: RegistroSociedad, title: 'Asociar Cliente'},
+                { component: AsociarCliente, title: 'Asociar Cliente'},
                 { component: ListadoDescuento, title: 'Lista Descuentos'},
                 { component: RegistroDescuento, title: 'Registrar Descuento'},
             ],
