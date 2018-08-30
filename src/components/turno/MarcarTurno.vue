@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Turnos
-        </h1>
-        <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">
                 <template v-if="activacionReten">
@@ -120,7 +116,7 @@
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 5400){
-                            this.$router.push({ name: 'ListadoPlan', params: { resultadoOperacion: "Plan modificado satisfactoriamente." }});
+                            this.$router.push({ name: 'PrincipalTurno', params: { resultadoOperacion: "Plan modificado satisfactoriamente." }});
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 5401){
                                 this.resultadoOperacion = "El plan seleccionado no existe.";

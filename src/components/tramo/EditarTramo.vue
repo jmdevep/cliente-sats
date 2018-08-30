@@ -1,9 +1,6 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Tramos
-        </h1>
-        <hr class="titleUnderline">
+
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Modificar Tramo</div>
             <div class="card-body darkTextCustom">
@@ -131,7 +128,7 @@
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5704){
-                                this.$router.push({ name: 'ListadoTramo', params: { resultadoOperacion: "Tramo modificado satisfactoriamente." }});                            
+                                this.$router.push({ name: 'PrincipalTramo', params: { resultadoOperacion: "Tramo modificado satisfactoriamente." }});                            
 
                             } else if (res.data.resultado == 5705){
                                 this.resultadoOperacion = "Error, ya existe un tramo con el mismo origen y destino.";

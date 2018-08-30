@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Clientes
-        </h1>
-        <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">¿Seguro desea eliminar este descuento?</div>
             {{ resultadoOperacion }}
@@ -52,7 +48,7 @@
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5450){
-                            this.$router.push({ name: 'ListadoDescuento', params: { resultadoOperacion: "Descuento eliminado satisfactoriamente." }});
+                            this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Descuento eliminado satisfactoriamente." }});
                         } else if (res.data.resultado == 5451){
                             this.resultadoOperacion = "El descuento seleccionado no existe.";
                         }

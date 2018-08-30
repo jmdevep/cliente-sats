@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Clientes
-        </h1>
-        <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Modificar descuento</div>
             <div class="card-body darkTextCustom">
@@ -112,13 +108,13 @@
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 5450){
-                            this.$router.push({ name: 'ListadoDescuento', params: { resultadoOperacion: "Descuento modificado satisfactoriamente." }});
+                            this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Descuento modificado satisfactoriamente." }});
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 5451){
                                 this.resultadoOperacion = "El descuento seleccionado no existe.";
                             }
                         });
-                }
+                } 
             },
             limpiarCajas(){
                 this.descuento = {

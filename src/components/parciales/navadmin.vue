@@ -10,18 +10,11 @@
                     <li class="nav-item active">
                         <router-link to="/"><a class="nav-link" href="#">Inicio<span class="sr-only">(current)</span></a></router-link>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Turnos
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <router-link to="/turno/carga-planilla-turnos"><a class="dropdown-item" href="#">Cargar Planilla <i class="fas fa-upload"></i></a></router-link>                        
-                        <router-link to="/turno/descarga-planilla-turnos"><a class="dropdown-item" href="#">Descargar Planilla <i class="fas fa-download"></i></a></router-link>
-                        <router-link to="/turno/listado-turno"><a class="dropdown-item" href="#">Ver turnos<i class="fas fa-download"></i></a></router-link>
-                        </div>
+                    <li class="nav-item">
+                        <router-link to="/turno/principal-turno"><a class="nav-link" href="#">Turnos</a></router-link>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Eventos</a>
+                        <router-link to="/evento/principal-evento"><a class="nav-link" href="#">Eventos</a></router-link>
                     </li>
                     <li class="nav-item">
                         <router-link to="/empleado/principal-empleado"><a class="nav-link" href="#">Empleados</a></router-link>
@@ -29,54 +22,8 @@
                     <li class="nav-item">
                         <router-link to="/cliente/principal-cliente"><a class="nav-link" href="#">Clientes</a></router-link>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Personas
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <router-link to="/persona/registro-persona"><a class="dropdown-item" href="#">Registrar</a></router-link>
-                        <router-link to="/persona/listado-persona"><a class="dropdown-item" href="#">Listado</a></router-link>
-                        <router-link to="/cliente/carga-planilla-clientes"><a class="dropdown-item" href="#">Cargar clientes por planilla</a></router-link>
-                        </div>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Planes
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <router-link to="/plan/registro-plan"><a class="dropdown-item" href="#">Registrar plan</a></router-link>
-                        <router-link to="/descuento/registro-descuento"><a class="dropdown-item" href="#">Registrar descuento</a></router-link>
-                        <router-link to="/plan/listado-plan"><a class="dropdown-item" href="#">Listado planes</a></router-link>
-                        <router-link to="/descuento/listado-descuento"><a class="dropdown-item" href="#">Listado descuentos</a></router-link>
-                        <router-link to="/plan/asociar-cliente"><a class="dropdown-item" href="#">Asociar cliente</a></router-link>
-                        </div>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Empresas
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <router-link to="/empresa/registro-empresa"><a class="dropdown-item" href="#">Registrar</a></router-link>
-                        <router-link to="/empresa/listado-empresa"><a class="dropdown-item" href="#">Listado</a></router-link>
-                        </div>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Servicios
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <router-link to="/servicio/registro-servicio"><a class="dropdown-item" href="#">Registrar</a></router-link>
-                        <router-link to="/servicio/listado-servicio"><a class="dropdown-item" href="#">Listado</a></router-link>
-                        </div>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Localidades
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <router-link to="/localidad/registro-localidad"><a class="dropdown-item" href="#">Registrar</a></router-link>
-                        <router-link to="/localidad/listado-localidad"><a class="dropdown-item" href="#">Listado</a></router-link>
-                        </div>
+                    <li class="nav-item">
+                        <router-link to="/tramo/principal-tramo"><a class="nav-link" href="#">Tramos</a></router-link>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -87,6 +34,9 @@
                         <router-link to="/prestador/listado-prestador"><a class="dropdown-item" href="#">Listado</a></router-link>
                         <router-link to="/prestador/listado-empresa-sin-prestador"><a class="dropdown-item" href="#">Registro</a></router-link>
                         </div>
+                     <li class="nav-item">
+                        <router-link to="/plan/principal-plan"><a class="nav-link" href="#">Planes</a></router-link>
+
                     </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">

@@ -1,9 +1,5 @@
 <template>
     <div>
-        <h1 class="mainTitle">
-        Clientes
-        </h1>
-        <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Editar Plan</div>
             <div class="card-body darkTextCustom">
@@ -144,7 +140,7 @@
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 5400){
-                            this.$router.push({ name: 'ListadoPlan', params: { resultadoOperacion: "Plan modificado satisfactoriamente." }});
+                            this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Plan modificado satisfactoriamente." }});
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 5401){
                                 this.resultadoOperacion = "El plan seleccionado no existe.";
