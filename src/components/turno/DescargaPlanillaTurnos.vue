@@ -119,7 +119,7 @@
         </div>
         <div class="row">
             <div class="col-sm-12">
-              <a @click="descargarPlanilla()" target="_blank" class="btn btn-info" role="button">Descargar Planilla</a>
+              <a @click="descargarPlanilla()" target="_blank" class="btn btn-success" role="button">Descargar Planilla</a>
             </div>
         </div>
     </div>

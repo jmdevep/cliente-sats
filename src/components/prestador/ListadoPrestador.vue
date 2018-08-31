@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1 class="mainTitle">
-        Convenios
+        Prestadores
         </h1>
         <hr class="titleUnderline">
         {{ resultadoOperacion }}

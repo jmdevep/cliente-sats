@@ -62,7 +62,7 @@
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
-            axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-personas', {
+            axios.get('http://localhost:4567/api/cliente/lista-personas', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -111,7 +111,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-personas', {
+                axios.get('http://localhost:4567/api/cliente/lista-personas', {
                 params: {
                     condiciones: {
                         orden: 'DESC',

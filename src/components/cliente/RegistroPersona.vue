@@ -35,6 +35,28 @@
                         <label for="fechaNacimiento" class="darkTextCustom">Fecha de Nacimiento</label>
                         <input type="date" class="form-control border-success" v-model="persona.fechaNacimiento" id="fechaNacimiento" placeholder="2019-12-05">
                     </div>
+                    <div class="form-group">
+                        <label for="sexos">Seleccione el género</label>
+                        <select id="sexos" class="form-control" v-model="persona.sexo">
+                            <option value="" selected> 
+                                Sin seleccionar
+                            </option>
+                            <option value="M" selected> 
+                                Masculino
+                            </option>
+                            <option value="F" selected> 
+                                Femenino
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sexos">Prestador de salud</label>
+                        <select id="sexos" class="form-control" v-model="persona.prestador">
+                            <option  v-for="(prestador,index) in prestadores" :key="index" v-bind:value="prestador.id" :disabled="descuento.disabled">
+                                {{ prestador.nombre }}
+                            </option>
+                        </select>
+                    </div>
                     <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore tableHeadingBackground">
                 </form>
             </div>
@@ -47,7 +69,33 @@
 	 export default {
         name: 'RegistroPersona',
         mounted(){
-
+            this.loading = true;
+            axios.get('http://localhost:4567/api/cliente/lista-prestadores', {
+                params: {
+                    condiciones: {
+                        orden: 'DESC',
+                        tamanoPagina: this.tamanoPagina,
+                        indicePagina: this.indicePagina,
+                        campo: 'nombre_prestador',
+                    },
+                }
+            })
+        		.then((res)=>{
+                    console.log(res);
+                    
+        			if(res.data.resultado == 100){
+                        this.prestadores = res.data.prestadores;
+                        if(res.data.cantidadElementos <= this.tamanoPagina){
+                            this.cantidadPaginas = 1;
+                        } else {
+                            this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
+                        }
+                        console.log(this.cantidadPaginas);
+                        this.indexActual = 1;
+                    }
+                    console.log(this.prestadores);
+        	});
+            this.loading = false;
             },
         beforeCreate: function () {
             var usuario = this.$session.get('usuario');
@@ -67,15 +115,23 @@
                     telefono: '',
                     documento: '',
                     fechaNacimiento: '',
+                    sexo: '',
+                    prestador:{
+                        id: 0,
+                        nombreDescriptivo: '',
+                        activo: 0,
+                        esConvenio: false,
+                    }
                 },
                 errorDisponibilidad: '',
+                prestadores: [],
             }
 
         },
         methods: {
             verificarDisponibilidad() {
                 if(this.persona.documento != ''){
-                    axios.get('https://servidor-sats.herokuapp.com/api/cliente/existe-persona', {
+                    axios.get('http://localhost:4567/api/cliente/existe-persona', {
                         params: {
                             rut: this.persona.documento,
                         }
@@ -97,7 +153,7 @@
                 if(this.checkForm()){
                     var params = this.persona;
                     console.log(params);
-                    axios.post('https://servidor-sats.herokuapp.com/api/cliente/agregar-persona', params) 
+                    axios.post('http://localhost:4567/api/cliente/agregar-persona', params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5302){
@@ -107,44 +163,95 @@
                                 this.resultadoOperacion = "Ya existe una persona con ese documento.";
                             }
                         });
-                    this.loading = false;
                 }
+                this.loading = false;
             },
             limpiarCajas(){
-                this.persona.nombre = '',
-                this.persona.direccion = '',
-                this.persona.telefono = '',
-                this.persona.documento = '',
+                this.persona = {
+                    nombre: '',
+                    direccion: '',
+                    telefono: '',
+                    documento: '',
+                    fechaNacimiento: '',
+                    sexo: '',
+                    prestador:{
+                        id: 0,
+                        nombreDescriptivo: '',
+                        activo: 0,
+                        esConvenio: false,
+                    }
+                };
                 this.errorDisponibilidad = '';
-                this.persona.fechaNacimiento = '';
+            },
+            validarDocumento(documento){
+                var verificador = documento[documento.length - 1];
+                var aux = 0;
+                var i = 0;
+                if(documento.length <= 6){
+                    for(i = documento.length; i < 7; i++){
+                        documento = '0' + documento;
+                    }
+                }
+                for(i = 0; i < 7; i++){
+                    aux += (parseInt("2987634"[i]) * parseInt(documento[i])) % 10;
+                }
+                if(aux%10 === 0){
+                    return 0 == verificador;
+                }else{
+                    return (10 - aux % 10) == verificador;
+                }
+            },
+            esFechaMenorAActual(fecha){
+                console.log(fecha);
+                console.log(new Date());
+                console.log(fecha <= new Date());
+                return this.convertirStringAFecha(fecha) <= new Date();
+            },
+            convertirStringAFecha(fecha) {
+                var laFecha = new Date(fecha);
+                return laFecha;
+            },
+            contieneSoloNumeros(texto){
+                var reg = new RegExp('^\\d+$');
+                return reg.test(texto);
             },
             checkForm() {
-                if (this.persona.nombre && this.persona.direccion && this.persona.telefono && this.persona.documento && this.persona.fechaNacimiento) {
+                if (this.persona.nombre && this.persona.direccion && this.persona.telefono && !isNaN(this.persona.telefono) && this.persona.documento && this.persona.fechaNacimiento && this.esFechaMenorAActual(this.persona.fechaNacimiento) && this.persona.sexo && !isNaN(this.persona.documento) && this.validarDocumento(this.persona.documento)) {
                     return true;
                 }
 
                 this.erroresForm = [];
-
+                if(this.persona.fechaNacimiento && !this.esFechaMenorAActual(this.persona.fechaNacimiento)){
+                    this.erroresForm.push('La fecha de nacimiento no puede ser futura.');
+                }
                 if (!this.persona.nombre) {
-                    this.erroresForm.push('Razón Social Requerida.');
+                    this.erroresForm.push('Nombre requerido.');
                 }
                 if (!this.persona.direccion) {
-                    this.erroresForm.push('Dirección Requerida.');
+                    this.erroresForm.push('Dirección requerida.');
                 }
                 if (!this.persona.telefono) {
-                    this.erroresForm.push('Teléfono Requerido.');
+                    this.erroresForm.push('Teléfono requerido.');
                 }
                 if (!this.persona.documento) {
-                    this.erroresForm.push('Documento Requerido.');
+                    this.erroresForm.push('Documento requerido.');
+                }
+                else if(!contieneSoloNumeros(this.persona.documento)){
+                    console.log(contieneSoloNumeros(this.persona.documento));
+                    this.erroresForm.push('El documento debe ser numérico, sin guiones ni puntos.');
+                }
+                else{
+                    this.erroresForm.push('El documento no concuerda con el formato de la cédula nacional.');
                 }
                 if (!this.persona.fechaNacimiento) {
-                    this.erroresForm.push('Fecha de Nacimiento Requerida.');
+                    this.erroresForm.push('Fecha de nacimiento requerida.');
                 }
-
+                if(!this.persona.sexo){
+                    this.erroresForm.push('Género requerido.');
+                }
                 this.disabled = false;
                 return false;
             }
-    
         },    
     }
 </script>

@@ -4,7 +4,7 @@
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Editar Persona</div>
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="registrarPersona()">
+                <form v-on:submit.prevent="modificarPersona()">
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
@@ -34,6 +34,28 @@
                         <label for="fechaNacimiento" class="darkTextCustom">Fecha de Nacimiento</label>
                         <input type="date" class="form-control border-success" v-model="persona.fechaNacimiento" id="fechaNacimiento" placeholder="2019-12-05">
                     </div>
+                    <div class="form-group">
+                        <label for="sexos">Seleccione el género</label>
+                        <select id="sexos" class="form-control" v-model="persona.sexo">
+                            <option value="" selected> 
+                                Sin seleccionar
+                            </option>
+                            <option value="M" selected> 
+                                Masculino
+                            </option>
+                            <option value="F" selected> 
+                                Femenino
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sexos">Prestador de salud</label>
+                        <select id="sexos" class="form-control" v-model="persona.prestador">
+                            <option  v-for="(descuento,index) in descuentos" :key="index" v-bind:value="descuento.id" :disabled="descuento.disabled">
+                                {{ descuento.motivo }} - {{descuento.porcentaje}}% 
+                            </option>
+                        </select>
+                    </div>
                     <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore tableHeadingBackground">
                 </form>
             </div>
@@ -48,6 +70,33 @@
         mounted(){
             this.persona = this.$route.params.persona;
             this.documentoOriginal = this.$route.params.persona.documento;
+            this.loading = true;
+            axios.get('http://localhost:4567/api/cliente/lista-prestadores', {
+                params: {
+                    condiciones: {
+                        orden: 'DESC',
+                        tamanoPagina: this.tamanoPagina,
+                        indicePagina: this.indicePagina,
+                        campo: 'nombre_prestador',
+                    },
+                }
+            })
+        		.then((res)=>{
+                    console.log(res);
+                    
+        			if(res.data.resultado == 100){
+                        this.prestadores = res.data.prestadores;
+                        if(res.data.cantidadElementos <= this.tamanoPagina){
+                            this.cantidadPaginas = 1;
+                        } else {
+                            this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
+                        }
+                        console.log(this.cantidadPaginas);
+                        this.indexActual = 1;
+                    }
+                    console.log(this.prestadores);
+        	});
+            this.loading = false;
         },
         beforeCreate: function () {
             var usuario = this.$session.get('usuario');
@@ -67,6 +116,13 @@
                     telefono: '',
                     documento: '',
                     fechaNacimiento: '',
+                    sexo: '',
+                    prestador:{
+                        id: 0,
+                        nombreDescriptivo: '',
+                        activo: 0,
+                        esConvenio: false,
+                    }
                 },
                 errorDisponibilidad: '',
                 documentoOriginal: '',
@@ -92,7 +148,7 @@
                     });
                 }
             },
-            registrarPersona(){
+            modificarPersona(){
                 this.loading = true;
                 if(this.checkForm()){
                     var params = this.persona;
@@ -107,16 +163,25 @@
                                 this.resultadoOperacion = "Error";
                             }
                         });
-                    this.loading = false;
                 }
+                this.loading = false;
             },
             limpiarCajas(){
-                this.persona.nombre = '',
-                this.persona.direccion = '',
-                this.persona.telefono = '',
-                this.persona.documento = '',
+                this.persona = {
+                    nombre: '',
+                    direccion: '',
+                    telefono: '',
+                    documento: '',
+                    fechaNacimiento: '',
+                    sexo: '',
+                    prestador:{
+                        id: 0,
+                        nombreDescriptivo: '',
+                        activo: 0,
+                        esConvenio: false,
+                    }
+                };
                 this.errorDisponibilidad = '';
-                this.persona.fechaNacimiento = '';
             },
             checkForm() {
                 if (this.persona.nombre && this.persona.direccion && this.persona.telefono && this.persona.documento && this.persona.fechaNacimiento) {
@@ -137,8 +202,17 @@
                 if (!this.persona.documento) {
                     this.erroresForm.push('Documento Requerido.');
                 }
+                else if(isNaN(this.persona.documento)){
+                    this.erroresForm.push('El documento debe ser numérico, sin guiones ni puntos.');
+                }
+                else{
+                    this.erroresForm.push('El documento no concuerda con el formato de la cédula nacional.');
+                }
                 if (!this.persona.fechaNacimiento) {
                     this.erroresForm.push('Fecha de Nacimiento Requerida.');
+                }
+                if(!this.persona.sexo){
+                    this.erroresForm.push('Género requerido.');
                 }
 
                 this.disabled = false;
