@@ -63,12 +63,11 @@ const ListadoLocalidad = () => import('@/components/localidad/ListadoLocalidad')
 const EliminarLocalidad = () => import('@/components/localidad/EliminarLocalidad');
 const EditarLocalidad = () => import('@/components/localidad/EditarLocalidad');
 
-//Convenio
-const ListadoConvenio = () => import('@/components/convenio/ListadoConvenio');
-const ListadoEmpresaSinConvenio = () => import('@/components/convenio/ListadoEmpresaSinConvenio');
-const RegistroConvenio = () => import('@/components/convenio/RegistroConvenio');
-const EliminarConvenio = () => import('@/components/convenio/EliminarConvenio');
-const EditarConvenio = () => import('@/components/convenio/EditarConvenio');
+//Prestador
+const ListadoPrestador = () => import('@/components/prestador/ListadoPrestador');
+const RegistroPrestador = () => import('@/components/prestador/RegistroPrestador');
+const EliminarPrestador = () => import('@/components/prestador/EliminarPrestador');
+const EditarPrestador = () => import('@/components/prestador/EditarPrestador');
 
 //Tramo
 const RegistroTramo = () => import('@/components/tramo/RegistroTramo');
@@ -153,12 +152,11 @@ export default new Router({
     {path: '/localidad/eliminar-localidad', name: 'EliminarLocalidad', component: EliminarLocalidad},
     {path: '/localidad/editar-localidad', name: 'EditarLocalidad', component: EditarLocalidad},
 
-    //Convenio
-    {path: '/convenio/listado-convenio', name: 'ListadoConvenio', component: ListadoConvenio},
-    {path: '/convenio/listado-empresa-sin-convenio', name: 'ListadoEmpresaSinConvenio', component: ListadoEmpresaSinConvenio},
-    {path: '/convenio/registro-convenio', name: 'RegistroConvenio', component: RegistroConvenio},
-    {path: '/convenio/eliminar-convenio', name: 'EliminarConvenio', component: EliminarConvenio},
-    {path: '/convenio/editar-convenio', name: 'EditarConvenio', component: EditarConvenio},
+    //prestador
+    {path: '/prestador/listado-prestador', name: 'ListadoPrestador', component: ListadoPrestador},
+    {path: '/prestador/registro-prestador', name: 'RegistroPrestador', component: RegistroPrestador},
+    {path: '/prestador/eliminar-prestador', name: 'EliminarPrestador', component: EliminarPrestador},
+    {path: '/prestador/editar-prestador', name: 'EditarPrestador', component: EditarPrestador},
 
     //Tramo
     {path: '/tramo/registro-tramo', name: 'RegistroTramo', component: RegistroTramo},

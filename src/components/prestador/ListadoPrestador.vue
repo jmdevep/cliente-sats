@@ -8,23 +8,30 @@
         <div class="row">
             <div class="col-sm-12">
                 <table class="table">
-                    <caption class="captionCustom"><h3>Lista de Convenios</h3> <i v-show="loading" class="fa fa-spinner fa-spin"></i> </caption>
+                    <caption class="captionCustom"><h3>Lista de prestadores</h3> <i v-show="loading" class="fa fa-spinner fa-spin"></i> </caption>
                     <thead class="greenBackground">
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Nombre</th>
-                            <th scope="col">Empresa</th>
+                            <th scope="col">Existe convenio</th>
                             <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="tableBodyBackground">
-                        <tr v-for="(convenio, index) in convenios" :key="index">
+                        <tr v-for="(prestador, index) in prestadores" :key="index">
                             <th scope="row">{{ index + 1 }}</th>
-                            <td>{{ convenio.nombreDescriptivo }}</td>
-                            <td>{{ convenio.empresa.nombre }}</td>
+                            <td>{{ prestador.nombreDescriptivo }}</td>
+                            <td align="center">
+                                <template v-if="prestador.esConvenio">
+                                    Sí
+                                </template>
+                                <template else>
+                                    No
+                                </template>                                
+                            </td>
                             <td>
-                                <router-link :to="{ name: 'EditarConvenio', params: { convenio: convenio }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
-                                <router-link :to="{ name: 'EliminarConvenio', params: { convenio: convenio }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>
+                                <router-link :to="{ name: 'EditarPrestador', params: { prestador: prestador }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
+                                <router-link :to="{ name: 'EliminarPrestador', params: { prestador: prestador }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>
                             </td>
                         </tr>
                     </tbody>
@@ -52,18 +59,18 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'ListadoConvenio',
+        name: 'ListadoPrestador',
         mounted(){
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
-            axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-convenios', {
+            axios.get('http://localhost:4567/api/cliente/lista-prestadores', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
                         tamanoPagina: this.tamanoPagina,
                         indicePagina: this.indicePagina,
-                        campo: 'nombre_convenio',
+                        campo: 'nombre_prestador',
                     },
                 }
             })
@@ -71,7 +78,7 @@
                     console.log(res);
                     
         			if(res.data.resultado == 100){
-                        this.convenios = res.data.convenios;
+                        this.prestadores = res.data.prestadores;
                         if(res.data.cantidadElementos <= this.tamanoPagina){
                             this.cantidadPaginas = 1;
                         } else {
@@ -81,7 +88,7 @@
                         this.indexActual = 1;
                     }
                     this.loading = false;
-                    console.log(this.convenios);
+                    console.log(this.prestadores);
         	});
 
         },
@@ -95,7 +102,7 @@
             return{
                 resultadoOperacion: '',
                 loading: false,
-                convenios: [],
+                prestadores: [],
                 tamanoPagina: 2,
                 indicePagina: 0,
                 cantidadPaginas: 0,
@@ -107,13 +114,13 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-convenios', {
+                axios.get('http://localhost:4567/api/cliente/lista-prestadores', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
                         tamanoPagina: this.tamanoPagina,
                         indicePagina: index -1,
-                        campo: 'nombre',
+                        campo: 'nombre_prestador',
                     },
                 }
                 })
@@ -122,9 +129,9 @@
                     console.log(res);
                     console.log(res.data.resultado);
         			if(res.data.resultado == 100){
-                        this.convenios = res.data.convenios;
-                        console.log(this.convenios);
-                        console.log(res.data.convenios);
+                        this.prestadores = res.data.prestadores;
+                        console.log(this.prestadores);
+                        console.log(res.data.prestadores);
                         this.indexActual = index;
                     }
                     this.loading = false;
