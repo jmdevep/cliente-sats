@@ -50,8 +50,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="sexos">Prestador de salud</label>
-                        <select id="sexos" class="form-control" v-model="persona.prestador">
+                        <label for="prestador">Prestador de salud</label>
+                        <select id="prestador" class="form-control" v-model="persona.prestador">
                             <option  v-for="(prestador,index) in prestadores" :key="index" v-bind:value="prestador.id" :disabled="descuento.disabled">
                                 {{ prestador.nombre }}
                             </option>
