@@ -41,7 +41,7 @@
         },
         methods: {
             eliminarPrestador(){
-                axios.delete('http://localhost:4567/api/cliente/eliminar-prestador', {data: { id: this.prestador.id }}) 
+                axios.delete(`${process.env.BASE_URL}/api/cliente/eliminar-prestador`, {data: { id: this.prestador.id }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5420){

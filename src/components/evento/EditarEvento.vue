@@ -1,9 +1,9 @@
 <template>
     <div>
         <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Registro de Eventos</div>
+            <div class="card-header greenBackground">Editar de Eventos</div>
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="registrarEvento()">
+                <form v-on:submit.prevent="modificarEvento()">
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
@@ -81,17 +81,28 @@
     import axios from 'axios';
     import Multiselect from 'vue-multiselect'
 
-
 	 export default {
         name: 'RegistroEvento',
-        components: { 'multi-select': Multiselect,                      
+            components: { 'multi-select': Multiselect,                      
         },
         mounted(){
             this.loading = true;
             this.cargarPersonas();
             this.cargarServicios();
             this.cargarTiposEventos();
-            },
+
+            this.evento = this.$route.params.evento;
+            this.personaSeleccionada = this.evento.persona; 
+            this.servicioSeleccionado = this.evento.servicio; 
+            this.tipoEventoSeleccionado = this.evento.tipo;
+            
+            this.horaInicio = this.obtenerHora(this.evento.inicioEvento);
+            this.horaFin = this.obtenerHora(this.evento.finEvento);
+
+            this.fechaInicio = this.obtenerFecha(this.evento.inicioEvento);
+            this.fechaFin = this.obetenerFecha(this.evento.finEvento);
+            
+        },
         beforeCreate: function () {
             var usuario = this.$session.get('usuario');
             if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
@@ -128,6 +139,14 @@
             }
         },
         methods: {
+            obtenerFecha(fecha){
+                var arraySplit = fecha.split("T");
+                return arraySplit[0];
+            },
+            obtenerHora(fecha){
+                var arraySplit = fecha.split("T");
+                return arraySplit[1];
+            },
             customLabelPersonas ({ nombre, documento }) {
                 return `${nombre} – ${documento}`
             },
@@ -176,7 +195,7 @@
                     this.loading = false;
         	    });         
             },
-            registrarEvento(){
+            modificarEvento(){
                 this.evento.inicioEvento  = moment(`${this.fechaInicio} ${this.horaInicio}`, 'YYYY-MM-DD HH:mm:ss').format();
                 this.evento.finEvento  = moment(`${this.fechaFin} ${this.horaFin}`, 'YYYY-MM-DD HH:mm:ss').format();
                 this.loading = true;

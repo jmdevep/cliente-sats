@@ -75,7 +75,7 @@
                 }
             };
             console.log(this.cliente);
-            axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-planes')
+            axios.get(`${process.env.BASE_URL}/api/cliente/lista-planes`)
         		.then((res)=>{
                     console.log(res);
         			if(res.data.resultado == 100){
@@ -138,7 +138,7 @@
                 if(this.cliente && this.cliente.sociedad && this.cliente.sociedad.nombre){
                     this.loading = true;
                     console.log("nombre -" + this.cliente.sociedad.nombre)
-                    axios.get('https://servidor-sats.herokuapp.com/api/cliente/existe-sociedad', {
+                    axios.get(`${process.env.BASE_URL}/api/cliente/existe-sociedad`, {
                         params: {
                             nombre: this.cliente.sociedad.nombre,
                         }
@@ -165,7 +165,7 @@
                 if(this.checkForm()){
                     var params = this.cliente;
                     console.log(params);
-                    axios.post('https://servidor-sats.herokuapp.com/api/cliente/agregar-sociedad', params) 
+                    axios.post(`${process.env.BASE_URL}/api/cliente/agregar-sociedad`, params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5422){

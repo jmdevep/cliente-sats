@@ -37,7 +37,7 @@
         },
         methods: {
             eliminarEmpleado(){
-                axios.delete('https://servidor-sats.herokuapp.com/api/empleado/eliminar-empleado', {data: { id: this.empleado.id }}) 
+                axios.delete(`${process.env.BASE_URL}/api/empleado/eliminar-empleado`, {data: { id: this.empleado.id }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 1300){

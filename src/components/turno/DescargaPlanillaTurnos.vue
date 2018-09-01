@@ -138,7 +138,7 @@
         name: 'DescargaPlanillaTurnos',
         mounted(){
             this.loading = true;    
-            axios.get('http://localhost:4567/api/turno/lista-roles')
+            axios.get(`${process.env.BASE_URL}/api/turno/lista-roles`)
         		.then((res)=>{
                     console.log(res);
         			if(res.data.resultado == 100){
@@ -176,8 +176,8 @@
                 console.log(JSON.stringify(this.empleadosRequest));
                 this.loading = true;
                 axios({
-                    url: 'http://localhost:4567/api/turno/descargar-planilla', 
-                    params: { empleados: this.empleadosRequest, mes: this.mesSeleccionado.mes, anio: this.mesSeleccionado.anio},
+                    url: `${process.env.BASE_URL}/api/turno/descargar-planilla`, 
+                    params: { empleados: this.empleadosRequest},
                     method: 'GET',
                     responseType: 'blob',
                     headers: {'Access-Control-Allow-Origin': '*'}
@@ -259,7 +259,8 @@
                 this.empleados = [];
                 this.loading = true;
                 console.log(index);
-                axios.get('http://localhost:4567/api/turno/lista-empleados-por-rol', {
+                axios.get(`${process.env.BASE_URL}/api/turno/lista-empleados-por-rol`, {
+
                 params: {
                     condiciones: {
                         orden: 'DESC',

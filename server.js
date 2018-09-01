@@ -4,8 +4,10 @@ var path = require('path');
 var serveStatic = require('serve-static');
 
 app = express();
-app.use(history());
+app.use(history()); 
 app.use(serveStatic(__dirname + "/dist"));
 var port = process.env.PORT || 5000;
+global.BASE_URL = process.env.BASE_URL || "http://localhost:4567";
+console.log(BASE_URL);
 app.listen(port);
 console.log('server started '+ port);

@@ -69,7 +69,7 @@
         methods: {
             verificarDisponibilidad() {
                 if(this.empresa.rut != ''){
-                    axios.get('https://servidor-sats.herokuapp.com/api/cliente/existe-empresa', {
+                    axios.get(`${process.env.BASE_URL}/api/cliente/existe-empresa`, {
                         params: {
                         rut: this.empresa.rut,
                         }
@@ -91,7 +91,7 @@
                 if(this.checkForm()){
                     var params = this.empresa;
                     console.log(params);
-                    axios.post('https://servidor-sats.herokuapp.com/api/cliente/agregar-empresa', params) 
+                    axios.post(`${process.env.BASE_URL}/api/cliente/agregar-empresa`, params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5202){

@@ -27,6 +27,7 @@
     import ListadoServicio from '../servicio/ListadoServicio.vue'
     import RegistroServicio from '../servicio/RegistroServicio.vue'
     import RegistroEvento from './RegistroEvento.vue'
+    import ListadoEvento from './ListadoEvento.vue'
 
 	export default {
         name: 'PrincipalEvento',
@@ -37,6 +38,7 @@
             RegistroEvento,
             ListadoServicio,
             RegistroServicio,
+            ListadoEvento,
         },
         data(){
             return {
@@ -45,6 +47,8 @@
                 { component: ListadoServicio, title: 'Lista Servicios' },
                 { component: RegistroServicio, title: 'Registar Servicio'},
                 { component: RegistroEvento, title: 'Registrar Evento'},
+                { component: ListadoEvento, title: 'Lista Eventos' },
+                
             ],
             }
         },
