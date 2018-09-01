@@ -70,7 +70,7 @@
         name: 'RegistroPersona',
         mounted(){
             this.loading = true;
-            axios.get('${process.env.BASE_URL}/api/cliente/lista-prestadores', {
+            axios.get(`${process.env.BASE_URL}/api/cliente/lista-prestadores`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -131,7 +131,7 @@
         methods: {
             verificarDisponibilidad() {
                 if(this.persona.documento != ''){
-                    axios.get('${process.env.BASE_URL}/api/cliente/existe-persona', {
+                    axios.get(`${process.env.BASE_URL}/api/cliente/existe-persona`, {
                         params: {
                             rut: this.persona.documento,
                         }
@@ -153,7 +153,7 @@
                 if(this.checkForm()){
                     var params = this.persona;
                     console.log(params);
-                    axios.post('${process.env.BASE_URL}/api/cliente/agregar-persona', params) 
+                    axios.post(`${process.env.BASE_URL}/api/cliente/agregar-persona`, params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5302){

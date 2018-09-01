@@ -61,7 +61,7 @@
                 if(this.checkForm()){
                     var params = this.servicio;
                     console.log(params);
-                    axios.post('${process.env.BASE_URL}/api/servicio/agregar-servicio', params) 
+                    axios.post(`${process.env.BASE_URL}/api/servicio/agregar-servicio`, params) 
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 5502){

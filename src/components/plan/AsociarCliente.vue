@@ -98,7 +98,7 @@
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
-            axios.get('${process.env.BASE_URL}/api/cliente/lista-empresas', {
+            axios.get(`${process.env.BASE_URL}/api/cliente/lista-empresas`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -124,7 +124,7 @@
                     }
                     this.loading = false;
         	});
-            axios.get('${process.env.BASE_URL}/api/cliente/lista-personas', {
+            axios.get(`${process.env.BASE_URL}/api/cliente/lista-personas`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -178,7 +178,7 @@
                 this.loading = true;
                 this.indexActualEmpresas = index;
                 console.log(index);
-                axios.get('${process.env.BASE_URL}/api/cliente/lista-empresas', {
+                axios.get(`${process.env.BASE_URL}/api/cliente/lista-empresas`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -203,7 +203,7 @@
             cargarDatosPersonas(index){
                 this.loading = true;
                 this.indicePaginaPersonas = index;
-                axios.get('${process.env.BASE_URL}/api/cliente/lista-personas', {
+                axios.get(`${process.env.BASE_URL}/api/cliente/lista-personas`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',

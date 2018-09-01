@@ -44,7 +44,7 @@
         },
         methods: {
             eliminarServicio(){
-                axios.delete('${process.env.BASE_URL}/api/servicio/eliminar-servicio', {data: { id: this.servicio.id }}) 
+                axios.delete(`${process.env.BASE_URL}/api/servicio/eliminar-servicio`, {data: { id: this.servicio.id }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5500){

@@ -77,7 +77,7 @@
         name: 'RegistroEmpleado',
         mounted(){
             this.loading = true;    
-            axios.get('${process.env.BASE_URL}/api/turno/lista-roles')
+            axios.get(`${process.env.BASE_URL}/api/turno/lista-roles`)
         		.then((res)=>{
                     console.log(res);
         			if(res.data.resultado == 100){
@@ -126,7 +126,7 @@
             verificarDisponibilidad() {
                 this.errorDisponibilidad = "Verificando..";
                 if(this.empleado.documento != ''){
-                    axios.get('${process.env.BASE_URL}/api/empleado/existe-empleado', {
+                    axios.get(`${process.env.BASE_URL}/api/empleado/existe-empleado`, {
                         params: {
                         documento: this.empleado.documento,
                         }
@@ -149,7 +149,7 @@
                     this.empleado.listaRoles = this.rolesSeleccionados;
                     var params = this.empleado;
                     console.log(params);
-                    axios.post('${process.env.BASE_URL}/api/empleado/agregar-empleado', params) 
+                    axios.post(`${process.env.BASE_URL}/api/empleado/agregar-empleado`, params) 
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 1302){

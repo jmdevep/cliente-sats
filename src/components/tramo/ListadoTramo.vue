@@ -59,7 +59,7 @@
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
-            axios.get('${process.env.BASE_URL}/api/tramo/lista-tramos', {
+            axios.get(`${process.env.BASE_URL}/api/tramo/lista-tramos`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -108,7 +108,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('${process.env.BASE_URL}/api/tramo/lista-tramos', {
+                axios.get(`${process.env.BASE_URL}/api/tramo/lista-tramos`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',

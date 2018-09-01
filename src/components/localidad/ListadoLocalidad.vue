@@ -55,7 +55,7 @@
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
-            axios.get('${process.env.BASE_URL}/api/localidad/lista-localidades', {
+            axios.get(`${process.env.BASE_URL}/api/localidad/lista-localidades`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -104,7 +104,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('${process.env.BASE_URL}/api/localidad/lista-localidades', {
+                axios.get(`${process.env.BASE_URL}/api/localidad/lista-localidades`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',

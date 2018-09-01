@@ -71,7 +71,7 @@
             this.resultadoOperacion = this.$route.params.resultadoOperacion || '';        
 
             this.loading = true;
-            axios.get('${process.env.BASE_URL}/api/evento/lista-eventos', {
+            axios.get(`${process.env.BASE_URL}/api/evento/lista-eventos`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -113,7 +113,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('${process.env.BASE_URL}/api/empleado/lista-empleados', {
+                axios.get(`${process.env.BASE_URL}/api/empleado/lista-empleados`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',

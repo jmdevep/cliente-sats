@@ -13,7 +13,7 @@
 	 export default {
         name: 'IngresoTurno',
         mounted(){
-			axios.get('${process.env.BASE_URL}/api/turnos/turnos-activacion', {
+			axios.get(`${process.env.BASE_URL}/api/turnos/turnos-activacion`, {
 				params: {
 					idEmpleado: 4,
 			  }

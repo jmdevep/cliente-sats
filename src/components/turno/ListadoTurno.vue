@@ -168,7 +168,7 @@
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
-            axios.get('${process.env.BASE_URL}/api/turno/lista-turnos-activos', {
+            axios.get(`${process.env.BASE_URL}/api/turno/lista-turnos-activos`, {
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
@@ -193,7 +193,7 @@
                     }
                     this.loading = false;
         	});
-            axios.get('${process.env.BASE_URL}/api/turno/lista-turnos-activables', {
+            axios.get(`${process.env.BASE_URL}/api/turno/lista-turnos-activables`, {
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
@@ -218,7 +218,7 @@
                     }
                     this.loading = false;
         	});
-            axios.get('${process.env.BASE_URL}/api/turno/lista-turnos', {
+            axios.get(`${process.env.BASE_URL}/api/turno/lista-turnos`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -272,7 +272,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('${process.env.BASE_URL}/api/turno/lista-turnos-activos', {
+                axios.get(`${process.env.BASE_URL}/api/turno/lista-turnos-activos`, {
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
@@ -293,7 +293,7 @@
                         this.indexActual = index;
                     }
         	    });
-                axios.get('${process.env.BASE_URL}/api/turno/lista-turnos-activables', {
+                axios.get(`${process.env.BASE_URL}/api/turno/lista-turnos-activables`, {
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
@@ -314,7 +314,7 @@
                         this.indexActual = index;
                     }
         	    });
-                axios.get('${process.env.BASE_URL}/api/turno/lista-turnos', {
+                axios.get(`${process.env.BASE_URL}/api/turno/lista-turnos`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',

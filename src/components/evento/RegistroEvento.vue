@@ -138,7 +138,7 @@
                 return `${nombre}`
             },
             cargarPersonas(){
-                axios.get('${process.env.BASE_URL}/api/cliente/lista-personas', {
+                axios.get(`${process.env.BASE_URL}/api/cliente/lista-personas`, {
                 params: {
                     }
                 })
@@ -151,7 +151,7 @@
         	    });         
             },
             cargarServicios(){
-                axios.get('${process.env.BASE_URL}/api/servicio/lista-servicios', {
+                axios.get(`${process.env.BASE_URL}/api/servicio/lista-servicios`, {
                 params: {
                     }
                 })
@@ -164,7 +164,7 @@
         	    });         
             },
             cargarTiposEventos(){
-                axios.get('${process.env.BASE_URL}/api/evento/lista-tipos-eventos', {
+                axios.get(`${process.env.BASE_URL}/api/evento/lista-tipos-eventos`, {
                 params: {
                     }
                 })
@@ -191,7 +191,7 @@
                     var params = this.evento;
                     console.log(params);
                     
-                    axios.post('${process.env.BASE_URL}/api/evento/agregar-evento', params) 
+                    axios.post(`${process.env.BASE_URL}/api/evento/agregar-evento`, params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5802){

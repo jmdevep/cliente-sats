@@ -61,7 +61,7 @@
     
 
             this.loading = true;
-            axios.get('${process.env.BASE_URL}/api/localidad/lista-localidades', {
+            axios.get(`${process.env.BASE_URL}/api/localidad/lista-localidades`, {
                 params: {
 
                 }
@@ -124,7 +124,7 @@
                     this.tramo.localidadDestino.disabled = undefined;
                     var params = this.tramo;
                     console.log(params);
-                    axios.post('${process.env.BASE_URL}/api/tramo/modificar-tramo', params) 
+                    axios.post(`${process.env.BASE_URL}/api/tramo/modificar-tramo`, params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5704){

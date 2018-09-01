@@ -63,7 +63,7 @@
         },
         methods: {
             eliminarPlan(){
-                axios.delete('${process.env.BASE_URL}/api/cliente/eliminar-plan', {data: { id: this.plan.id }}) 
+                axios.delete(`${process.env.BASE_URL}/api/cliente/eliminar-plan`, {data: { id: this.plan.id }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5400){

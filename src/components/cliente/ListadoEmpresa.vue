@@ -58,6 +58,8 @@
         mounted(){
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
             this.loading = true;
+            console.log(process.env);
+            console.log(`${process.env.BASE_URL}`);
             axios.get(`${process.env.BASE_URL}/api/cliente/lista-empresas`, {
                 params: {
                     condiciones: {
