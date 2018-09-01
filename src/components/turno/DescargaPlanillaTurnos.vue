@@ -4,6 +4,14 @@
         <i v-show="loading" class="fa fa-spinner fa-spin"></i>        
         <div class="row">
             <div class="col-sm-12">
+                <div v-if="meses.length" class="form-group">
+                    <label>Mes a planificar:</label>
+                    <select id="meses" class="form-control" v-model="mesSeleccionado">
+                        <option  v-for="(mes,index) in meses" :key="index" v-bind:value="mes">
+                            {{ mes.textoMes }} - {{mes.anio}}
+                        </option>
+                    </select>
+                </div>
                 <div v-if="roles.length" class="form-group">
                     <label>Seleccione un rol para cargar los empleados:</label>
                     <select id="roles" class="form-control" v-model="rolSeleccionado" @change="cambioSelect()">
@@ -42,7 +50,6 @@
                             <td>
                                <a href="#" class="btn btn-info" @click="seleccionarEmpleado(empleado)" role="button">Seleccionar</a>
                             </td>
- 
                         </tr>
                     </tbody>
                 </table>
@@ -63,7 +70,6 @@
                 </ul>
             </div>
         </div>
-       
         <hr class="titleUnderline">
         <div class="row">
             <div class="col-sm-12">
@@ -126,7 +132,8 @@
 </template>
 
 <script>
-	import axios from 'axios';
+    import axios from 'axios';
+    const FileDownload = require('js-file-download');
 	 export default {
         name: 'DescargaPlanillaTurnos',
         mounted(){
@@ -139,9 +146,8 @@
                         this.roles.forEach(function(obj) { obj.disabled = false; });
                     }
                     this.loading = false;
-        	});
-        	
-
+            });
+            this.cargarSelectMeses();
         	},
         data(){
             return{
@@ -156,8 +162,14 @@
                 loading: false,
                 empleadosSeleccionados: [],
                 empleadosRequest: [],
+                meses: [],
+                mesSeleccionado: {
+                    id: 0, 
+                    mes: 0, 
+                    textoMes: 'textoMes', 
+                    anio: 0
+                },
             }
-
         },
         methods: {
             descargarPlanilla(){
@@ -172,12 +184,7 @@
                 })
                 .then((res)=>{
                     console.log(res);
-                    const url = window.URL.createObjectURL(new Blob([response.data]));
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', 'turnos.xls'); //or any other extension
-                    document.body.appendChild(link);
-                    link.click();
+                    FileDownload(res.data, 'Planilla-Turnos.xlsx')
                 });
             },
             quitarEmpleado(empleado){
@@ -189,6 +196,7 @@
                 this.empleadosSeleccionados.push(empleado);
                 var emp = {
                     nombre: empleado.nombre,
+                    apellido: empleado.apellido,
                     listaRoles: [
                          {
                             descripcion: this.rolSeleccionado.descripcion
@@ -196,17 +204,63 @@
                     ],
                     id: empleado.id
                 }
+                console.log(emp);
                 this.empleadosRequest.push(emp);
                 this.empleados = this.empleados.filter(emp => emp.id != empleado.id);
             },
             cambioSelect(){
                 this.cargarDatos(1);
             },
+            cargarSelectMeses(){
+                var fechaActual = moment(new Date());
+                var fechaAux = null;
+
+                for(var i = -2; i <= 3; i++){
+                    if(i >= 0){
+                        fechaAux = moment(fechaActual).clone().add(i, 'M');
+                        console.log(fechaAux);
+                        console.log(fechaActual);
+                    }else{
+                        fechaAux = moment(fechaActual).clone().subtract(Math.abs(i), 'months');
+                    }
+                    var mesAux = moment(fechaAux).clone().month();
+                    var anioAux = moment(fechaAux).clone().year();
+                    var textoMes = this.obtenerMesDesdeNumero(mesAux);
+                    var elMes = {
+                        id: i, 
+                        mes: mesAux, 
+                        textoMes: textoMes, 
+                        anio: anioAux,
+                        };
+                    if(i == 0){
+                       this.mesSeleccionado = elMes; 
+                    }
+                    this.meses.push(elMes);
+                }
+            },
+            obtenerMesDesdeNumero(numeroMes){
+                switch(numeroMes){
+                    case 0: return 'Enero';
+                    case 1: return 'Febrero';
+                    case 2: return 'Marzo';
+                    case 3: return 'Abril';
+                    case 4: return 'Mayo';
+                    case 5: return 'Junio';
+                    case 6: return 'Julio';
+                    case 7: return 'Agosto';
+                    case 8: return 'Setiembre';
+                    case 9: return 'Octubre';
+                    case 10: return 'Noviembre';
+                    case 11: return 'Diciembre';
+                    default: return 'Mes no definido';
+                }
+            },
             cargarDatos(index){
                 this.empleados = [];
                 this.loading = true;
                 console.log(index);
                 axios.get(`${process.env.BASE_URL}/api/turno/lista-empleados-por-rol`, {
+
                 params: {
                     condiciones: {
                         orden: 'DESC',
