@@ -51,7 +51,7 @@
                 if(this.checkForm()){
                     var params = this.localidad;
                     console.log(params);
-                    axios.post('https://servidor-sats.herokuapp.com/api/localidad/modificar-localidad', params) 
+                    axios.post('${process.env.BASE_URL}/api/localidad/modificar-localidad', params) 
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 5604){

@@ -48,7 +48,7 @@
             this.nombreOriginal = this.$route.params.plan.nombre;
             this.loading = true;    
             console.log(this.plan);
-            axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-descuentos')
+            axios.get('${process.env.BASE_URL}/api/cliente/lista-descuentos')
             .then((res)=>{
                 console.log(res);
                 if(res.data.resultado == 100){
@@ -110,7 +110,7 @@
                  console.log(this.plan.nombre);
                 if(this.plan != null && this.plan.nombre != '' && this.nombreOriginal != this.plan.nombre){
                     this.loading = true;
-                    axios.get('https://servidor-sats.herokuapp.com/api/cliente/existe-plan', {
+                    axios.get('${process.env.BASE_URL}/api/cliente/existe-plan', {
                         params: {
                         nombre: this.plan.nombre,
                         }
@@ -136,7 +136,7 @@
                 if(this.checkForm()){
                     var params = this.plan;
                     console.log(params);
-                    axios.post('https://servidor-sats.herokuapp.com/api/cliente/modificar-plan', params) 
+                    axios.post('${process.env.BASE_URL}/api/cliente/modificar-plan', params) 
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 5400){

@@ -77,7 +77,7 @@
             this.resultadoOperacion = this.$route.params.resultadoOperacion || '';        
 
             this.loading = true;
-            axios.get('https://servidor-sats.herokuapp.com/api/empleado/lista-empleados', {
+            axios.get('${process.env.BASE_URL}/api/empleado/lista-empleados', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -118,7 +118,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('https://servidor-sats.herokuapp.com/api/empleado/lista-empleados', {
+                axios.get('${process.env.BASE_URL}/api/empleado/lista-empleados', {
                 params: {
                     condiciones: {
                         orden: 'DESC',

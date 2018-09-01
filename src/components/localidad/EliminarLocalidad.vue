@@ -47,7 +47,7 @@
         },
         methods: {
             eliminarLocalidad(){
-                axios.delete('https://servidor-sats.herokuapp.com/api/localidad/eliminar-localidad', {data: { id: this.localidad.id }}) 
+                axios.delete('${process.env.BASE_URL}/api/localidad/eliminar-localidad', {data: { id: this.localidad.id }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5600){

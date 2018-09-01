@@ -5,47 +5,41 @@
             <div class="col-sm-12">
                 <table class="table">
                     
-                    <caption class="captionCustom"><h3>Lista de Empleados</h3></caption>
+                    <caption class="captionCustom"><h3>Lista de Eventos</h3></caption>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                     <thead class="greenBackground">
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">ID</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Apellido</th>
-                            <th scope="col">Documento</th>
-                            <th scope="col">Domicilio</th>
-                            <th scope="col">Telefono</th>
-                            <th scope="col">Carnet de Salud</th>
-                            <th scope="col">Carnet de Chofer</th>
-                            <th scope="col">Usuario</th>                            
+                            <th scope="col">Inicio</th>
+                            <th scope="col">Direccion</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Tipo Evento</th>
+                            <th scope="col">Servicio</th>
+                            <th scope="col">Paciente</th>
+                            <th scope="col">Prestador</th>                            
+                            <th scope="col">Finaliza</th>
                             <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="tableBodyBackground">
-                        <tr v-for="(empleado, index) in empleados" :key="index">
+                        <tr v-for="(evento, index) in eventos" :key="index">
                             <th scope="row">{{ index + 1 }}</th>
-                            <td>{{ empleado.id }}</td>
-                            <td>{{ empleado.nombre }}</td>
-                            <td>{{ empleado.apellido }}</td>
-                            <td>{{ empleado.documento }}</td>
-                            <td>{{ empleado.domicilio }}</td>
-                            <td>{{ empleado.telefono }}</td>
-                            <td>{{ empleado.vencimientoCarnetSalud }}</td>
-                            <td>{{ empleado.vencimientoCarnetChofer }}</td>
-                            <template v-if="empleado.usuario.id != 0">
-                                <td>{{ empleado.usuario.id }}</td> 
-                            </template>   
-                            <template v-else>
-                                <td>
-                                    <router-link :to="{ name: 'AsociarUsuario', params: { empleado: empleado }}"><a href="#" class="btn btn-info" role="button">Asociar</a></router-link>                                                                                            
-                                </td>   
+                            <td>{{ evento.inicioEvento }}</td>
+                            <td>{{ evento.direccion }}</td>
+                            <td>{{ evento.estado.nombre }}</td>
+                            <td>{{ evento.tipo.nombre }}</td>
+                            <td>{{ evento.servicio.nombre }}</td>
+                            <td>{{ evento.persona.nombre }}</td>
+                            <template v-if="evento.persona.prestado">
+                                <td>{{ evento.persona.prestador.nombreDescriptivo }}</td>
                             </template>
-                            <td>
-                                <router-link :to="{ name: 'EditarEmpleado', params: { empleado: empleado }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
-                                <router-link :to="{ name: 'EliminarEmpleado', params: { empleado: empleado }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>                                
-                            </td>
- 
+                            <template v-else>
+                                <td>Prestador no definido</td>
+                            </template>
+                            
+                            <td>{{ evento.finEvento }}</td>
+                            <router-link :to="{ name: 'EditarEvento', params: { evento: evento }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
+                            <router-link :to="{ name: 'EliminarEvento', params: { evento: evento }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>                                                           
                         </tr>
                     </tbody>
                 </table>
@@ -72,12 +66,12 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'ListadoEmpleado',
+        name: 'ListadoEvento',
         mounted(){
             this.resultadoOperacion = this.$route.params.resultadoOperacion || '';        
 
             this.loading = true;
-            axios.get('https://servidor-sats.herokuapp.com/api/empleado/lista-empleados', {
+            axios.get('${process.env.BASE_URL}/api/evento/lista-eventos', {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -90,7 +84,7 @@
         		.then((res)=>{
                     console.log(res);
         			if(res.data.resultado == 100){
-                        this.empleados = res.data.listaEmpleados;
+                        this.eventos = res.data.listaEventos;
                         if(res.data.cantidadElementos <= this.tamanoPagina){
                             this.cantidadPaginas = 1;
                         } else {
@@ -107,6 +101,7 @@
             return{
                 resultadoOperacion: '',
                 empleados: [],
+                eventos: [],
                 tamanoPagina: 2,
                 indicePagina: 0,
                 cantidadPaginas: 0,
@@ -118,7 +113,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('https://servidor-sats.herokuapp.com/api/empleado/lista-empleados', {
+                axios.get('${process.env.BASE_URL}/api/empleado/lista-empleados', {
                 params: {
                     condiciones: {
                         orden: 'DESC',

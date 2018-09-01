@@ -45,7 +45,7 @@
         name: 'RegistroPlan',
         mounted(){
             this.loading = true;    
-            axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-descuentos')
+            axios.get('${process.env.BASE_URL}/api/cliente/lista-descuentos')
             .then((res)=>{
                 console.log(res);
                 if(res.data.resultado == 100){
@@ -100,7 +100,7 @@
             verificarDisponibilidad() {
                 if(this.plan != null && this.plan.nombre != ''){
                     console.log("nombre -" + this.plan.nombre)
-                    axios.get('https://servidor-sats.herokuapp.com/api/cliente/existe-plan', {
+                    axios.get('${process.env.BASE_URL}/api/cliente/existe-plan', {
                         params: {
                         nombre: this.plan.nombre,
                         }
@@ -122,7 +122,7 @@
                 if(this.checkForm()){
                     var params = this.plan;
                     console.log(params);
-                    axios.post('https://servidor-sats.herokuapp.com/api/cliente/agregar-plan', params) 
+                    axios.post('${process.env.BASE_URL}/api/cliente/agregar-plan', params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5402){

@@ -41,7 +41,7 @@
         },
         methods: {
             eliminarPersona(){
-                axios.delete('https://servidor-sats.herokuapp.com/api/cliente/eliminar-persona', {data: { id: this.persona.id }}) 
+                axios.delete(`${process.env.BASE_URL}/api/cliente/eliminar-persona`, {data: { id: this.persona.id }}) 
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5300){

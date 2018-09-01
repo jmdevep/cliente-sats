@@ -71,7 +71,7 @@
             this.persona = this.$route.params.persona;
             this.documentoOriginal = this.$route.params.persona.documento;
             this.loading = true;
-            axios.get('http://localhost:4567/api/cliente/lista-prestadores', {
+            axios.get(`${process.env.BASE_URL}/api/cliente/lista-prestadores`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -131,7 +131,7 @@
         methods: {
             verificarDisponibilidad() {
                 if(this.persona.documento != '' && this.persona.documento != this.persona.documentoOriginal){
-                    axios.get('https://servidor-sats.herokuapp.com/api/cliente/existe-persona', {
+                    axios.get(`${process.env.BASE_URL}/api/cliente/existe-persona`, {
                         params: {
                             rut: this.persona.documento,
                         }
@@ -153,7 +153,7 @@
                 if(this.checkForm()){
                     var params = this.persona;
                     console.log(params);
-                    axios.post('https://servidor-sats.herokuapp.com/api/cliente/modificar-persona', params) 
+                    axios.post(`${process.env.BASE_URL}/api/cliente/modificar-persona`, params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5304){

@@ -57,9 +57,8 @@
         name: 'ListadoEmpresa',
         mounted(){
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
-
             this.loading = true;
-            axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-empresas', {
+            axios.get(`${process.env.BASE_URL}/api/cliente/lista-empresas`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -108,7 +107,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get('https://servidor-sats.herokuapp.com/api/cliente/lista-empresas', {
+                axios.get(`${process.env.BASE_URL}/api/cliente/lista-empresas`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',

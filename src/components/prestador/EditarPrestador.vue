@@ -67,7 +67,7 @@
             verificarDisponibilidad() {
                 if(this.prestador && this.prestador.nombreDescriptivo != null && this.prestador.nombreDescriptivo != this.nombreOriginal){
                     console.log("nombre -" + this.prestador.nombreDescriptivo)
-                    axios.get('http://localhost:4567/api/cliente/existe-prestador', {
+                    axios.get('${process.env.BASE_URL}/api/cliente/existe-prestador', {
                         params: {
                         nombre: this.prestador.nombreDescriptivo,
                         }
@@ -93,7 +93,7 @@
                 if(this.checkForm()){
                     var params = this.prestador;
                     console.log(params);
-                    axios.post('http://localhost:4567/api/cliente/modificar-prestador', params) 
+                    axios.post('${process.env.BASE_URL}/api/cliente/modificar-prestador', params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5420 || res.data.resultado == 5424){
