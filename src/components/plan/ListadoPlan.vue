@@ -115,7 +115,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get(`${process.env.BASE_URL}/api/cliente/lista-planes`, {
+                axios.get(`${String(process.env.BASE_URL)}/api/cliente/lista-planes`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
