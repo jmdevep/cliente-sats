@@ -79,6 +79,7 @@ const EditarTramo =  () => import('@/components/tramo/EditarTramo');
 const RegistroEvento = () => import('@/components/evento/RegistroEvento');
 const EditarEvento = () => import('@/components/evento/EditarEvento');
 const EliminarEvento = () => import('@/components/evento/EliminarEvento');
+const AsignarEmpleadosEvento  =  () => import('@/components/evento/AsignarEmpleadosEvento');
 
 
 //Principales
@@ -170,6 +171,7 @@ export default new Router({
     {path: '/evento/registro-evento', name: 'RegistroEvento', component: RegistroEvento},
     {path: '/evento/editar-evento', name: 'EditarEvento', component: EditarEvento},
     {path: '/evento/eliminar-evento', name: 'EliminarEvento', component: EliminarEvento},
+    {path: '/evento/asignar-empleados-evento', name: 'AsignarEmpleadosEvento', component: AsignarEmpleadosEvento},
 
     //Principales
     {path: '/empleado/principal-empleado', name: 'PrincipalEmpleado', component: PrincipalEmpleado},

@@ -16,7 +16,7 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'EliminarEvento ',
+        name: 'EliminarEvento',
         mounted(){
             this.evento = this.$route.params.evento;
             },
@@ -24,7 +24,7 @@
                 var usuario = this.$session.get('usuario');
                 if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
                 this.$router.push('/usuario/login')
-                } 
+            } 
         },
         data(){
             return{
