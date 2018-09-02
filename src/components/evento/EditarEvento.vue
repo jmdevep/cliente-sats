@@ -70,7 +70,7 @@
                         <input type="text" class="form-control border-success" v-model="evento.direccion" id="direccion" placeholder="direccion">
                     </div>
 
-                    <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore tableHeadingBackground">
+                    <input type="submit" :disabled="disabled" value="Modificar" class="btn marginBefore tableHeadingBackground">
                 </form>
             </div>
         </div>
@@ -100,7 +100,7 @@
             this.horaFin = this.obtenerHora(this.evento.finEvento);
 
             this.fechaInicio = this.obtenerFecha(this.evento.inicioEvento);
-            this.fechaFin = this.obetenerFecha(this.evento.finEvento);
+            this.fechaFin = this.obtenerFecha(this.evento.finEvento);
             
         },
         beforeCreate: function () {
@@ -210,14 +210,14 @@
                     var params = this.evento;
                     console.log(params);
                     
-                    axios.post(`${process.env.BASE_URL}/api/evento/agregar-evento`, params) 
+                    axios.post(`${process.env.BASE_URL}/api/evento/modificar-evento`, params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5802){
-                                this.resultadoOperacion = "Evento agregado satisfactoriamente.";
+                            if(res.data.resultado == 5804){
+                                this.$router.push({ name: 'PrincipalEvento', params: { resultadoOperacion: "Evento agregado satisfactoriamente." }});                            
                                 this.limpiarCajas();    
-                            } else if (res.data.resultado == 5803){
-                                this.resultadoOperacion = "Error en el alta.";
+                            } else if (res.data.resultado == 5805){
+                                this.resultadoOperacion = "Error en modificacion.";
                             }
                         }); 
                     this.loading = false;

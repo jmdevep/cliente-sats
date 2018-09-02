@@ -5,6 +5,8 @@ import App from './App'
 import router from './router'
 import VueSession from 'vue-session'
 import dotenv from 'dotenv'
+import BootstrapVue from 'bootstrap-vue'
+
 dotenv.config()
 
 var options = {
@@ -14,6 +16,7 @@ var options = {
 
 
 Vue.use(VueSession, options)
+Vue.use(BootstrapVue);
 Vue.config.productionTip = false
 /*
 router.beforeEach((to, from, next) => {

@@ -121,4 +121,11 @@ hr{
 .nav-item .disabled{
     color: #5fb95f !important;
 } 
+
+.card .border-success .mb-3{
+    margin-top: 20px;
+}
+.contenido{
+    margin-top: 20px;
+}
 </style>
