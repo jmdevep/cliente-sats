@@ -4,9 +4,9 @@
             <div class="card-header greenBackground">Carga de planilla</div>
             <div class="large-12 medium-12 small-12 cell">
                 <label>Planilla: 
-                    <input type="file" id="archivo" ref="archivo" class="btn marginBefore tableHeadingBackground" v-on:change="cargarArchivo()"/>
+                    <input type="file" id="archivo" ref="archivo" class="btn marginBefore" v-on:change="cargarArchivo()"/>
                 </label>
-                <input type="submit" :disabled="disabled" value="Subir archivo" v-on:click="enviarArchivo()" class="btn marginBefore tableHeadingBackground">
+                <input type="submit" :disabled="disabled" value="Subir archivo" v-on:click="enviarArchivo()" class="btn marginBefore btn-success">
             </div>
         </div>
   </div>
@@ -36,8 +36,8 @@ import axios from 'axios';
             .catch(function(){
                 console.log('FAILURE!!');
             });
-      }
-    },
+            }
+        },
                 beforeCreate: function () {
                 var usuario = this.$session.get('usuario');
                 if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {

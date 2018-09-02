@@ -89,11 +89,21 @@
                         </tbody>
                     </table>
                 </template>
-                <template v-else>
+                <template v-else-if="loaded">
                     No hay turnos activos ni planeados cerca de esta hora.
                 </template>
             </div>
         </div>
+        <div>
+        <b-btn v-b-modal.modal1>Launch demo modal</b-btn>
+
+        <!-- Modal Component -->
+        <b-modal id="modal1" title="Bootstrap-Vue">
+            <p class="my-4">Hello from modal!</p>
+        </b-modal>
+        </div>
+
+        <!-- modal-1.vue -->
         <div class="row">
             <div class="col-sm-12">
                 <table class="table">
@@ -172,7 +182,7 @@
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
-                        valor: '7',
+                        valor: '10',
                         fechaInicio: new Date(),
                         fechaFin: new Date(),
                     },
@@ -197,7 +207,7 @@
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
-                        valor: '7',
+                        valor: '10',
                         fechaInicio: new Date(),
                         fechaFin: new Date(),
                     },
@@ -225,9 +235,9 @@
                         tamanoPagina: this.tamanoPagina,
                         indicePagina: this.indicePagina,
                         campo: 'id_empleado',
-                        valor: '7',
-                        fechaInicio: new Date(),
-                        fechaFin: new Date(),
+                        valor: '10',
+                        fechaInicio: '2018-09-01 00:00:00 AM',
+                        fechaFin: '2018-09-01 23:59:59 PM',
                     },
                 }
             })
@@ -246,7 +256,7 @@
                     }
                     this.loading = false;
         	});
-
+            this.loaded = true;
         },
             beforeCreate: function () {
                 var usuario = this.$session.get('usuario');
@@ -258,6 +268,7 @@
             return{
                 resultadoOperacion: '',
                 loading: false,
+                loaded:false,
                 turnos: [],
                 turnosActivables: [],
                 turnosActivos: [],
@@ -276,9 +287,9 @@
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
-                        valor : '7',
-                        fechaInicio: new Date(),
-                        fechaFin: new Date(),
+                        valor : '10',
+                        fechaInicio: obtenerFechasFiltro(true),
+                        fechaFin: obtenerFechasFiltro(false),
                     },
                 }
                 })
@@ -297,7 +308,7 @@
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
-                        valor : '7',
+                        valor : '10',
                         fechaInicio: new Date(),
                         fechaFin: new Date(),
                     },
@@ -321,7 +332,7 @@
                         tamanoPagina: this.tamanoPagina,
                         indicePagina: index -1,
                         campo: 'id_empleado',
-                        valor : '7',
+                        valor : '10',
                         fechaInicio: new Date(),
                         fechaFin: new Date(),
                     },
@@ -339,6 +350,14 @@
                     }
         	    });
                 this.loading = false;
+            },
+            obtenerFechasFiltro(inicio){
+                var fechaActual = new Date();
+                if(inicio){
+                    fechaActual.setHours(0,0,0,0);
+                }else{
+                    fechaActual.setHours(23,0,59,0);
+                }
             },
             cargarSiguiente(){
                 this.cargarDatos(this.indexActual + 1);

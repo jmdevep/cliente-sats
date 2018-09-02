@@ -177,7 +177,7 @@
                 this.loading = true;
                 axios({
                     url: `${process.env.BASE_URL}/api/turno/descargar-planilla`, 
-                    params: { empleados: this.empleadosRequest},
+                    params: { empleados: this.empleadosRequest, anio: this.mesSeleccionado.anio, mes: this.mesSeleccionado.mes},
                     method: 'GET',
                     responseType: 'blob',
                     headers: {'Access-Control-Allow-Origin': '*'}
@@ -231,10 +231,14 @@
                         mes: mesAux, 
                         textoMes: textoMes, 
                         anio: anioAux,
-                        };
+                    };
+                    
                     if(i == 0){
                        this.mesSeleccionado = elMes; 
+                       console.log('cabeza');
+                       console.log(elMes);
                     }
+                    console.log(elMes);
                     this.meses.push(elMes);
                 }
             },
