@@ -30,7 +30,7 @@
                             <td>{{ evento.tipo.nombre }}</td>
                             <td>{{ evento.servicio.nombre }}</td>
                             <td>{{ evento.persona.nombre }}</td>
-                            <template v-if="evento.persona.prestado">
+                            <template v-if="evento.persona.prestador">
                                 <td>{{ evento.persona.prestador.nombreDescriptivo }}</td>
                             </template>
                             <template v-else>
