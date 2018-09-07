@@ -3,6 +3,7 @@
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Asignar Funcionarios</div>
             <div class="card-body darkTextCustom">
+                <form v-on:submit.prevent="asignarEmpleados()">
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
@@ -10,129 +11,92 @@
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <template>
-                        <b-container fluid>
-                            <!-- User Interface controls -->
-                            <b-row>
-                            <b-col md="6" class="my-1">
-                                <b-form-group horizontal label="Filtrar" class="mb-0">
-                                <b-input-group>
-                                    <b-form-input v-model="filter" placeholder="Escribe para buscar" />
-                                    <b-input-group-append>
-                                    <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
-                                    </b-input-group-append>
-                                </b-input-group>
-                                </b-form-group>
-                            </b-col>
-                            <b-col md="6" class="my-1">
-                                <b-form-group horizontal label="Ordenar" class="mb-0">
-                                <b-input-group>
-                                    <b-form-select v-model="sortBy" :options="sortOptions">
-                                    <option slot="first" :value="null">-- ninguno --</option>
-                                    </b-form-select>
-                                    <b-form-select :disabled="!sortBy" v-model="sortDesc" slot="append">
-                                    <option :value="false">Asc</option>
-                                    <option :value="true">Desc</option>
-                                    </b-form-select>
-                                </b-input-group>
-                                </b-form-group>
-                            </b-col>
-                            <b-col md="6" class="my-1">
-                                <b-form-group horizontal label="Sentido" class="mb-0">
-                                <b-input-group>
-                                    <b-form-select v-model="sortDirection" slot="append">
-                                    <option value="asc">Asc</option>
-                                    <option value="desc">Desc</option>
-                                    <option value="last">Last</option>
-                                    </b-form-select>
-                                </b-input-group>
-                                </b-form-group>
-                            </b-col>
-                            <b-col md="6" class="my-1">
-                                <b-form-group horizontal label="Registros por página" class="mb-0">
-                                <b-form-select :options="pageOptions" v-model="perPage" />
-                                </b-form-group>
-                            </b-col>
-                            </b-row>
+                    <p>{{ resultadoOperacion }}</p>
 
-                            <!-- Main table element -->
-                            <b-table show-empty
-                                    stacked="md"
-                                    :items="items"
-                                    :fields="fields"
-                                    :current-page="currentPage"
-                                    :per-page="perPage"
-                                    :filter="filter"
-                                    :sort-by.sync="sortBy"
-                                    :sort-desc.sync="sortDesc"
-                                    :sort-direction="sortDirection"
-                                    @filtered="onFiltered"
-                            >
-                            <template slot="name" slot-scope="row">{{row.value.first}} {{row.value.last}}</template>
-                            <template slot="isActive" slot-scope="row">{{row.value?'Yes :)':'No :('}}</template>
-                            <template slot="actions" slot-scope="row">
-                                <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-                                <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1">
-                                Info modal
-                                </b-button>
-                                <b-button size="sm" @click.stop="row.toggleDetails">
-                                {{ row.detailsShowing ? 'Ocultar' : 'Mostrar' }} Detalles
-                                </b-button>
+                    <div class="row">
+                        <div class="col-lg-12">
+                        <p>
+                             <a href="#" @click="equipo = 3" class="btn btn-sq-lg btn-info equipo3">
+                            <br/>
+                            Médico <br>
+                            Chofer <br>
+                            Enfermero
+                            </a>
+                            <a href="#"  @click="equipo = 2" class="btn btn-sq-lg btn-info equipo2">
+                            <br/>
+                            Chofer <br>
+                            Enfermero
+                            </a>
+                            <a href="#"  @click="equipo = 1" class="btn btn-sq-lg btn-info equipo1">
+                            <br/>
+                            Chofer - Enfermero
+                            </a>
+                        </p>
+                        </div>
+                    </div>
+
+                    <template v-if="chofer()">
+                        <multi-select v-model="choferSeleccionado" placeholder="Chofer" :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="choferes.lista" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">
+                            
+                            <template slot="option" slot-scope="props">
+                                <div class="option__desc">
+                                    <span class="option__title">{{ props.option.nombre }} {{ props.option.apellido }}</span>
+                                    <br>
+                                    <span class="option__small">{{ props.option.documento }}</span>
+                                </div>
                             </template>
-                            <template slot="row-details" slot-scope="row">
-                                <b-card>
-                                <ul>
-                                    <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value}}</li>
-                                </ul>
-                                </b-card>
-                            </template>
-                            </b-table>
-
-                            <b-row>
-                            <b-col md="6" class="my-1">
-                                <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
-                            </b-col>
-                            </b-row>
-
-                            <!-- Info modal -->
-                            <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" ok-only>
-                            <pre>{{ modalInfo.content }}</pre>
-                            </b-modal>
-
-                        </b-container>
+                        </multi-select>
                     </template>
+
+                    <br> 
+
+                   <template v-if="enfermero()"> 
+                        <multi-select v-model="enfermeroSeleccionado" placeholder="Enfermero" :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="enfermeros.lista" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">    
+                            <template slot="option" slot-scope="props">
+                                <div class="option__desc">
+                                    <span class="option__title">{{ props.option.nombre }} {{ props.option.apellido }}</span>
+                                    <br>
+                                    <span class="option__small">{{ props.option.documento }}</span>
+                                </div>
+                            </template>
+                        </multi-select>
+                    </template>
+
+                    <br>
+
+                    <template v-if="medico()"> 
+                        <multi-select v-model="medicoSeleccionado" placeholder="Médico" :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="medicos.lista" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">
+                            <template slot="option" slot-scope="props">
+                                <div class="option__desc">
+                                    <span class="option__title">{{ props.option.nombre }} {{ props.option.apellido }}</span>
+                                    <br>
+                                    <span class="option__small">{{ props.option.documento }}</span>
+                                </div>
+                            </template>
+                        </multi-select>
+                    </template>         
+
+                    <template v-if="choferEnfermero()"> 
+                        <multi-select v-model="choferEnfermeroSeleccionado" placeholder="Chofer enfermero" :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="choferesEnfermeros.lista" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">
+                            <template slot="option" slot-scope="props">
+                                <div class="option__desc">
+                                    <span class="option__title">{{ props.option.nombre }} {{ props.option.apellido }}</span>
+                                    <br>
+                                    <span class="option__small">{{ props.option.documento }}</span>
+                                </div>
+                            </template>
+                        </multi-select>
+                    </template>        
+
+                    <input type="submit" :disabled="disabled" value="Asignar" class="btn marginBefore tableHeadingBackground">
+                    
+                </form>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-
-const items = [
-  { isActive: true, age: 40, name: { first: 'Dickerson', last: 'Macdonald' } },
-  { isActive: false, age: 21, name: { first: 'Larsen', last: 'Shaw' } },
-  {
-    isActive: false,
-    age: 9,
-    name: { first: 'Mini', last: 'Navarro' },
-    _rowVariant: 'success'      
-  },
-  { isActive: false, age: 89, name: { first: 'Geneva', last: 'Wilson' } },
-  { isActive: true, age: 38, name: { first: 'Jami', last: 'Carney' } },
-  { isActive: false, age: 27, name: { first: 'Essie', last: 'Dunlap' } },
-  { isActive: true, age: 40, name: { first: 'Thor', last: 'Macdonald' } },
-  {
-    isActive: true,
-    age: 87,
-    name: { first: 'Larsen', last: 'Shaw' },
-    _cellVariants: { age: 'danger', isActive: 'warning' }
-  },
-  { isActive: false, age: 26, name: { first: 'Mitzi', last: 'Navarro' } },
-  { isActive: false, age: 22, name: { first: 'Genevieve', last: 'Wilson' } },
-  { isActive: true, age: 38, name: { first: 'John', last: 'Carney' } },
-  { isActive: false, age: 29, name: { first: 'Dick', last: 'Dunlap' } }
-]
-
     import axios from 'axios';
     import Multiselect from 'vue-multiselect'
 
@@ -143,21 +107,15 @@ const items = [
         mounted(){
             this.loading = true;
             this.evento = this.$route.params.evento;
+            this.evento.listaEmpleados = [];
             this.cargarRoles();
+
         },
         beforeCreate: function () {
             var usuario = this.$session.get('usuario');
             if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
             this.$router.push('/usuario/login')
             } 
-        },
-        computed: {
-            sortOptions () {
-            // Create an options list from our fields
-            return this.fields
-                .filter(f => f.sortable)
-                .map(f => { return { text: f.label, value: f.key } })
-            }
         },
         data(){
             return{
@@ -176,7 +134,8 @@ const items = [
                     servicio: null,
                     tipo: null,
                     direccion: '',
-                    finEvento: ''
+                    finEvento: '',
+                    listaEmpleados: [],
                 },
                 roles: [],
                 enfermeros: { lista: [] },
@@ -184,43 +143,21 @@ const items = [
                 medicos: { lista: [] },
                 choferesEnfermeros: { lista: [] },
                 rol: null,
-                equipo: 3,
-
-                //******************************************************** */
-                items: items,
-                fields: [
-                    { key: 'nombre', label: 'Nombre', sortable: true, sortDirection: 'desc' },
-                    { key: 'apellido', label: 'Apellido', sortable: true, sortDirection: 'desc' },  
-                    { key: 'documento', label: 'Documento' },
-                    { key: 'disponible', label: 'activo' },
-                    { key: 'acciones', label: 'Acciones' }
-                ],
-                currentPage: 1,
-                perPage: 5,
-                totalRows: items.length,
-                pageOptions: [ 5, 10, 15 ],
-                sortBy: null,
-                sortDesc: false,
-                sortDirection: 'asc',
-                filter: null,
-                modalInfo: { title: '', content: '' }
-                        }
+                equipo: 3
+            }
+        },
+        watch: {
+            equipo: function (val) {
+                if(val == 2){
+                    this.medicoSeleccioando = null;
+                } else if( val == 1){
+                    this.medicoSeleccionado = null;
+                    this.enfermeroSeleccionado = null;
+                }
+            }
+                
         },
         methods: {
-            info (item, index, button) {
-                this.modalInfo.title = `Row index: ${index}`
-                this.modalInfo.content = JSON.stringify(item, null, 2)
-                this.$root.$emit('bv::show::modal', 'modalInfo', button)
-            },
-            resetModal () {
-                this.modalInfo.title = ''
-                this.modalInfo.content = ''
-            },
-            onFiltered (filteredItems) {
-                // Trigger pagination to update the number of buttons/pages due to filtering
-                this.totalRows = filteredItems.length
-                this.currentPage = 1
-            },
             cargarRoles(){
                 axios.get(`${process.env.BASE_URL}/api/turno/lista-roles`)
         		.then((res)=>{
@@ -252,70 +189,58 @@ const items = [
                     console.log(res);
         			if(res.data.resultado == 100){
                         array.lista = res.data.listaEmpleados;
+                        array.lista.forEach(function(obj) { obj.disabled = false; });
                     }
                     this.loading = false;
                 });
             },
-            modificarEvento(){
-                this.evento.inicioEvento  = moment(`${this.fechaInicio} ${this.horaInicio}`, 'YYYY-MM-DD HH:mm:ss').format();
-                this.evento.finEvento  = moment(`${this.fechaFin} ${this.horaFin}`, 'YYYY-MM-DD HH:mm:ss').format();
-                this.loading = true;
-
-                delete this.personaSeleccionada.fechaNacimiento;
+            cambioSelect(){
+                var indexRol = this.roles.findIndex((rol => rol.id == pRol.id));
+                console.log(indexRol);
+                this.roles[indexRol].disabled = false;
+            },
+            asignarEmpleados(){
+                if(this.choferSeleccionado){
+                    this.choferSeleccionado.listaRoles = [ this.roles.find(x => x.descripcion == "CHOF. ESP.") ];
+                    this.evento.listaEmpleados.push(this.choferSeleccionado);
+                }
+                if(this.enfermeroSeleccionado){
+                    this.enfermeroSeleccionado.listaRoles = [ this.roles.find(x => x.descripcion == "AUX. ENF.") ];
+                    this.evento.listaEmpleados.push(this.enfermeroSeleccionado)
+                }
+                if(this.choferEnfermeroSeleccionado){
+                    this.choferEnfermeroSeleccionado.listaRoles = [ this.roles.find(x => x.descripcion == "CHOF. ENF.") ];
+                    this.evento.listaEmpleados.push(this.choferEnfermeroSeleccionado);
+                }
+                if(this.medicoSeleccionado){
+                    this.medicoSeleccionado.listaRoles = [ this.roles.find(x => x.descripcion == "MED.") ];
+                    this.evento.listaEmpleados.push(this.medicoSeleccionado);
+                }
 
                 if(this.checkForm()){
-                    this.evento.persona = this.personaSeleccionada;
-                    this.evento.tipo = this.tipoEventoSeleccionado;
-                    this.evento.servicio = this.servicioSeleccionado;
 
                     var params = this.evento;
                     console.log(params);
                     
-                    axios.post(`${process.env.BASE_URL}/api/evento/modificar-evento`, params) 
+                    axios.post(`${process.env.BASE_URL}/api/evento/asignar-empleados-evento`, params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5804){
-                                this.$router.push({ name: 'PrincipalEvento', params: { resultadoOperacion: "Evento agregado satisfactoriamente." }});                            
+                            if(res.data.resultado == 5806){
+                                this.resultadoOperacion = "Empleados asignados satisfactoriamente.";
                                 this.limpiarCajas();    
-                            } else if (res.data.resultado == 5805){
-                                this.resultadoOperacion = "Error en modificacion.";
+                            } else if (res.data.resultado == 5807){
+                                this.resultadoOperacion = "Error en asignación.";
                             }
                         }); 
                     this.loading = false;
                 }
             },
+        
             limpiarCajas(){
                 errorDisponibilidad: '';
             },
             checkForm() {
-                if (this.fechaInicio && this.fechaFin  && this.horaInicio && this.horaFin  && this.direccion != ''
-                && this.personaSeleccionada != null && this.servicioSeleccionado !=  null && this.tipoEventoSeleccionado != null) {
-                    return true;
-                }
-
-                this.erroresForm = [];
-                
-                if (!this.fechaInicio) {
-                    this.erroresForm.push('Fecha inicio requerida.');
-                } 
-                if(!this.horaInicio){
-                    this.erroresForm.push('Hora Inicio requerida');
-                }
-                if(this.direccion == ''){
-                    this.erroresForm.push('Direccion requerida');
-                }
-                if(!this.personaSeleccionada){
-                    this.erroresForm.push("Paciente requerido");
-                }
-                if(!this.servicioSeleccionado){
-                    this.erroresForm.push('Servicio requerido');
-                }
-                if(!this.tipoEventoSeleccionado){
-                    this.erroresForm.push('Tipo de Evento requerido');
-                }
-
-                this.disabled = false;
-                return false;
+                return true;
             },
             chofer(){
                 if(this.equipo == 3 || this.equipo == 2)
