@@ -107,6 +107,7 @@
         mounted(){
             this.loading = true;
             this.evento = this.$route.params.evento;
+            this.evento.listaEmpleados = [];
             this.cargarRoles();
 
         },
@@ -133,7 +134,8 @@
                     servicio: null,
                     tipo: null,
                     direccion: '',
-                    finEvento: ''
+                    finEvento: '',
+                    listaEmpleados: [],
                 },
                 roles: [],
                 enfermeros: { lista: [] },
@@ -143,6 +145,17 @@
                 rol: null,
                 equipo: 3
             }
+        },
+        watch: {
+            equipo: function (val) {
+                if(val == 2){
+                    this.medicoSeleccioando = null;
+                } else if( val == 1){
+                    this.medicoSeleccionado = null;
+                    this.enfermeroSeleccionado = null;
+                }
+            }
+                
         },
         methods: {
             cargarRoles(){
@@ -176,70 +189,58 @@
                     console.log(res);
         			if(res.data.resultado == 100){
                         array.lista = res.data.listaEmpleados;
+                        array.lista.forEach(function(obj) { obj.disabled = false; });
                     }
                     this.loading = false;
                 });
             },
-            modificarEvento(){
-                this.evento.inicioEvento  = moment(`${this.fechaInicio} ${this.horaInicio}`, 'YYYY-MM-DD HH:mm:ss').format();
-                this.evento.finEvento  = moment(`${this.fechaFin} ${this.horaFin}`, 'YYYY-MM-DD HH:mm:ss').format();
-                this.loading = true;
-
-                delete this.personaSeleccionada.fechaNacimiento;
+            cambioSelect(){
+                var indexRol = this.roles.findIndex((rol => rol.id == pRol.id));
+                console.log(indexRol);
+                this.roles[indexRol].disabled = false;
+            },
+            asignarEmpleados(){
+                if(this.choferSeleccionado){
+                    this.choferSeleccionado.listaRoles = [ this.roles.find(x => x.descripcion == "CHOF. ESP.") ];
+                    this.evento.listaEmpleados.push(this.choferSeleccionado);
+                }
+                if(this.enfermeroSeleccionado){
+                    this.enfermeroSeleccionado.listaRoles = [ this.roles.find(x => x.descripcion == "AUX. ENF.") ];
+                    this.evento.listaEmpleados.push(this.enfermeroSeleccionado)
+                }
+                if(this.choferEnfermeroSeleccionado){
+                    this.choferEnfermeroSeleccionado.listaRoles = [ this.roles.find(x => x.descripcion == "CHOF. ENF.") ];
+                    this.evento.listaEmpleados.push(this.choferEnfermeroSeleccionado);
+                }
+                if(this.medicoSeleccionado){
+                    this.medicoSeleccionado.listaRoles = [ this.roles.find(x => x.descripcion == "MED.") ];
+                    this.evento.listaEmpleados.push(this.medicoSeleccionado);
+                }
 
                 if(this.checkForm()){
-                    this.evento.persona = this.personaSeleccionada;
-                    this.evento.tipo = this.tipoEventoSeleccionado;
-                    this.evento.servicio = this.servicioSeleccionado;
 
                     var params = this.evento;
                     console.log(params);
                     
-                    axios.post(`${process.env.BASE_URL}/api/evento/modificar-evento`, params) 
+                    axios.post(`${process.env.BASE_URL}/api/evento/asignar-empleados-evento`, params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5804){
-                                this.$router.push({ name: 'PrincipalEvento', params: { resultadoOperacion: "Evento agregado satisfactoriamente." }});                            
+                            if(res.data.resultado == 5806){
+                                this.resultadoOperacion = "Empleados asignados satisfactoriamente.";
                                 this.limpiarCajas();    
-                            } else if (res.data.resultado == 5805){
-                                this.resultadoOperacion = "Error en modificacion.";
+                            } else if (res.data.resultado == 5807){
+                                this.resultadoOperacion = "Error en asignación.";
                             }
                         }); 
                     this.loading = false;
                 }
             },
+        
             limpiarCajas(){
                 errorDisponibilidad: '';
             },
             checkForm() {
-                if (this.fechaInicio && this.fechaFin  && this.horaInicio && this.horaFin  && this.direccion != ''
-                && this.personaSeleccionada != null && this.servicioSeleccionado !=  null && this.tipoEventoSeleccionado != null) {
-                    return true;
-                }
-
-                this.erroresForm = [];
-                
-                if (!this.fechaInicio) {
-                    this.erroresForm.push('Fecha inicio requerida.');
-                } 
-                if(!this.horaInicio){
-                    this.erroresForm.push('Hora Inicio requerida');
-                }
-                if(this.direccion == ''){
-                    this.erroresForm.push('Direccion requerida');
-                }
-                if(!this.personaSeleccionada){
-                    this.erroresForm.push("Paciente requerido");
-                }
-                if(!this.servicioSeleccionado){
-                    this.erroresForm.push('Servicio requerido');
-                }
-                if(!this.tipoEventoSeleccionado){
-                    this.erroresForm.push('Tipo de Evento requerido');
-                }
-
-                this.disabled = false;
-                return false;
+                return true;
             },
             chofer(){
                 if(this.equipo == 3 || this.equipo == 2)
