@@ -20,9 +20,9 @@ const EditarEmpleado = () => import('@/components/empleado/EditarEmpleado');
 
 //Turno
 const DescargaPlanillaTurnos = () => import('@/components/turno/DescargaPlanillaTurnos');
-const CargaPlanillaTurnos= () => import('@/components/turno/CargaPlanillaTurnos')
-const ListadoTurno= () => import('@/components/turno/ListadoTurno')
-
+const CargaPlanillaTurnos= () => import('@/components/turno/CargaPlanillaTurnos');
+const ListadoTurno= () => import('@/components/turno/ListadoTurno');
+const ListadoAsistenciaEvento= () => import('@/components/turno/ListadoAsistenciaEvento');
 
 //Cliente
 const RegistroPersona = () => import('@/components/cliente/RegistroPersona');
@@ -115,6 +115,7 @@ export default new Router({
     {path: '/turno/descarga-planilla-turnos', name: 'DescargaPlanillaTurnos', component: DescargaPlanillaTurnos},
     {path: '/turno/carga-planilla-turnos', name: 'CargaPlanillaTurnos', component: CargaPlanillaTurnos},
     {path: '/turno/listado-turno', name: 'ListadoTurno', component: ListadoTurno},
+    {path: '/turno/listado-asistencia-evento', name: 'ListadoAsistenciaEvento', component: ListadoAsistenciaEvento},
 
     //Persona
     {path: '/persona/registro-persona', name: 'RegistroPersona', component: RegistroPersona},
