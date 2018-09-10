@@ -53,10 +53,10 @@
                                             </form>
                                         </b-modal>
                                     </div>
+                                    <template v-if="puesto.tipo == 2">
+                                        <router-link :to="{ name: 'ListadoAsistenciaEvento', params: { turno: turno, puesto: puesto, ingreso: false, activacionReten: true }}"><a href="#" class="btn btn-info" role="button">Marcar activación retén</a></router-link>
+                                    </template>
                                 </td>
-                                <template v-if="puesto.tipo == 2">
-                                    <td colspan="9"><router-link :to="{ name: 'MarcarTurno', params: { turno: turno, puesto: puesto, ingreso: false, activacionReten: true }}"><a href="#" class="btn btn-info" role="button">Marcar activación retén</a></router-link></td>
-                                </template>
                             </tr>
                         </tbody>
                     </table>
@@ -194,7 +194,7 @@
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
-                        valor: '9',
+                        valor: '10',
                         fechaInicio: this.obtenerFechaActual(),
                         fechaFin: this.obtenerFechaActual(),
                     },
@@ -218,7 +218,7 @@
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
-                        valor: '9',
+                        valor: '10',
                         fechaInicio: this.obtenerFechaActual(),
                         fechaFin: this.obtenerFechaActual(),
                     },
@@ -304,7 +304,7 @@
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
-                        valor: '9',
+                        valor: '10',
                         fechaInicio: obtenerFechasFiltro(true),
                         fechaFin: obtenerFechasFiltro(false),
                     },
@@ -325,7 +325,7 @@
                 params: {
                     condiciones: {
                         campo: 'id_empleado',
-                        valor : '9',
+                        valor : '10',
                         fechaInicio: this.obtenerFechaActual(),
                         fechaFin: this.obtenerFechaActual(),
                     },
