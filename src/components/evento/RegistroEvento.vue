@@ -208,7 +208,7 @@
                 errorDisponibilidad: '';
             },
             checkForm() {
-                if (this.fechaInicio && this.fechaFin  && this.horaInicio && this.horaFin  && this.direccion != ''
+                if (this.fechaInicio && this.horaInicio && this.direccion != ''
                 && this.personaSeleccionada != null && this.servicioSeleccionado !=  null && this.tipoEventoSeleccionado != null) {
                     return true;
                 }

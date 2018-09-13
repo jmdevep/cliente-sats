@@ -12,7 +12,6 @@
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                     <p>{{ resultadoOperacion }}</p>
-
                     <div class="row">
                         <div class="col-lg-12">
                         <p>
@@ -34,6 +33,17 @@
                         </p>
                         </div>
                     </div>
+
+                    <ul>
+                        <li v-if="choferSeleccionado != null"><b>Chofer: </b> {{ choferSeleccionado.nombre  + " " + choferSeleccionado.apellido}}
+                        </li>
+                        <li v-if="enfermeroSeleccionado != null"><b>Enfermero: </b> {{ enfermeroSeleccionado.nombre + " " + enfermeroSeleccionado.apellido}}
+                        </li>
+                        <li v-if="medicoSeleccionado != null"><b>Médico: </b> {{ medicoSeleccionado.nombre + " " + medicoSeleccionado.apellido}}
+                        </li>
+                        <li v-if="choferEnfermeroSeleccionado != null"><b>Chofer Enfermero: </b> {{ choferEnfermeroSeleccionado.nombre + " " + choferEnfermeroSeleccionado.apellido }}
+                        </li>
+                    </ul>
 
                     <template v-if="chofer()">
                         <multi-select v-model="choferSeleccionado" placeholder="Chofer" :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="choferes.lista" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">
@@ -99,6 +109,7 @@
 <script>
     import axios from 'axios';
     import Multiselect from 'vue-multiselect'
+import DescargaPlanillaTurnosVue from '../turno/DescargaPlanillaTurnos.vue';
 
 	 export default {
         name: 'AsignarEmpleadosEvento',
@@ -109,6 +120,7 @@
             this.evento = this.$route.params.evento;
             this.evento.listaEmpleados = [];
             this.cargarRoles();
+            this.cargarEmpleados();
 
         },
         beforeCreate: function () {
@@ -123,6 +135,7 @@
                 enfermeroSeleccionado: null,
                 choferSeleccionado: null,
                 medicoSeleccionado: null,
+                empleadosOriginales: [],
                 loading: false,
                 erroresForm: [],
                 disabled: false,
@@ -149,10 +162,13 @@
         watch: {
             equipo: function (val) {
                 if(val == 2){
-                    this.medicoSeleccioando = null;
+                    this.medicoSeleccionado = null;
+                    this.choferEnfermeroSeleccionado = null;
                 } else if( val == 1){
                     this.medicoSeleccionado = null;
                     this.enfermeroSeleccionado = null;
+                } else {
+                    this.choferEnfermeroSeleccionado = null;
                 }
             }
                 
@@ -167,18 +183,60 @@
                         this.cargarListas();
                     }
                     this.loading = false;
-            });
+                });
+            },
+            cargarEmpleados(){
+                axios.get(`${process.env.BASE_URL}/api/evento/lista-empleados-evento`, {
+                params: {
+                    evento: this.evento,
+                }
+                })
+        		.then((res)=>{
+                    console.log(res);
+        			if(res.data.resultado == 100){
+                        this.empleadosOriginales = res.data.listaEmpleados;
+                        if(res.data.listaEmpleados.length){
+                            res.data.listaEmpleados.forEach( empleado => { 
+                            var desc = empleado.listaRoles[0].descripcion;
+                            switch(desc) {
+                                case "AUX. ENF.":
+                                    this.enfermeros.lista.push(empleado);
+                                    this.enfermeroSeleccionado = empleado;
+                                    break;
+                                case "CHOF. ESP.":
+                                    this.choferes.lista.push(empleado);
+                                    this.choferSeleccionado = empleado;
+                                    break;
+                                case "MED.":
+                                    this.medicos.lista.push(empleado);
+                                    this.medicoSeleccionado(medico);
+                                    break;
+                                case "CHOF. ENF.":
+                                    this.choferesEnfermeros.lista.push(empleado);
+                                    this.choferEnfermeroSeleccionado = empleado;
+                                default:
+                                    null;
+                            }
+                            });
+                        };
+                    } else {
+                        this.resultadoOperacion = "Este evento no tiene empleados asignados."
+                    }
+                        
+                });
+                this.loading = false;
             },
             cargarListas(){
-                this.cargarEmpleados(this.roles.find(x => x.descripcion == "AUX. ENF."), this.enfermeros);
-                this.cargarEmpleados(this.roles.find(x => x.descripcion == "CHOF. ESP."), this.choferes);
-                this.cargarEmpleados(this.roles.find(x => x.descripcion == "MED."), this.medicos);
-                this.cargarEmpleados(this.roles.find(x => x.descripcion == "CHOF. ENF."), this.choferesEnfermeros);
+                this.cargarEmpleadosDisponibles(this.roles.find(x => x.descripcion == "AUX. ENF."), this.enfermeros);
+                this.cargarEmpleadosDisponibles(this.roles.find(x => x.descripcion == "CHOF. ESP."), this.choferes);
+                this.cargarEmpleadosDisponibles(this.roles.find(x => x.descripcion == "MED."), this.medicos);
+                this.cargarEmpleadosDisponibles(this.roles.find(x => x.descripcion == "CHOF. ENF."), this.choferesEnfermeros);
+                
             },
             customLabelEmpleados ({ nombre, documento }) {
                 return `${nombre} – ${documento}`
             },
-            cargarEmpleados(pRol, array){
+            cargarEmpleadosDisponibles(pRol, array){
                 axios.get(`${process.env.BASE_URL}/api/evento/lista-empleados-por-rol-evento`, {
                 params: {
                     rol: pRol,
@@ -188,7 +246,7 @@
         		.then((res)=>{
                     console.log(res);
         			if(res.data.resultado == 100){
-                        array.lista = res.data.listaEmpleados;
+                        array.lista = array.lista.concat(res.data.listaEmpleados);
                         array.lista.forEach(function(obj) { obj.disabled = false; });
                     }
                     this.loading = false;
@@ -200,6 +258,7 @@
                 this.roles[indexRol].disabled = false;
             },
             asignarEmpleados(){
+                this.evento.listaEmpleados = [];
                 if(this.choferSeleccionado){
                     this.choferSeleccionado.listaRoles = [ this.roles.find(x => x.descripcion == "CHOF. ESP.") ];
                     this.evento.listaEmpleados.push(this.choferSeleccionado);
@@ -220,7 +279,18 @@
                 if(this.checkForm()){
 
                     var params = this.evento;
-                    console.log(params);
+                    
+
+                    var empleadosDelete = this.empleadosOriginales.filter( original => {
+                        return this.evento.listaEmpleados.some( n => {
+                            console.log(original.id + " " + n.id);
+                        return original.id != n.id
+                        });
+                    });
+
+                    if(empleadosDelete.length){
+                        this.eliminarEmpleadosEvento(empleadosDelete);            
+                    }
                     
                     axios.post(`${process.env.BASE_URL}/api/evento/asignar-empleados-evento`, params) 
                         .then((res)=>{
@@ -235,7 +305,23 @@
                     this.loading = false;
                 }
             },
-        
+
+            eliminarEmpleadosEvento(empleadosDelete){
+                axios.delete(`${process.env.BASE_URL}/api/evento/eliminar-empleados-evento`, { 
+                    data: { 
+                        id: this.evento.id,
+                        listaEmpleados: empleadosDelete 
+                        }
+                    }) 
+                    .then((res)=>{
+                        console.log(res);
+                        if(res.data.resultado == 5808){
+                            //this.$router.push({ name: 'PrincipalEvento', params: { resultadoOperacion: "Evento eliminado satisfactoriamente." }});                                                        
+                        } else if (res.data.resultado == 5809){
+                            //this.$router.push({ name: 'PrincipalEvento', params: { resultadoOperacion: "El evento seleccionado no existe." }});                                                        
+                        }
+                    });    
+            },
             limpiarCajas(){
                 errorDisponibilidad: '';
             },
