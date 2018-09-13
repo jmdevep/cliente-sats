@@ -17,12 +17,15 @@ const ListadoEmpleado = () => import('@/components/empleado/ListadoEmpleado');
 const EliminarEmpleado = () => import('@/components/empleado/EliminarEmpleado');
 const AsociarUsuario = () => import('@/components/empleado/AsociarUsuario');
 const EditarEmpleado = () => import('@/components/empleado/EditarEmpleado');
+const ListarInformeHoras = () => import('@/components/empleado/ListarInformeHoras');
 
 //Turno
 const DescargaPlanillaTurnos = () => import('@/components/turno/DescargaPlanillaTurnos');
 const CargaPlanillaTurnos= () => import('@/components/turno/CargaPlanillaTurnos');
 const ListadoTurno= () => import('@/components/turno/ListadoTurno');
 const ListadoAsistenciaEvento= () => import('@/components/turno/ListadoAsistenciaEvento');
+const EditarPuesto= () => import('@/components/turno/EditarPuesto');
+const EliminarPuesto= () => import('@/components/turno/EliminarPuesto');
 
 //Cliente
 const RegistroPersona = () => import('@/components/cliente/RegistroPersona');
@@ -112,12 +115,15 @@ export default new Router({
     {path: '/empleado/eliminar-empleado', name: 'EliminarEmpleado', component: EliminarEmpleado},
     {path: '/empleado/editar-empleado', name: 'EditarEmpleado', component: EditarEmpleado},
     {path: '/empleado/asociar-usuario', name: 'AsociarUsuario', component: AsociarUsuario},
+    {path: '/empleado/listar-informe-horas', name: 'ListarInformeHoras', component: ListarInformeHoras},
     
     //Turno
     {path: '/turno/descarga-planilla-turnos', name: 'DescargaPlanillaTurnos', component: DescargaPlanillaTurnos},
     {path: '/turno/carga-planilla-turnos', name: 'CargaPlanillaTurnos', component: CargaPlanillaTurnos},
     {path: '/turno/listado-turno', name: 'ListadoTurno', component: ListadoTurno},
     {path: '/turno/listado-asistencia-evento', name: 'ListadoAsistenciaEvento', component: ListadoAsistenciaEvento},
+    {path: '/turno/editar-turno', name: 'EditarPuesto', component: EditarPuesto},
+    {path: '/turno/eliminar-puesto', name: 'EliminarPuesto', component: EliminarPuesto},
 
     //Persona
     {path: '/persona/registro-persona', name: 'RegistroPersona', component: RegistroPersona},

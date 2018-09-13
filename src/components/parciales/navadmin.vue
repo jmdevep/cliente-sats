@@ -37,6 +37,9 @@
                      <li class="nav-item">
                         <router-link to="/plan/principal-plan"><a class="nav-link" href="#">Planes</a></router-link>
                     </li>
+                    <li class="nav-item">
+                        <router-link to="/empleado/listar-informe-horas"><a class="nav-link" href="#">Informe horas</a></router-link>
+                    </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <li v-if="this.$session.exists() && this.$session.get('usuario') != null" class="nav-item"><a class="nav-link" href="#"><i class="fas fa-user-md"></i> {{ usuario.nombre }}</a></li>
