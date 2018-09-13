@@ -115,7 +115,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get(`${process.env.BASE_URL}/api/empleado/lista-empleados`, {
+                axios.get(`${process.env.BASE_URL}/api/evento/lista-eventos`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -128,7 +128,7 @@
         		.then((res)=>{
                     console.log(res);
         			if(res.data.resultado == 100){
-                        this.empleados = res.data.listaEmpleados;
+                        this.eventos = res.data.listaEventos;
                         this.indexActual = index;
                     }
                     this.loading = false;
@@ -139,7 +139,7 @@
             },
             cargarAnterior(){
                 this.cargarDatos(this.indexActual - 1);
-            }   
+            }  
         },    
     }
 </script>
