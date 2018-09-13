@@ -42,13 +42,12 @@
         },
         data(){
             return {
-            currentTab: RegistroEvento,
+            currentTab: ListadoEvento,
             tabs: [
                 { component: ListadoServicio, title: 'Lista Servicios' },
                 { component: RegistroServicio, title: 'Registar Servicio'},
                 { component: RegistroEvento, title: 'Registrar Evento'},
                 { component: ListadoEvento, title: 'Lista Eventos' },
-                
             ],
             }
         },

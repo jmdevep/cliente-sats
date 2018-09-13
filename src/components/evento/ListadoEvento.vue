@@ -41,6 +41,7 @@
                             <router-link :to="{ name: 'EditarEvento', params: { evento: evento }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
                             <router-link :to="{ name: 'EliminarEvento', params: { evento: evento }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>                                                           
                             <router-link :to="{ name: 'AsignarEmpleadosEvento', params: { evento: evento }}"><a href="#" class="btn btn-danger" role="button">Empleados Asignados</a></router-link>                                                           
+                            <router-link :to="{ name: 'AsignarViaje', params: { evento: evento }}"><a href="#" class="btn btn-danger" role="button">Traslado</a></router-link>                                                                                       
                         </tr>
                     </tbody>
                 </table>
