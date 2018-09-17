@@ -39,20 +39,7 @@
                                     <td>{{ informe.resumen.datosGenerales[6] }}</td>
                                     <td>{{ informe.resumen.datosGenerales[7] }}</td>
                                     <td>
-                                        <div>
-                                            <b-btn class="btn btn-success" v-b-modal.marcarSalidaModal @click="guardarDatosParaMarcarHora(false, puesto.fin, puesto.id)">Marcar salida</b-btn>
-                                            <b-modal id="marcarSalidaModal" ref="marcarSalidaModal" @ok="controlarEventoMarcarTurnoSalida"  title="Marcar salida del turno">
-                                                <form @submit.stop.prevent="handleSubmit">
-                                                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                                                    <p class="my-4">Turno seleccionado: {{puesto.inicio}} a {{puesto.fin}}</p>
-                                                    <div class="form-group">
-                                                        <label for="horaS" class="darkTextCustom">Hora de salida a marcar</label>
-                                                        <input type="time" class="form-control border-success" id="horaS" v-model="marcarHoraSalida"/>
-                                                        <p> {{ resultadoOperacionMarcar }}</p>
-                                                    </div>
-                                                </form>
-                                            </b-modal>
-                                        </div>
+                                        
                                     </td>
                                 </template>
                             </tr>
