@@ -205,7 +205,24 @@
                 }
             },
             limpiarCajas(){
-                errorDisponibilidad: '';
+                this.personaSeleccionada = null;
+                this.servicioSeleccionado = null;
+                this.tipoEventoSeleccionado = null;
+                this.erroresForm = [];
+                this.errorDisponibilidad = '';
+                this.evento = {
+                    inicioEvento: '',
+                    direccion: '',
+                    persona: null,
+                    servicio: null,
+                    tipo: null,
+                    direccion: '',
+                    finEvento: ''
+                },
+                this.horaInicio = null;
+                this.horaFin = null;
+                this.fechaInicio = null;
+                this.fechaFin = null;
             },
             checkForm() {
                 if (this.fechaInicio && this.horaInicio && this.direccion != ''

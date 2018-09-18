@@ -49,14 +49,15 @@
                             </option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="prestador">Prestador de salud</label>
-                        <select id="prestador" class="form-control" v-model="persona.prestador">
-                            <option  v-for="(prestador,index) in prestadores" :key="index" v-bind:value="prestador.id" :disabled="descuento.disabled">
-                                {{ prestador.nombre }}
-                            </option>
-                        </select>
-                    </div>
+                    <p>Prestador de Salud: </p>
+                    <multi-select v-model="persona.prestador" placeholder="Prestador de Salud"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="prestadores" :option-height="104" :custom-label="customLabelPrestadores" :show-labels="false">    
+                        <template slot="option" slot-scope="props">
+                            <div class="option__desc">
+                                <span class="option__title">Nombre: {{ props.option.nombreDescriptivo }}</span>
+                            </div>
+                        </template>
+                    </multi-select>
+
                     <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore tableHeadingBackground">
                 </form>
             </div>
@@ -65,37 +66,16 @@
 </template>
 
 <script>
-	import axios from 'axios';
+    import axios from 'axios';
+    import Multiselect from 'vue-multiselect';
+    
 	 export default {
         name: 'RegistroPersona',
+        components: { 'multi-select': Multiselect,                      
+        }, 
         mounted(){
             this.loading = true;
-            axios.get(`${process.env.BASE_URL}/api/cliente/lista-prestadores`, {
-                params: {
-                    condiciones: {
-                        orden: 'DESC',
-                        tamanoPagina: this.tamanoPagina,
-                        indicePagina: this.indicePagina,
-                        campo: 'nombre_prestador',
-                    },
-                }
-            })
-        		.then((res)=>{
-                    console.log(res);
-                    
-        			if(res.data.resultado == 100){
-                        this.prestadores = res.data.prestadores;
-                        if(res.data.cantidadElementos <= this.tamanoPagina){
-                            this.cantidadPaginas = 1;
-                        } else {
-                            this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
-                        }
-                        console.log(this.cantidadPaginas);
-                        this.indexActual = 1;
-                    }
-                    console.log(this.prestadores);
-        	});
-            this.loading = false;
+            this.cargarPrestadores();
             },
         beforeCreate: function () {
             var usuario = this.$session.get('usuario');
@@ -116,12 +96,7 @@
                     documento: '',
                     fechaNacimiento: '',
                     sexo: '',
-                    prestador:{
-                        id: 0,
-                        nombreDescriptivo: '',
-                        activo: 0,
-                        esConvenio: false,
-                    }
+                    prestador: null
                 },
                 errorDisponibilidad: '',
                 prestadores: [],
@@ -147,6 +122,19 @@
                             }
                     });
                 }
+            },
+            customLabelPrestadores ({ nombreDescriptivo }) {
+                return `${ nombreDescriptivo } `
+            },
+            cargarPrestadores(){
+                axios.get(`${process.env.BASE_URL}/api/cliente/lista-prestadores`)
+        		.then((res)=>{
+                    console.log(res);
+        			if(res.data.resultado == 100){
+                        this.prestadores = res.data.prestadores;
+                    }
+                    this.loading = false;
+                });
             },
             registrarPersona(){
                 this.loading = true;
@@ -255,3 +243,4 @@
         },    
     }
 </script>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

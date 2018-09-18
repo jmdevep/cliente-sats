@@ -52,7 +52,7 @@
                             <th scope="col">Documento</th>
                             <th scope="col">Acciones</th>
                         </tr>
-                    </thead>
+                    </thead>    
                     <tbody class="tableBodyBackground">
                         <tr v-for="(persona, index) in personas" :key="index">
                             <th scope="row">{{ index + 1 }}</th>
@@ -70,6 +70,7 @@
                         </tr>
                     </tbody>
                 </table>
+                {{ this.indexActualPersonas }}
                 <ul class="pagination">
                     <li class="page-item" v-bind:class="{ 'disabled' : (indexActualPersonas==1) }">
                     <a @click="cargarAnteriorPersonas()" class="page-link" href="#" aria-label="Previous">
@@ -202,13 +203,14 @@
             },
             cargarDatosPersonas(index){
                 this.loading = true;
-                this.indicePaginaPersonas = index;
+                console.log("Cargar datos Personas indice", + index);
+                this.indexActualPersonas = index;
                 axios.get(`${process.env.BASE_URL}/api/cliente/lista-personas`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
                         tamanoPagina: this.tamanoPagina,
-                        indicePagina: indicePaginaPersonas,
+                        indicePagina: index,
                         campo: 'nombre_persona',
                     },
                 }
@@ -244,16 +246,16 @@
                 this.$router.replace({name: "EliminarSociedad", params: {cliente: cliente}});
             },
             cargarSiguienteEmpresas(){
-                this.cargarDatos(this.indexActualEmpresas + 1);
+                this.cargarDatosEmpresas(this.indexActualEmpresas + 1);
             },
             cargarSiguientePersonas(){
-                this.cargarDatos(this.indexActualPersonas + 1);
+                this.cargarDatosPersonas(this.indexActualPersonas + 1);
             },
             cargarAnteriorEmpresas(){
-                this.cargarDatos(this.indexActualEmpresas - 1);
+                this.cargarDatosEmpresas(this.indexActualEmpresas - 1);
             },
             cargarAnteriorPersonas(){
-                this.cargarDatos(this.indexActualPersonas - 1);
+                this.cargarDatosPersonas(this.indexActualPersonas - 1);
             }   
         },    
     }
