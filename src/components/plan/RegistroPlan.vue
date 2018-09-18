@@ -32,6 +32,14 @@
                             </option>
                         </select>
                     </div>
+                    <p>Prestador de Salud: </p>
+                    <multi-select v-model="plan.prestador" placeholder="Prestador de Salud"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="prestadores" :option-height="104" :custom-label="customLabelPrestadores" :show-labels="false">    
+                        <template slot="option" slot-scope="props">
+                            <div class="option__desc">
+                                <span class="option__title">Nombre: {{ props.option.nombreDescriptivo }}</span>
+                            </div>
+                        </template>
+                    </multi-select>
                     <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore btn-success">
                 </form>
             </div>
@@ -40,11 +48,16 @@
 </template>
 
 <script>
-	import axios from 'axios';
+    import axios from 'axios';
+       import Multiselect from 'vue-multiselect';
+
 	 export default {
         name: 'RegistroPlan',
+        components: { 'multi-select': Multiselect,                      
+        },
         mounted(){
             this.loading = true;    
+            this.cargarPrestadores();
             axios.get(`${process.env.BASE_URL}/api/cliente/lista-descuentos`)
             .then((res)=>{
                 console.log(res);
@@ -67,7 +80,9 @@
                 resultadoOperacion: '',
                 erroresForm: [],
                 disabled: true,
+                prestadores: [],
             	plan: {
+                    prestador: null,
                     id: 0,
                     nombre: '',
                     cuota: 0,
@@ -117,6 +132,19 @@
                     });
                 }
             },
+            customLabelPrestadores ({ nombreDescriptivo }) {
+                return `${ nombreDescriptivo } `
+            },
+            cargarPrestadores(){
+                axios.get(`${process.env.BASE_URL}/api/cliente/lista-prestadores`)
+        		.then((res)=>{
+                    console.log(res);
+        			if(res.data.resultado == 100){
+                        this.prestadores = res.data.prestadores;
+                    }
+                    this.loading = false;
+                });
+            },
             registrarPlan(){
                 this.loading = true;
                 if(this.checkForm()){
@@ -140,8 +168,8 @@
             },
             limpiarCajas(){
                 this.plan.id = 0;
-                this.plan.nombre = '',
-                this.plan.cuota = 0,
+                this.plan.nombre = '';
+                this.plan.cuota = 0;
                 this.plan.convenio = { 
                         id: 0,
                         nombre: '',
@@ -167,7 +195,7 @@
                 this.erroresForm = [];
             },
             checkForm() {
-                limpiarMensajes();
+                this.limpiarMensajes();
 
                 if (this.plan.nombre && this.plan.cuota && this.plan.cuota >= 0 && this.plan.descuento && this.plan.descuento.id != 0) {
                     return true;
@@ -192,3 +220,4 @@
         },    
     }
 </script>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

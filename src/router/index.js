@@ -85,7 +85,8 @@ const EliminarEvento = () => import('@/components/evento/EliminarEvento');
 const AsignarEmpleadosEvento  =  () => import('@/components/evento/AsignarEmpleadosEvento');
 const AsignarViaje = () => import('@/components/evento/AsignarViaje');
 const RegistroLlamado = () => import('@/components/llamado/RegistroLlamado');
-
+const EditarLlamado = () => import('@/components/llamado/EditarLlamado');
+const EliminarLlamado = () => import('@/components/llamado/EliminarLlamado');
 
 //Principales
 const PrincipalEmpleado = () => import('@/components/empleado/PrincipalEmpleado')
@@ -183,6 +184,8 @@ export default new Router({
     {path: '/evento/asignar-empleados-evento', name: 'AsignarEmpleadosEvento', component: AsignarEmpleadosEvento},
     {path: '/evento/asignar-viaje', name: 'AsignarViaje', component: AsignarViaje},
     {path: '/evento/registro-llamado', name: 'RegistroLlamado', component: RegistroLlamado},
+    {path: '/evento/editar-llamado', name: 'EditarLlamado', component: EditarLlamado},
+    {path: '/evento/eliminar-llamado', name: 'EliminarLlamado', component: EliminarLlamado},
 
 
 

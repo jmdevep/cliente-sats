@@ -1,9 +1,9 @@
 <template>
     <div>
         <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Registro de Llamado</div>
+            <div class="card-header greenBackground">Modificar Llamado</div>
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="registrarLlamado()">
+                <form v-on:submit.prevent="modificarLlamado()">
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
@@ -97,7 +97,7 @@
                         <input type="time"  class="form-control border-success" id="horaLlegadaDestino" v-model="horaLlegadaDestino"/>
                     </div> 
 
-                    <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore tableHeadingBackground">
+                    <input type="submit" :disabled="disabled" value="Actualizar" class="btn marginBefore tableHeadingBackground">
                 </form>
             </div>
         </div>
@@ -110,7 +110,7 @@
     const moment = require('moment-timezone');
 
 	 export default {
-        name: 'RegistroLlamado',
+        name: 'EditarLlamado',
         components: { 'multi-select': Multiselect,                      
         },
         mounted(){
@@ -118,10 +118,23 @@
             this.cargarPersonas();
             this.cargarPrestadores();
 
-            this.fechaRecibido = this.obtenerFechaActual();
-            this.horaRecibido = this.obtenerHoraActual();
-            this.fechaSalida = this.obtenerFechaActual();
-            this.horaSalida = this.obtenerHoraActual();
+            this.llamado = this.$route.params.llamado;
+
+            console.log(this.llamado.fechaRecibido);
+            this.fechaRecibido = this.obtenerFecha(this.llamado.fechaRecibido);            
+            this.horaRecibido = this.obtenerHora(this.llamado.fechaRecibido);
+            console.log("Recibido");
+            /*
+            this.fechaLlegadaAsistencia = this.obtenerFecha(this.llamado.fechaLlegadaAsistencia);
+            this.fechaSalidaMovil = this.obtenerFecha(this.llamado.fechaSalidaMovil);
+            this.fechaLlegadaDestinoPaciente = this.obtenerFecha(this.llamado.fechaLlegadaDestinoPaciente);
+
+
+            
+            this.horaLlegadaAsistencia = this.obtenerHora(this.llamado.horaLlegadaAsistencia);
+            this.horaSalidaMovil = this.obtenerHora(this.llamado.horaSalidaMovil);
+            this.horaLlegadaDestinoPaciente = this.obtenerHora(this.llamado.horaLlegadaDestinoPaciente);*/
+
             },
         beforeCreate: function () {
             var usuario = this.$session.get('usuario');
@@ -165,6 +178,16 @@
             }
         },
         methods: {
+            obtenerFecha(fecha){
+                var arraySplit = fecha.split("T");
+                console.log(arraySplit[0]);
+                return arraySplit[0];
+            },
+            obtenerHora(fecha){
+                var arraySplit = fecha.split("T");
+                console.log(arraySplit[1]);                
+                return arraySplit[1];
+            },
             obtenerFechaActual(){
                 var fechaActual = moment(new Date(), 'YYYY-MM-DD HH:mm:ss');
                 fechaActual.tz("America/Argentina/Buenos_Aires").format('YYYY-MM-DD HH:mm:ss');
@@ -206,7 +229,7 @@
                     this.loading = false;
         	    });         
             },  
-            registrarLlamado(){
+            modificarLlamado(){
                 this.llamado.fechaRecibido = moment(`${this.fechaRecibido} ${this.horaRecibido}`,'YYYY-MM-DD HH:mm:ss').format();
                 this.llamado.fechaLlegadaAsistencia = moment(`${this.fechaLlegadaAsistencia} ${this.horaLlegadaAsistencia}`,'YYYY-MM-DD HH:mm:ss').format();
                 this.llamado.fechaSalidaMovil = moment(`${this.fechaSalida} ${this.horaSalida}`,'YYYY-MM-DD HH:mm:ss').format();
@@ -220,14 +243,14 @@
 
                 if(this.checkForm()){
 
-                    axios.post(`${process.env.BASE_URL}/api/llamado/agregar-llamado`, params) 
+                    axios.post(`${process.env.BASE_URL}/api/llamado/modificar-llamado`, params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
-                            if(res.data.resultado == 6002){
-                                this.resultadoOperacion = "Evento agregado satisfactoriamente.";
+                            if(res.data.resultado == 6000){
+                                this.resultadoOperacion = "Llamado modificado satisfactoriamente.";
                                 this.limpiarCajas();    
-                            } else if (res.data.resultado == 6003){
-                                this.resultadoOperacion = "Error en el alta.";
+                            } else if (res.data.resultado == 6001){
+                                this.resultadoOperacion = "Error en la modificacion.";
                             }
                         }); 
                     this.loading = false;

@@ -27,7 +27,7 @@
     import ListadoTurno from './ListadoTurno.vue'
     import DescargaPlanillaTurnos from './DescargaPlanillaTurnos.vue' 
     import CargaPlanillaTurnos from './CargaPlanillaTurnos.vue'
-    import MarcarTurno from './MarcarTurno.vue'
+    //import MarcarTurno from './MarcarTurno.vue'
 
 	export default {
         name: 'PrincipalTurno',
@@ -38,7 +38,7 @@
              ListadoTurno,
              DescargaPlanillaTurnos,
              CargaPlanillaTurnos,
-             MarcarTurno
+             //MarcarTurno
         },
         data(){
             return {
@@ -47,7 +47,7 @@
                 { component: ListadoTurno, title: 'Lista Turnos' },
                 { component: DescargaPlanillaTurnos, title: 'Descargar Planilla'},
                 { component: CargaPlanillaTurnos, title: 'Cargar Planilla'},
-                { component: MarcarTurno, title: 'Marcar Turno'},
+                //{ component: MarcarTurno, title: 'Marcar Turno'},
             ],
             }
         },
