@@ -13,14 +13,16 @@
                                 <th scope="col">Nombre</th>
                                 <th scope="col">Apellido</th>
                                 <th scope="col">Documento</th>
-                                <th scope="col" title="Horas diurnas">Horas D</th>
-                                <th scope="col" title="Horas nocturnas">Horas N</th>
-                                <th scope="col" title="Horas extra">Horas E</th>
-                                <th scope="col" title="Horas retén">Horas R</th>
-                                <th scope="col" title="Horas feriado diurnas">Horas F D</th>
-                                <th scope="col" title="Horas feriado nocturnas">Horas F N</th>
-                                <th scope="col" title="Viáticos mayores a 400km">Viáticos +</th>
-                                <th scope="col" title="Viáticos menores a 400km">Viáticos -</th>
+                                <th scope="col">Rol</th>
+                                <th scope="col" title="Horas diurnas">D</th>
+                                <th scope="col" title="Horas nocturnas">N</th>
+                                <th scope="col" title="Horas extra">E</th>
+                                <th scope="col" title="Horas retén">R</th>
+                                <th scope="col" title="Horas feriado diurnas">F D</th>
+                                <th scope="col" title="Horas feriado nocturnas">F N</th>
+                                <th scope="col" title="Viáticos mayores a 400km">V +</th>
+                                <th scope="col" title="Viáticos menores a 400km">V -</th>
+                                <th scope="col" title="Viáticos por cantidad de KM">V KM</th>
                             </tr>
                         </thead>
                         <tbody class="tableBodyBackground">
@@ -30,17 +32,16 @@
                                     <td>{{ informe.empleado.nombre }}</td>
                                     <td>{{ informe.empleado.apellido }}</td>
                                     <td>{{ informe.empleado.documento }}</td>
-                                    <td>{{ informe.resumen.datosGenerales[0] }}</td>
-                                    <td>{{ informe.resumen.datosGenerales[1] }}</td>
-                                    <td>{{ informe.resumen.datosGenerales[2] }}</td>
-                                    <td>{{ informe.resumen.datosGenerales[3] }}</td>
-                                    <td>{{ informe.resumen.datosGenerales[4] }}</td>
-                                    <td>{{ informe.resumen.datosGenerales[5] }}</td>
-                                    <td>{{ informe.resumen.datosGenerales[6] }}</td>
-                                    <td>{{ informe.resumen.datosGenerales[7] }}</td>
-                                    <td>
-                                        
-                                    </td>
+                                    <td>{{ informe.empleado.roles[0].nombre }}</td>
+                                    <td>{{ informe.resumen.diurnas }}</td>
+                                    <td>{{ informe.resumen.nocturnas }}</td>
+                                    <td>{{ informe.resumen.extra }}</td>
+                                    <td>{{ informe.resumen.reten }}</td>
+                                    <td>{{ informe.resumen.feriadoDiurno }}</td>
+                                    <td>{{ informe.resumen.feriadoNocturno }}</td>
+                                    <td>{{ informe.resumen.viaticosMayores}}</td>
+                                    <td>{{ informe.resumen.viaticosMenores }}</td>
+                                    <td>{{ informe.resumen.cantidadKmViaticos }}</td>
                                 </template>
                             </tr>
                         </tbody>
@@ -61,57 +62,6 @@
                         </li>
                     </ul>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <table class="table">
-                    <caption class="captionCustom"><h3>Informe de horas médicos</h3></caption>
-                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <thead class="greenBackground">
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Apellido</th>
-                            <th scope="col">Documento</th>
-                            <th scope="col" title="Horas diurnas">Horas D</th>
-                            <th scope="col" title="Horas nocturnas">Horas N</th>
-                            <th scope="col" title="Horas feriado diurnas">Feriado D</th>
-                            <th scope="col" title="Horas feriado nocturnas">Feriado N</th>
-                            <th scope="col" title="Viáticos en km">Viáticos km</th>
-                        </tr>
-                    </thead>
-                    <tbody class="tableBodyBackground">
-                        <tr v-for="(informe, index) in informes" :key="index">
-                            <template v-if="informe.resumen.rol.id == 4">
-                                <th scope="row">{{ index + 1 }}</th>
-                                <td>{{ informe.empleado.nombre }}</td>
-                                <td>{{ informe.empleado.apellido }}</td>
-                                <td>{{ informe.empleado.documento }}</td>
-                                <td>{{ informe.resumen.datosGenerales[0] }}</td>
-                                <td>{{ informe.resumen.datosGenerales[1] }}</td>
-                                <td>{{ informe.resumen.datosGenerales[2] }}</td>
-                                <td>{{ informe.resumen.datosGenerales[3] }}</td>
-                                <td>{{ informe.resumen.datosGenerales[4] }}</td>
-                           </template>
-                        </tr>
-                    </tbody>
-                </table>
-                <ul class="pagination">
-                    <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==1) }">
-                    <a @click="cargarAnterior()" class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                        <span class="sr-only">Anterior</span>
-                    </a>
-                    </li> 
-                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="cargarDatos(index)" class="page-link" href="#">{{ index }}</a></li>
-                    <li class="page-item"  v-bind:class="{ 'disabled' : (indexActual==cantidadPaginas) }">
-                    <a @click="cargarSiguiente()" class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                        <span class="sr-only">Siguiente</span>
-                    </a>
-                    </li>
-                </ul>
             </div>
         </div>
     </div>
@@ -169,8 +119,7 @@
                 axios.get(`${process.env.BASE_URL}/api/empleado/generar-informe-horas-trabajadas`, {
                 params: {
                     condiciones: {
-                        inicio: this.inicio,
-                        fin: this.fin,
+                        mes = 9,
                     },
                 }
             })

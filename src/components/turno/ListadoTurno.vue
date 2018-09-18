@@ -297,8 +297,8 @@
                         indicePagina: this.indicePagina,
                         campo: 'id_empleado',
                         valor: '10',
-                        fechaInicio: '2018-09-03 00:00:00 AM',
-                        fechaFin: '2018-09-31 23:59:59 PM',
+                        fechaInicio: '2018-09-03 00:00:00',
+                        fechaFin: '2018-09-31 23:59:59',
                     },
                 }
             })
@@ -437,8 +437,8 @@
                             indicePagina: index -1,
                             campo: 'id_empleado',
                             valor : '10',
-                            fechaInicio: '2018-09-03 00:00:00 AM',
-                            fechaFin: '2018-09-31 23:59:59 PM',
+                            fechaInicio: '2018-09-03 00:00:00',
+                            fechaFin: '2018-09-31 23:59:59',
                         },
                     }
                 })
@@ -533,23 +533,17 @@
                     fechaSola[0] = moment.parseZone(fechaSola[0], 'DD/MM/YYYY').format('YYYY-MM-DD');
                     console.log(fechaSola[0]);
                     fecha  = moment.parseZone(`${fechaSola[0]} ${this.marcarHoraIngreso}`, 'YYYY-MM-DD HH:mm:ss').format();
+                    fecha = fecha.replace("T", " ");
+                    fecha = fecha.replace("Z", "");
                     console.log(fecha);
-                }
-                else{
-                    console.log(this.marcarFechaSalida);
-                    var fechaSola = this.marcarFechaSalida.split(" ");
-                    fechaSola[0] = moment.parseZone(fechaSola[0], 'DD/MM/YYYY').format('YYYY-MM-DD');
-                    console.log(fechaSola[0]);
-                    fecha = moment.parseZone(`${fechaSola[0]} ${this.marcarHoraSalida}`, 'YYYY-MM-DD HH:mm:ss').format();
-                }
-                console.log(fecha);
+
+                    console.log(fecha);
                 var idPuesto = this.puestoSeleccionado.id;
                 console.log(this.turnoSeleccionado);
-                axios.get(`${process.env.BASE_URL}/api/turno/marcar-turno`, {
+                axios.get(`${process.env.BASE_URL}/api/turno/marcar-ingreso-turno`, {
                 params: {
                     condiciones:{
                         idPuesto: idPuesto,
-                        esInicio: ingreso,
                         hora: fecha,
                     }
                 }
@@ -563,7 +557,7 @@
                         if(resultado > 0){
                             /*this.ocultarModales();*/
                             this.limpiarCajas();
-                            resultadoOperacionMarcar = 'Se ha marcado hora satisfactoriamente.';
+                            resultadoOperacionMarcar = 'Se ha marcado ingreso satisfactoriamente.';
                         } else {
                             this.resultadoOperacionMarcar = 'No se han realizado cambios.';                            
                         }
@@ -574,6 +568,49 @@
                     }
                     
                 });
+                }
+                else{
+                    console.log(this.marcarFechaSalida);
+                    var fechaSola = this.marcarFechaSalida.split(" ");
+                    fechaSola[0] = moment.parseZone(fechaSola[0], 'DD/MM/YYYY').format('YYYY-MM-DD');
+                    console.log(fechaSola[0]);
+                    fecha = moment.parseZone(`${fechaSola[0]} ${this.marcarHoraSalida}`, 'YYYY-MM-DD HH:mm:ss').format();
+                    fecha = fecha.replace("T", " ");
+                    fecha = fecha.replace("Z", "");
+                    console.log(fecha);
+
+                var idPuesto = this.puestoSeleccionado.id;
+                console.log(this.puestoSeleccionado);
+                console.log(this.turnoSeleccionado);
+                axios.get(`${process.env.BASE_URL}/api/turno/marcar-salida-turno`, {
+                params: {
+                    puesto: this.puestoSeleccionado,
+                    turno: this.turnoSeleccionado,
+                    hora: fecha,
+                }
+                })
+        		.then((res)=>{
+                    console.log(res);
+        			if(res.data.resultado == 3004){
+                        var resultado = res.data.filasAfectadas;
+                        console.log("resullllll");
+                        console.log(resultado);
+                        if(resultado > 0){
+                            /*this.ocultarModales();*/
+                            this.limpiarCajas();
+                            resultadoOperacionMarcar = 'Se ha marcado salida satisfactoriamente.';
+                        } else {
+                            this.resultadoOperacionMarcar = 'No se han realizado cambios.';                            
+                        }
+                        console.log(resultado);
+                    }
+                    else{
+                        this.resultadoOperacionMarcar = 'Ocurrió un error.';
+                    }
+                    
+                });
+                }
+                
                 this.loading = false;
                 this.cargarDatos(this.indexActual);
             },

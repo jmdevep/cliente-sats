@@ -177,7 +177,7 @@
                 this.loading = true;
                 axios({
                     url: `${process.env.BASE_URL}/api/turno/descargar-planilla`, 
-                    params: { empleados: this.empleadosRequest, anio: this.mesSeleccionado.anio, mes: this.mesSeleccionado.mes},
+                    params: { empleados: this.empleadosRequest, anio: this.mesSeleccionado.anio, mes: this.mesSeleccionado.mes + 1},
                     method: 'GET',
                     responseType: 'blob',
                     headers: {'Access-Control-Allow-Origin': '*'}
