@@ -194,8 +194,6 @@ export default new Router({
     {path: '/evento/editar-llamado', name: 'EditarLlamado', component: EditarLlamado},
     {path: '/evento/eliminar-llamado', name: 'EliminarLlamado', component: EliminarLlamado},
 
-
-
     //Principales
     {path: '/prestador/principal-prestador', name: 'PrincipalPrestador', component: PrincipalPrestador},    
     {path: '/empleado/principal-empleado', name: 'PrincipalEmpleado', component: PrincipalEmpleado},
