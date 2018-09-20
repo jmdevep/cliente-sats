@@ -6,7 +6,7 @@
             <div class="card-body darkTextCustom">
                 <template v-if="!existeViaje">
                     <p>Este evento no tiene un traslado registrado.</p>
-                    <button @click="mostrarForm = !mostrarForm" class="btn marginBefore tableHeadingBackground">
+                    <button @click="toggleForm()" class="btn marginBefore tableHeadingBackground">
                         {{ mostrarForm ? "Cancelar" : "Ingresar Traslado"}}
                     </button>
                 </template>
@@ -121,6 +121,10 @@
             }
         },
         methods: {
+            toggleForm(){
+                this.mostrarForm = !this.mostrarForm;
+                this.disabled = !this.disabled;
+            },
             cargarTramos(){
                 axios.get(`${process.env.BASE_URL}/api/tramo/lista-tramos`)
         		.then((res)=>{

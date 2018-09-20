@@ -3,104 +3,164 @@
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Asignar Funcionarios</div>
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="asignarEmpleados()">
-                    <p v-if="erroresForm.length">
-                        <b>Por favor corrija lo siguiente:</b>
-                        <ul>
-                            <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
-                        </ul>
-                    </p>
-                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
-                    <div class="row">
-                        <div class="col-lg-12">
-                        <p>
-                             <a href="#" @click="equipo = 3" class="btn btn-sq-lg btn-info equipo3">
-                            <br/>
-                            Médico <br>
-                            Chofer <br>
-                            Enfermero
-                            </a>
-                            <a href="#"  @click="equipo = 2" class="btn btn-sq-lg btn-info equipo2">
-                            <br/>
-                            Chofer <br>
-                            Enfermero
-                            </a>
-                            <a href="#"  @click="equipo = 1" class="btn btn-sq-lg btn-info equipo1">
-                            <br/>
-                            Chofer - Enfermero
-                            </a>
+                <template v-if="!tieneEmpleados">
+                    <p>Este evento no tiene empleados asignados.</p>
+                    <button @click="toggleForm()" class="btn marginBefore tableHeadingBackground">
+                        {{ mostrarForm ? "Cancelar" : "Asignar empleados"}}
+                    </button>
+                </template>
+                <template v-else>
+                    <button @click="toggleEditar()" class="btn marginBefore tableHeadingBackground">
+                        {{ disabled ?  "Cancelar " : "Editar"  }}
+                    </button>
+                </template>
+                <template v-if="mostrarForm">
+                    <form>
+                        <p v-if="erroresForm.length">
+                            <b>Por favor corrija lo siguiente:</b>
+                            <ul>
+                                <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
+                            </ul>
                         </p>
+                        <i v-show="loading" class="fa fa-spinner fa-spin"></i>
+                        <p>{{ resultadoOperacion }}</p>
+                        
+                        <template v-if="mostrarEquipos">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                <p>
+                                    <a href="#" @click="equipo = 3" class="btn btn-sq-lg btn-info equipo3">
+                                    <br/>
+                                    Médico <br>
+                                    Chofer <br>
+                                    Enfermero
+                                    </a>
+                                    <a href="#"  @click="equipo = 2" class="btn btn-sq-lg btn-info equipo2">
+                                    <br/>
+                                    Chofer <br>
+                                    Enfermero
+                                    </a>
+                                    <a href="#"  @click="equipo = 1" class="btn btn-sq-lg btn-info equipo1">
+                                    <br/>
+                                    Chofer - Enfermero
+                                    </a>
+                                </p>
+                                </div>
+                            </div>
+                        </template>
+
+                        <template v-if="chofer()">
+                            <multi-select :disabled="disabled" v-model="choferSeleccionado" placeholder="Chofer" :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="choferes.lista" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">
+                                
+                                <template slot="option" slot-scope="props">
+                                    <div class="option__desc">
+                                        <span class="option__title">{{ props.option.nombre }} {{ props.option.apellido }}</span>
+                                        <br>
+                                        <span class="option__small">{{ props.option.documento }}</span>
+                                    </div>
+                                </template>
+                            </multi-select>
+                        </template>
+
+                        <br> 
+
+                    <template v-if="enfermero()"> 
+                            <multi-select :disabled="disabled" v-model="enfermeroSeleccionado" placeholder="Enfermero" :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="enfermeros.lista" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">    
+                                <template slot="option" slot-scope="props">
+                                    <div class="option__desc">
+                                        <span class="option__title">{{ props.option.nombre }} {{ props.option.apellido }}</span>
+                                        <br>
+                                        <span class="option__small">{{ props.option.documento }}</span>
+                                    </div>
+                                </template>
+                            </multi-select>
+                        </template>
+
+                        <br>
+
+                        <template v-if="medico()"> 
+                            <multi-select :disabled="disabled" v-model="medicoSeleccionado" placeholder="Médico" :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="medicos.lista" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">
+                                <template slot="option" slot-scope="props">
+                                    <div class="option__desc">
+                                        <span class="option__title">{{ props.option.nombre }} {{ props.option.apellido }}</span>
+                                        <br>
+                                        <span class="option__small">{{ props.option.documento }}</span>
+                                    </div>
+                                </template>
+                            </multi-select>
+                        </template>         
+
+                        <template v-if="choferEnfermero()"> 
+                            <multi-select :disabled="disabled" v-model="choferEnfermeroSeleccionado" placeholder="Chofer enfermero" :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="choferesEnfermeros.lista" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">
+                                <template slot="option" slot-scope="props">
+                                    <div class="option__desc">
+                                        <span class="option__title">{{ props.option.nombre }} {{ props.option.apellido }}</span>
+                                        <br>
+                                        <span class="option__small">{{ props.option.documento }}</span>
+                                    </div>
+                                </template>
+                            </multi-select>
+                        </template>        
+
+                        <hr>
+                        <br>
+
+                        <div class="list-group">
+                            <template v-if="choferSeleccionado">
+                                <a :key="index" href="#" class="list-group-item lista-tramos list-group-item-action flex-column align-items-start list-group-flush no-pointer">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">Rol: Chofer</h5>
+                                        <template v-if="!disabled">
+                                            <small class="small-x-large"><a href="#" @click="removerChofer()"><i class="fas fa-trash"></i></a></small>
+                                        </template>
+                                    </div>
+                                    <p class="mb-1">Nombre: {{ choferSeleccionado.nombre + " " + choferSeleccionado.apellido }} </p>
+                                    <small>Documento: {{ choferSeleccionado.documento }}</small>
+                                </a>
+                            </template>
+                            <template v-if="choferEnfermeroSeleccionado">
+                                <a :key="index" href="#" class="list-group-item lista-tramos list-group-item-action flex-column align-items-start list-group-flush no-pointer">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1"> Chofer Enfermero</h5>
+                                        <template v-if="!disabled">
+                                            <small class="small-x-large"><a href="#" @click="removerChoferEnfermero()"><i class="fas fa-trash"></i></a></small>
+                                        </template>
+                                    </div>
+                                    <p class="mb-1">Nombre: {{ choferEnfermeroSeleccionado.nombre + " " + choferEnfermeroSeleccionado.apellido }} </p>
+                                    <small>Documento: {{ choferEnfermeroSeleccionado.documento }}</small>
+                                </a>
+                            </template>
+                            <template v-if="enfermeroSeleccionado">
+                                <a :key="index" href="#" class="list-group-item lista-tramos list-group-item-action flex-column align-items-start list-group-flush no-pointer">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1"> Enfermero</h5>
+                                        <template v-if="!disabled">
+                                            <small class="small-x-large"><a href="#" @click="removerEnfermero()"><i class="fas fa-trash"></i></a></small>
+                                        </template>
+                                    </div>
+                                    <p class="mb-1">Nombre: {{ enfermeroSeleccionado.nombre + " " + enfermeroSeleccionado.apellido }} </p>
+                                    <small>Documento: {{ enfermeroSeleccionado.documento }}</small>
+                                </a>
+                            </template>
+                            <template v-if="medicoSeleccionado">
+                                <a :key="index" href="#" class="list-group-item lista-tramos list-group-item-action flex-column align-items-start list-group-flush no-pointer">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1"> Medico</h5>
+                                        <template v-if="!disabled">
+                                            <small class="small-x-large"><a href="#" @click="removerMedico()"><i class="fas fa-trash"></i></a></small>
+                                        </template>
+                                    </div>
+                                    <p class="mb-1">Nombre: {{ medicoSeleccionado.nombre + " " + medicoSeleccionado.apellido }} </p>
+                                    <small>Documento: {{ medicoSeleccionado.documento }}</small>
+                                </a>
+                            </template>
                         </div>
-                    </div>
 
-                    <ul>
-                        <li v-if="choferSeleccionado != null"><b>Chofer: </b> {{ choferSeleccionado.nombre  + " " + choferSeleccionado.apellido}}
-                        </li>
-                        <li v-if="enfermeroSeleccionado != null"><b>Enfermero: </b> {{ enfermeroSeleccionado.nombre + " " + enfermeroSeleccionado.apellido}}
-                        </li>
-                        <li v-if="medicoSeleccionado != null"><b>Médico: </b> {{ medicoSeleccionado.nombre + " " + medicoSeleccionado.apellido}}
-                        </li>
-                        <li v-if="choferEnfermeroSeleccionado != null"><b>Chofer Enfermero: </b> {{ choferEnfermeroSeleccionado.nombre + " " + choferEnfermeroSeleccionado.apellido }}
-                        </li>
-                    </ul>
-
-                    <template v-if="chofer()">
-                        <multi-select v-model="choferSeleccionado" placeholder="Chofer" :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="choferes.lista" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">
-                            
-                            <template slot="option" slot-scope="props">
-                                <div class="option__desc">
-                                    <span class="option__title">{{ props.option.nombre }} {{ props.option.apellido }}</span>
-                                    <br>
-                                    <span class="option__small">{{ props.option.documento }}</span>
-                                </div>
-                            </template>
-                        </multi-select>
-                    </template>
-
-                    <br> 
-
-                   <template v-if="enfermero()"> 
-                        <multi-select v-model="enfermeroSeleccionado" placeholder="Enfermero" :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="enfermeros.lista" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">    
-                            <template slot="option" slot-scope="props">
-                                <div class="option__desc">
-                                    <span class="option__title">{{ props.option.nombre }} {{ props.option.apellido }}</span>
-                                    <br>
-                                    <span class="option__small">{{ props.option.documento }}</span>
-                                </div>
-                            </template>
-                        </multi-select>
-                    </template>
-
-                    <br>
-
-                    <template v-if="medico()"> 
-                        <multi-select v-model="medicoSeleccionado" placeholder="Médico" :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="medicos.lista" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">
-                            <template slot="option" slot-scope="props">
-                                <div class="option__desc">
-                                    <span class="option__title">{{ props.option.nombre }} {{ props.option.apellido }}</span>
-                                    <br>
-                                    <span class="option__small">{{ props.option.documento }}</span>
-                                </div>
-                            </template>
-                        </multi-select>
-                    </template>         
-
-                    <template v-if="choferEnfermero()"> 
-                        <multi-select v-model="choferEnfermeroSeleccionado" placeholder="Chofer enfermero" :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="choferesEnfermeros.lista" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">
-                            <template slot="option" slot-scope="props">
-                                <div class="option__desc">
-                                    <span class="option__title">{{ props.option.nombre }} {{ props.option.apellido }}</span>
-                                    <br>
-                                    <span class="option__small">{{ props.option.documento }}</span>
-                                </div>
-                            </template>
-                        </multi-select>
-                    </template>        
-
-                    <input type="submit" :disabled="disabled" value="Asignar" class="btn marginBefore tableHeadingBackground">
-                    
-                </form>
+                        <template v-if="disabled">
+                            <input type="submit" v-on:submit.prevent="asignarEmpleados()" :disabled="disabled" value="Asignar" class="btn marginBefore tableHeadingBackground">
+                        </template>
+                    </form>
+                </template>
             </div>
         </div>
     </div>
@@ -109,7 +169,7 @@
 <script>
     import axios from 'axios';
     import Multiselect from 'vue-multiselect'
-import DescargaPlanillaTurnosVue from '../turno/DescargaPlanillaTurnos.vue';
+    import DescargaPlanillaTurnosVue from '../turno/DescargaPlanillaTurnos.vue';
 
 	 export default {
         name: 'AsignarEmpleadosEvento',
@@ -131,6 +191,7 @@ import DescargaPlanillaTurnosVue from '../turno/DescargaPlanillaTurnos.vue';
         },
         data(){
             return{
+                tieneEmpleados: false,
                 choferEnfermeroSeleccionado: null,
                 enfermeroSeleccionado: null,
                 choferSeleccionado: null,
@@ -139,6 +200,7 @@ import DescargaPlanillaTurnosVue from '../turno/DescargaPlanillaTurnos.vue';
                 loading: false,
                 erroresForm: [],
                 disabled: false,
+                mostrarForm: false,
                 errorDisponibilidad: '',
                 evento: {
                     inicioEvento: '',
@@ -156,7 +218,8 @@ import DescargaPlanillaTurnosVue from '../turno/DescargaPlanillaTurnos.vue';
                 medicos: { lista: [] },
                 choferesEnfermeros: { lista: [] },
                 rol: null,
-                equipo: 3
+                equipo: 3,
+                mostrarEquipos: false,
             }
         },
         watch: {
@@ -174,6 +237,27 @@ import DescargaPlanillaTurnosVue from '../turno/DescargaPlanillaTurnos.vue';
                 
         },
         methods: {
+            toggleEditar(){
+                this.disabled = !this.disabled;
+                this.mostrarEquipos = !this.mostrarEquipos;
+            },
+            toggleForm(){
+                this.mostrarForm = !this.mostrarForm;
+                this.disabled = !this.disabled;
+                this.mostrarEquipos = !this.mostrarEquipos;
+            },
+            removerEnfermero(){
+                this.enfermeroSeleccionado = null;
+            },
+            removerChofer(){
+                this.choferSeleccionado = null;
+            },
+            removerChoferEnfermero(){
+                this.choferEnfermeroSeleccionado = null;
+            },
+            removerMedico(){
+                this.medicoSeleccionado = null;
+            },
             cargarRoles(){
                 axios.get(`${process.env.BASE_URL}/api/turno/lista-roles`)
         		.then((res)=>{
@@ -194,7 +278,11 @@ import DescargaPlanillaTurnosVue from '../turno/DescargaPlanillaTurnos.vue';
         		.then((res)=>{
                     console.log(res);
         			if(res.data.resultado == 100){
+                        console.log("lista empleados evento");
+                        console.log(res.data.listaEmpleados);
                         this.empleadosOriginales = res.data.listaEmpleados;
+                        this.tieneEmpleados = true;
+                        this.mostrarForm = true;
                         if(res.data.listaEmpleados.length){
                             res.data.listaEmpleados.forEach( empleado => { 
                             var desc = empleado.listaRoles[0].descripcion;
@@ -280,7 +368,7 @@ import DescargaPlanillaTurnosVue from '../turno/DescargaPlanillaTurnos.vue';
 
                     var params = this.evento;
                     
-
+                    /*
                     var empleadosDelete = this.empleadosOriginales.filter( original => {
                         return this.evento.listaEmpleados.some( n => {
                             console.log(original.id + " " + n.id);
@@ -290,11 +378,11 @@ import DescargaPlanillaTurnosVue from '../turno/DescargaPlanillaTurnos.vue';
 
                     if(empleadosDelete.length){
                         this.eliminarEmpleadosEvento(empleadosDelete);            
-                    }
+                    }*/
                     
                     axios.post(`${process.env.BASE_URL}/api/evento/asignar-empleados-evento`, params) 
                         .then((res)=>{
-                            console.log(res.data.resultado);                            
+                            console.log(res);                            
                             if(res.data.resultado == 5806){
                                 this.resultadoOperacion = "Empleados asignados satisfactoriamente.";
                                 this.limpiarCajas();    
@@ -396,5 +484,19 @@ import DescargaPlanillaTurnosVue from '../turno/DescargaPlanillaTurnos.vue';
     background-size:70% 70%;    
     background-repeat: no-repeat;
     background-position: center;
+}
+</style>
+<style>
+.lista-tramos{
+    width: fit-content;
+    min-width: 60%;
+}
+
+.no-pointer{
+    cursor: default;
+}
+
+.small-x-large{
+    font-size: larger;
 }
 </style>
