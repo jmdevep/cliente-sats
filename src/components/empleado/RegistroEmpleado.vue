@@ -176,6 +176,7 @@
                 this.empleado.telefono = '';
                 this.empleado.vencimientoCarnetSalud = '';
                 this.empleado.vencimientoCarnetChofer = '';
+                this.rolesSeleccionados = [];
             },
             limpiarMensajes(){
                 this.resultadoOperacion = "";

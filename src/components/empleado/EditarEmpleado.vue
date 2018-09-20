@@ -12,6 +12,24 @@
                         </ul>
                     </p>
                     <p v-if="resultadoOperacion">{{ resultadoOperacion }}</p>
+                    <div v-if="roles.length" class="form-group">
+                        <label>Seleccione los roles del empleado:</label>
+                        <select id="roles" class="form-control" v-model="rolSeleccionado" @change="cambioSelect()">
+                            <option  v-for="(rol,index) in roles" :key="index" v-bind:value="rol" :disabled="rol.disabled">
+                                {{ rol.nombre }}
+                            </option>
+                        </select>
+                    </div>                    
+                    <p v-if="rolesSeleccionados.length">
+                        <b>Roles Seleccionados:</b>
+                        <ul>
+                            <li v-for="(rol, index) in rolesSeleccionados" :key="index">{{ rol.nombre }} 
+                                <a href="#" @click="removerRol(rol)">
+                                    - <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre </label>
                         <input type="text" class="form-control border-success" v-model="empleado.nombre" id="nombre" placeholder="Nombre">
@@ -59,6 +77,8 @@
         mounted(){
             this.empleado = this.$route.params.empleado;
             this.documentoOriginal = this.$route.params.empleado.documento;
+            console.log(this.empleado);
+            this.cargarListaRoles();
         	},
         data(){
             return{
@@ -77,10 +97,48 @@
                     vencimientoCarnetChofer: '',
                 },
                 documentoOriginal: '',
+                roles: [],
+                rolesSeleccionados: [],
+                rolSeleccionado: [],
             }
-
         },
         methods: {
+            cargarRolesActuales(){
+                if(this.empleado.listaRoles.length){
+                    console.log(this.empleado.listaRoles);
+                    this.empleado.listaRoles.forEach(rol => {
+                        this.rolesSeleccionados.push(rol);
+                        var indexRol = this.roles.findIndex((r => r.id == rol.id));
+                        console.log(indexRol);
+                        this.roles[indexRol].disabled = true;
+                    })
+                }
+            },
+            cambioSelect(){
+                this.rolesSeleccionados.push(this.rolSeleccionado);
+                var indexRol = this.roles.findIndex((rol => rol.id == this.rolSeleccionado.id));
+                this.roles[indexRol].disabled = true;
+            },
+            removerRol(pRol){
+                this.rolesSeleccionados = this.rolesSeleccionados.filter(rol => rol.id != pRol.id);
+                var indexRol = this.roles.findIndex((rol => rol.id == pRol.id));
+                console.log(indexRol);
+                this.roles[indexRol].disabled = false;
+
+            },
+            cargarListaRoles(){
+                this.loading = true;    
+                axios.get(`${process.env.BASE_URL}/api/turno/lista-roles`)
+        		.then((res)=>{
+                    console.log(res);
+        			if(res.data.resultado == 100){
+                        this.roles = res.data.roles;
+                        this.roles.forEach(function(obj) { obj.disabled = false; });
+                        this.cargarRolesActuales();
+                    }
+                    this.loading = false;
+        	    });
+            },
             verificarDisponibilidad() {
                 
                 if(this.empleado.documento != '' && this.documentoOriginal != this.empleado.documento){
@@ -107,6 +165,7 @@
             modificarEmpleado(){
                 this.loading = true;
                 if(this.checkForm()){
+                    this.empleado.listaRoles = this.rolesSeleccionados;
                     var params = this.empleado;
                     console.log(params);
                     axios.post(`${process.env.BASE_URL}/api/empleado/modificar-empleado`, params) 
@@ -131,6 +190,7 @@
                 this.empleado.telefono = '';
                 this.empleado.vencimientoCarnetSalud = '';
                 this.empleado.vencimientoCarnetChofer = '';
+                
             },
 
             checkForm() {

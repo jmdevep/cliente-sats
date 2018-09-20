@@ -145,7 +145,9 @@
                 console.log(index);
                 axios.get(`${process.env.BASE_URL}/api/empleado/generar-informe-horas-trabajadas`, {
                 params: {
-                    mes: this.mesSeleccionado.mes,
+                    condiciones: {
+                        mes: 9,
+                    },
                 }
             })
         		.then((res)=>{

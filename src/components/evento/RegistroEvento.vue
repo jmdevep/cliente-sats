@@ -3,7 +3,6 @@
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Registro de Eventos</div>
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="registrarEvento()">
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
@@ -12,6 +11,67 @@
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                     <p>{{ resultadoOperacion }}</p>
+
+                    <multi-select v-model="personaSeleccionada" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
+                        
+                        <template slot="option" slot-scope="props">
+                            <div class="option__desc">
+                                <span class="option__title">{{ props.option.nombre }}</span>
+                                <br>
+                                <span class="option__small">{{ props.option.documento }}</span>
+                            </div>
+                        </template>
+                    </multi-select>
+                    <br/> 
+
+                    <button v-on:click.prevent="togglePersona()" >{{ agregarPersona ? "Cancelar" : "Agregar Paciente" }}</button>   
+                    <br/>
+
+                    <template v-if="agregarPersona">
+                        <div class="form-group">
+                        <label for="nombre" class="darkTextCustom">Nombre Completo</label>
+                        <input type="text" class="form-control border-success" v-model="persona.nombre" id="nombre" placeholder="Nombre">
+                        </div>
+                        <div class="form-group">
+                            <label for="direccion" class="darkTextCustom">Dirección</label>
+                            <input type="text" class="form-control border-success" v-model="persona.direccion" id="direccion" placeholder="Dirección">
+                        </div>
+                        <div class="form-group">
+                            <label for="telefono" class="darkTextCustom">Teléfono</label>
+                            <input type="text" class="form-control border-success" v-model="persona.telefono" id="telefono" placeholder="Teléfono">
+                        </div>
+                        <div class="form-group">
+                            <label for="documento" class="darkTextCustom">Documento</label>
+                            <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="persona.documento" id="documento" placeholder="Documento">
+                            <small id="emailHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaNacimiento" class="darkTextCustom">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control border-success" v-model="persona.fechaNacimiento" id="fechaNacimiento" placeholder="2019-12-05">
+                        </div>
+                        <div class="form-group">
+                            <label for="sexos">Seleccione el género</label>
+                            <select id="sexos" class="form-control" v-model="persona.sexo">
+                                <option value="" selected> 
+                                    Sin seleccionar
+                                </option>
+                                <option value="M" selected> 
+                                    Masculino
+                                </option>
+                                <option value="F" selected> 
+                                    Femenino
+                                </option>
+                            </select>
+                        </div>
+                        <p>Prestador de Salud: </p>
+                        <multi-select v-model="persona.prestador" placeholder="Prestador de Salud"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="prestadores" :option-height="104" :custom-label="customLabelPrestadores" :show-labels="false">    
+                            <template slot="option" slot-scope="props">
+                                <div class="option__desc">
+                                    <span class="option__title">Nombre: {{ props.option.nombreDescriptivo }}</span>
+                                </div>
+                            </template>
+                        </multi-select>
+                    </template>
 
                     
                     <multi-select v-model="personaSeleccionada" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
@@ -70,8 +130,7 @@
                         <input type="text" class="form-control border-success" v-model="evento.direccion" id="direccion" placeholder="direccion">
                     </div>
 
-                    <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore tableHeadingBackground">
-                </form>
+                    <button v-on:click.prevent="registrarEvento()" :disabled="disabled" class="btn marginBefore tableHeadingBackground"> Registrar </button>
             </div>
         </div>
     </div>
@@ -91,6 +150,7 @@
             this.cargarPersonas();
             this.cargarServicios();
             this.cargarTiposEventos();
+            this.cargarLlamados();
             },
         beforeCreate: function () {
             var usuario = this.$session.get('usuario');
@@ -100,6 +160,7 @@
         },
         data(){
             return{
+                agregarPersona: null,
                 personaSeleccionada: null,
                 servicioSeleccionado: null,
                 tipoEventoSeleccionado: null,
@@ -121,13 +182,18 @@
                 personas: [],
                 servicios: [],
                 tiposEventos: [],
+                llamados: [],
                 horaInicio: null,
                 horaFin: null,
                 fechaInicio: null,
                 fechaFin: null,
+                persona: null,
             }
         },
         methods: {
+            togglePersona(){
+                this.agregarPersona = !this.agregarPersona;
+            },
             customLabelPersonas ({ nombre, documento }) {
                 return `${nombre} – ${documento}`
             },
@@ -159,6 +225,19 @@
                     console.log(res);
         			if(res.data.resultado == 100){
                         this.servicios = res.data.listaServicios;
+                    }
+                    this.loading = false;
+        	    });         
+            },
+            cargarLlamados(){
+                axios.get(`${process.env.BASE_URL}/api/llamado/lista-llamados`, {
+                params: {
+                    }
+                })
+        		.then((res)=>{
+                    console.log(res);
+        			if(res.data.resultado == 100){
+                        this.llamados = res.data.listaLlamados;
                     }
                     this.loading = false;
         	    });         
