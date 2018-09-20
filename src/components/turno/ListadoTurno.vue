@@ -40,10 +40,10 @@
                                 <td>{{ puesto.estado }}</td>
                                 <td>
                                     <div>
-                                        <b-btn class="btn btn-success" v-b-modal.marcarSalidaModal @click="guardarDatosParaMarcarHora(false, true, turno, puesto)">Marcar salida</b-btn>
+                                        <b-btn class="btn btn-success" v-b-modal.marcarSalidaModal @click="guardarDatosParaMarcarHora(false, true, turno, puesto)"><i class="fas fa-door-closed"></i> Marcar salida</b-btn>
                                     </div>
                                     <template v-if="puesto.tipo == 2">
-                                        <router-link :to="{ name: 'ListadoAsistenciaEvento', params: { turno: turno, puesto: puesto, ingreso: false, activacionReten: true }}"><a href="#" class="btn btn-info" role="button">Marcar activación retén</a></router-link>
+                                        <router-link :to="{ name: 'ListadoAsistenciaEvento', params: { turno: turno, puesto: puesto, ingreso: false, activacionReten: true }}"><a href="#" class="btn btn-info" role="button"><i class="fas fa-ambulance"></i> Marcar activación retén</a></router-link>
                                     </template>
                                 </td>
                             </tr>
@@ -86,7 +86,7 @@
                                 <td>{{ puesto.estado }}</td>
                                 <td>
                                     <div>
-                                        <b-btn class="btn btn-success" v-b-modal.marcarIngresoModal @click="guardarDatosParaMarcarHora(true, false, turno, puesto)">Marcar ingreso</b-btn>
+                                        <b-btn class="btn btn-success" v-b-modal.marcarIngresoModal @click="guardarDatosParaMarcarHora(true, false, turno, puesto)"><i class="fas fa-door-open"></i> Marcar ingreso</b-btn>
                                     </div>
                                 </td>
                             </tr>
@@ -168,12 +168,13 @@
                             <td>{{ puesto.estado }}</td>
                             <td>
                                 <template v-if="verModificar">
-                                    <router-link :to="{ name: 'EditarPuesto', params: { puesto: puesto }}"><a href="#" class="btn btn-info" role="button">Modificar</a></router-link>
-                                    <router-link :to="{ name: 'EliminarPuesto', params: { puesto: puesto }}"><a href="#" class="btn btn-info" role="button">Eliminar</a></router-link>
+                                    <router-link :to="{ name: 'EditarPuesto', params: { puesto: puesto }}"><a href="#" class="btn btn-info" role="button"><i class="far fa-edit"></i></a></router-link>
+                                    <router-link :to="{ name: 'EliminarPuesto', params: { puesto: puesto }}"><a href="#" class="btn btn-info" role="button"><i class="fas fa-trash-alt"></i></a></router-link>
                                 </template> 
                                 <template v-if="verMarcar">
                                     <div>
-                                        <b-btn class="btn btn-success" @click="guardarDatosParaMarcarHora(true, true, turno, puesto); mostrarModalHora=true;">Marcar hora</b-btn>
+                                        <b-btn class="btn btn-success" @click="guardarDatosParaMarcarHora(true, true, turno, puesto); mostrarModalHora=true;"><i class="fas fa-user-clock"></i></b-btn>
+                                        <b-btn class="btn btn-success"><i class="fas fa-sync"></i></b-btn>
                                     </div>
                                 </template> 
                             </td>

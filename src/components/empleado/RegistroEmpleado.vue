@@ -12,7 +12,7 @@
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
-                    <p v-if="resultadoOperacion">{{ resultadoOperacion }}</p>
+                    <i v-show="alerta" class="fas fa-exclamation-circle"></i><i v-show="informacion" class="fas fa-info-circle"></i><p v-if="resultadoOperacion">{{ resultadoOperacion }}</p>
                     <div v-if="roles.length" class="form-group">
                         <label>Seleccione los roles del empleado:</label>
                         <select id="roles" class="form-control" v-model="rolSeleccionado" @change="cambioSelect()">
@@ -107,6 +107,8 @@
                 roles: [],
                 rolesSeleccionados: [],
                 rolSeleccionado: null,
+                informacion: false,
+                alerta: false,
             }
 
         },
@@ -153,10 +155,12 @@
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 1302){
-                                this.resultadoOperacion = "Alta de empleado existosa.";
+                                informacion = true;
+                                this.resultadoOperacion = 'Alta de empleado exitosa.';
                                 this.limpiarCajas();
                             } else if(res.data.resultado == 4){
-                                this.resultadoOperacion = "Error 0004, por favor comunicarse con soporte."
+                                alerta = true;
+                                this.resultadoOperacion = 'Ha ocurrido un error, por favor comuníquese con el soporte.'
                             }
                         });  
                 }
@@ -176,6 +180,8 @@
             limpiarMensajes(){
                 this.resultadoOperacion = "";
                 this.erroresForm = [];
+                advertencia = false;
+                alerta = false;
             },
             checkForm() {
                 this.limpiarMensajes();

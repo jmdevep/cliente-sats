@@ -3,9 +3,21 @@
         {{ resultadoOperacion }}
         <div class="row">
             <div class="col-sm-12">
+                <div v-if="meses.length" class="form-group">
+                    <label>Mes a consultar:</label>
+                    <select id="meses" class="form-control" v-model="mesSeleccionado" @change="cargarDatos()">
+                        <option  v-for="(mes,index) in meses" :key="index" v-bind:value="mes">
+                            {{ mes.textoMes }} - {{mes.anio}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
                 <div class="table-responsive">
-                    <table class="table">
-                        <caption class="captionCustom"><h3>Informe de horas no médicos</h3></caption>
+                    <table class="table" id="tablaInformeHoras">
+                        <caption class="captionCustom"><h3>Informe de horas</h3></caption>
                         <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                         <thead class="greenBackground">
                             <tr>
@@ -27,21 +39,21 @@
                         </thead>
                         <tbody class="tableBodyBackground">
                             <tr v-for="(informe, index) in informes" :key="index">
-                                <template v-if="informe.resumen.rol.id != 4">
+                                <template v-if="informe.empleado.listaRoles[0].id != 4">
                                     <th scope="row">{{ index + 1 }}</th>
                                     <td>{{ informe.empleado.nombre }}</td>
                                     <td>{{ informe.empleado.apellido }}</td>
                                     <td>{{ informe.empleado.documento }}</td>
-                                    <td>{{ informe.empleado.roles[0].nombre }}</td>
-                                    <td>{{ informe.resumen.diurnas }}</td>
-                                    <td>{{ informe.resumen.nocturnas }}</td>
-                                    <td>{{ informe.resumen.extra }}</td>
-                                    <td>{{ informe.resumen.reten }}</td>
-                                    <td>{{ informe.resumen.feriadoDiurno }}</td>
-                                    <td>{{ informe.resumen.feriadoNocturno }}</td>
-                                    <td>{{ informe.resumen.viaticosMayores}}</td>
-                                    <td>{{ informe.resumen.viaticosMenores }}</td>
-                                    <td>{{ informe.resumen.cantidadKmViaticos }}</td>
+                                    <td>{{ informe.empleado.listaRoles[0].nombre }}</td>
+                                    <td>{{ informe.diurnas }}</td>
+                                    <td>{{ informe.nocturnas }}</td>
+                                    <td>{{ informe.extra }}</td>
+                                    <td>{{ informe.reten }}</td>
+                                    <td>{{ informe.feriadoDiurno }}</td>
+                                    <td>{{ informe.feriadoNocturno }}</td>
+                                    <td>{{ informe.viaticosMayores}}</td>
+                                    <td>{{ informe.viaticosMenores }}</td>
+                                    <td>{{ informe.cantidadKmViaticos }}</td>
                                 </template>
                             </tr>
                         </tbody>
@@ -64,6 +76,17 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <download-excel
+                    class   = "btn btn-default"
+                    :data   = "informes"
+                    :fields = "json_fields"
+                    name    = "filename.xls">
+                    Descargar excel
+                </download-excel>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -72,14 +95,11 @@
         name: 'ListarInformeHoras',
         mounted(){
             this.resultadoOperacion = this.$route.params.resultadoOperacion || '';        
-
+            this.cargarSelectMeses();
             this.loading = true;
             axios.get(`${process.env.BASE_URL}/api/empleado/generar-informe-horas-trabajadas`, {
                 params: {
-                    condiciones: {
-                        inicio: this.inicio,
-                        fin: this.fin,
-                    },
+                    mes: 9,
                 }
             })
         		.then((res)=>{
@@ -109,6 +129,13 @@
                 indexActual: 0,
                 inicio: '2018-08-01 00:00:00',
                 fin: '2018-09-30 23:59:59',
+                mesSeleccionado: {
+                    id: 0, 
+                    mes: 0, 
+                    textoMes: 'textoMes', 
+                    anio: 0
+                },
+                meses: [],
             }
 
         },
@@ -118,9 +145,7 @@
                 console.log(index);
                 axios.get(`${process.env.BASE_URL}/api/empleado/generar-informe-horas-trabajadas`, {
                 params: {
-                    condiciones: {
-                        mes = 9,
-                    },
+                    mes: this.mesSeleccionado.mes,
                 }
             })
         		.then((res)=>{
@@ -132,12 +157,65 @@
                     this.loading = false;
         	    });
             },
+            exportarExcel(){
+                $("tablaInformeHoras").tableExport({
+                    bootstrap: false
+                });
+            },
+            obtenerMesDesdeNumero(numeroMes){
+                switch(numeroMes){
+                    case 0: return 'Enero';
+                    case 1: return 'Febrero';
+                    case 2: return 'Marzo';
+                    case 3: return 'Abril';
+                    case 4: return 'Mayo';
+                    case 5: return 'Junio';
+                    case 6: return 'Julio';
+                    case 7: return 'Agosto';
+                    case 8: return 'Setiembre';
+                    case 9: return 'Octubre';
+                    case 10: return 'Noviembre';
+                    case 11: return 'Diciembre';
+                    default: return 'Mes no definido';
+                }
+            },
             cargarSiguiente(){
                 this.cargarDatos(this.indexActual + 1);
             },
             cargarAnterior(){
                 this.cargarDatos(this.indexActual - 1);
-            }   
+            },
+            cargarSelectMeses(){
+                var fechaActual = moment(new Date());
+                var fechaAux = null;
+
+                for(var i = -2; i <= 3; i++){
+                    if(i >= 0){
+                        fechaAux = moment(fechaActual).clone().add(i, 'M');
+                        console.log(fechaAux);
+                        console.log(fechaActual);
+                    }else{
+                        fechaAux = moment(fechaActual).clone().subtract(Math.abs(i), 'months');
+                    }
+                    var mesAux = moment(fechaAux).clone().month();
+                    var anioAux = moment(fechaAux).clone().year();
+                    var textoMes = this.obtenerMesDesdeNumero(mesAux);
+                    var elMes = {
+                        id: i, 
+                        mes: mesAux, 
+                        textoMes: textoMes, 
+                        anio: anioAux,
+                    };
+                    
+                    if(i == 0){
+                       this.mesSeleccionado = elMes; 
+                       console.log('cabeza');
+                       console.log(elMes);
+                    }
+                    console.log(elMes);
+                    this.meses.push(elMes);
+                }
+            },   
         },    
     }
 </script>

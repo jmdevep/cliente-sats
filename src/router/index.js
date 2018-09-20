@@ -8,6 +8,7 @@ const ListadoUsuario = () => import('@/components/usuario/ListadoUsuario');
 const EditarUsuario = () => import('@/components/usuario/EditarUsuario');
 const EliminarUsuario = () => import('@/components/usuario/EliminarUsuario');
 const Login = () => import('@/components/usuario/Login');
+const CambiarContrasena = () => import('@/components/usuario/CambiarContrasena');
 
 
 //Empleado
@@ -108,6 +109,7 @@ export default new Router({
     {path: '/usuario/editar-usuario', name: 'EditarUsuario', component: EditarUsuario},
     {path: '/usuario/eliminar-usuario', name: 'EliminarUsuario', component: EliminarUsuario},
     {path: '/usuario/login', name: 'Login', component: Login},
+    {path: '/usuario/cambiar-contrasena', name: 'CambiarContrasena', component: CambiarContrasena},
     
     //Empleado
     {path: '/empleado/registro-empleado', name: 'RegistroEmpleado', component: RegistroEmpleado},

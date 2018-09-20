@@ -6,6 +6,7 @@ import router from './router'
 import VueSession from 'vue-session'
 import dotenv from 'dotenv'
 import BootstrapVue from 'bootstrap-vue'
+import JsonExcel from 'vue-json-excel'
 
 dotenv.config()
 
@@ -13,11 +14,10 @@ var options = {
   persist: true
 }
 
-
-
 Vue.use(VueSession, options)
 Vue.use(BootstrapVue);
 Vue.config.productionTip = false
+Vue.component('downloadExcel', JsonExcel)
 /*
 router.beforeEach((to, from, next) => {
   const authRequired = to.matched.some((route) => route.meta.auth)
