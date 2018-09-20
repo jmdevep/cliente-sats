@@ -39,12 +39,14 @@
                                 <td>{{ puesto.rol.nombre }}</td>
                                 <td>{{ puesto.estado }}</td>
                                 <td>
-                                    <div>
-                                        <b-btn class="btn btn-success" v-b-modal.marcarSalidaModal @click="guardarDatosParaMarcarHora(false, true, turno, puesto)"><i class="fas fa-door-closed"></i> Marcar salida</b-btn>
-                                    </div>
-                                    <template v-if="puesto.tipo == 2">
-                                        <router-link :to="{ name: 'ListadoAsistenciaEvento', params: { turno: turno, puesto: puesto, ingreso: false, activacionReten: true }}"><a href="#" class="btn btn-info" role="button"><i class="fas fa-ambulance"></i> Marcar activación retén</a></router-link>
-                                    </template>
+                                    <b-button-group vertical>
+                                        <div>
+                                            <b-btn class="btn btn-success" v-b-modal.marcarSalidaModal @click="guardarDatosParaMarcarHora(false, true, turno, puesto)"><i class="fas fa-door-closed"></i> Marcar salida</b-btn>
+                                        </div>
+                                        <template v-if="puesto.tipo == 2">
+                                            <router-link :to="{ name: 'ListadoAsistenciaEvento', params: { turno: turno, puesto: puesto, ingreso: false, activacionReten: true }}"><a  class="btn btn-success" role="button"><i class="fas fa-ambulance"></i> Marcar activación retén</a></router-link>
+                                        </template>
+                                    </b-button-group>
                                 </td>
                             </tr>
                         </tbody>
@@ -167,16 +169,18 @@
                             <td>{{ puesto.rol.nombre }}</td>
                             <td>{{ puesto.estado }}</td>
                             <td>
-                                <template v-if="verModificar">
-                                    <router-link :to="{ name: 'EditarPuesto', params: { puesto: puesto }}"><a href="#" class="btn btn-info" role="button"><i class="far fa-edit"></i></a></router-link>
-                                    <router-link :to="{ name: 'EliminarPuesto', params: { puesto: puesto }}"><a href="#" class="btn btn-info" role="button"><i class="fas fa-trash-alt"></i></a></router-link>
-                                </template> 
-                                <template v-if="verMarcar">
-                                    <div>
-                                        <b-btn class="btn btn-success" @click="guardarDatosParaMarcarHora(true, true, turno, puesto); mostrarModalHora=true;"><i class="fas fa-user-clock"></i></b-btn>
-                                        <b-btn class="btn btn-success"><i class="fas fa-sync"></i></b-btn>
-                                    </div>
-                                </template> 
+                                <b-button-group>
+                                    <template v-if="verMarcar">
+                                        <div>
+                                            <b-btn class="btn btn-success" @click="guardarDatosParaMarcarHora(true, true, turno, puesto); mostrarModalHora=true;"><i class="fas fa-user-clock"></i></b-btn>
+                                            <b-btn class="btn btn-success"><i class="fas fa-sync"></i></b-btn>
+                                        </div>
+                                    </template> 
+                                    <template v-if="verModificar">
+                                        <router-link :to="{ name: 'EditarPuesto', params: { puesto: puesto }}"><a  class="btn btn-success" role="button"><i class="far fa-edit"></i></a></router-link>
+                                        <router-link :to="{ name: 'EliminarPuesto', params: { puesto: puesto }}"><a  class="btn btn-danger" role="button"><i class="fas fa-trash-alt"></i></a></router-link>
+                                    </template> 
+                                </b-button-group>
                             </td>
                         </tr>
                     </tbody>
@@ -202,14 +206,14 @@
                                         </b-modal>
                 <ul class="pagination">
                     <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==1) }">
-                        <a @click="cargarAnterior()" class="page-link" href="#" aria-label="Previous">
+                        <a @click="cargarAnterior()" class="page-link"  aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                             <span class="sr-only">Anterior</span>
                         </a>
                     </li> 
-                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="cargarDatos(index)" class="page-link" href="#">{{ index }}</a></li>
+                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="cargarDatos(index)" class="page-link" >{{ index }}</a></li>
                     <li class="page-item"  v-bind:class="{ 'disabled' : (indexActual==cantidadPaginas) }">
-                        <a @click="cargarSiguiente()" class="page-link" href="#" aria-label="Next">
+                        <a @click="cargarSiguiente()" class="page-link"  aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                             <span class="sr-only">Siguiente</span>
                         </a>

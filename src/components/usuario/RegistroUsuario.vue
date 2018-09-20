@@ -83,6 +83,8 @@
                     }
             },
             verificarDisponibilidad() {
+                this.errorDisponibilidad = 'Verificando...';
+                this.loading = true;
                 if(this.usuario.nombre != ''){
                     axios.get(`${process.env.BASE_URL}/api/usuario/existe-usuario`, {
                         params: {
@@ -100,6 +102,7 @@
                             }
                     });
                 }
+                this.loading = false;
             },
             registrarUsuario(){
                 this.loading = true;
