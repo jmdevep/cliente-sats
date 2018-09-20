@@ -53,6 +53,7 @@ const EditarPlan = () => import('@/components/plan/EditarPlan');
 const AsociarCliente = () => import('@/components/plan/AsociarCliente');
 const RegistroSociedad = () => import('@/components/plan/RegistroSociedad');
 const EliminarSociedad = () => import('@/components/plan/EliminarSociedad');
+const AsociarClienteGrupo = () => import('@/components/plan/AsociarClienteGrupo');
 
 //Servicio
 const RegistroServicio = () => import('@/components/servicio/RegistroServicio');
@@ -89,6 +90,7 @@ const EditarLlamado = () => import('@/components/llamado/EditarLlamado');
 const EliminarLlamado = () => import('@/components/llamado/EliminarLlamado');
 
 //Principales
+const PrincipalPrestador= () => import('@/components/prestador/PrincipalPrestador')
 const PrincipalEmpleado = () => import('@/components/empleado/PrincipalEmpleado')
 const PrincipalCliente = () => import('@/components/cliente/PrincipalCliente')
 const PrincipalEvento  = () => import('@/components/evento/PrincipalEvento')
@@ -96,12 +98,14 @@ const PrincipalTramo = () => import('@/components/tramo/PrincipalTramo')
 const PrincipalTurno = () => import('@/components/turno/PrincipalTurno')
 const PrincipalPlan = () => import('@/components/plan/PrincipalPlan')
 
+const PruebaTabla = () => import('@/components/pruebas/PruebaTabla')
+
 Vue.use(Router)
 
 export default new Router({
   mode: 'history',
   routes: [
-    {path: '/', name: 'Home', component: HelloWorld},    
+    {path: '/', name: 'PruebaTabla', component: PruebaTabla},    
     //Usuario
     {path: '/usuario/registro-usuario', name: 'RegistroUsuario', component: RegistroUsuario},
     {path: '/usuario/listado-usuario', name: 'ListadoUsuario', component: ListadoUsuario},
@@ -152,6 +156,7 @@ export default new Router({
     {path: '/plan/asociar-cliente', name: 'AsociarCliente', component: AsociarCliente},
     {path: '/plan/registro-sociedad', name: 'RegistroSociedad', component: RegistroSociedad},
     {path: '/plan/eliminar-sociedad', name: 'EliminarSociedad', component: EliminarSociedad},
+    {path: '/plan/asociar-cliente-grupo', name: 'AsociarClienteGrupo', component: AsociarClienteGrupo},
 
     //Servicio
     {path: '/servicio/registro-servicio', name: 'RegistroServicio', component: RegistroServicio},
@@ -190,6 +195,7 @@ export default new Router({
 
 
     //Principales
+    {path: '/prestador/principal-prestador', name: 'PrincipalPrestador', component: PrincipalPrestador},    
     {path: '/empleado/principal-empleado', name: 'PrincipalEmpleado', component: PrincipalEmpleado},
     {path: '/cliente/principal-cliente', name: 'PrincipalCliente', component: PrincipalCliente},
     {path: '/evento/principal-evento', name: 'PrincipalEvento', component: PrincipalEvento},

@@ -1,6 +1,8 @@
 <template>
     <div>
         {{ resultadoOperacion }}
+
+        {{ JSON.stringify(usuarioLoggeado)}}
         <div class="row">
             <div class="col-sm-12">
                 <table class="table">
@@ -22,7 +24,9 @@
                             <td>{{ usuario.tipo.nombre }}</td>
                             <td>
                                 <router-link :to="{ name: 'EditarUsuario', params: { usuario: usuario }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
-                                <router-link :to="{ name: 'EliminarUsuario', params: { usuario: usuario }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>
+                                <template v-if="usuario.id != usuarioLoggeado.id">
+                                    <router-link :to="{ name: 'EliminarUsuario', params: { usuario: usuario }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>
+                                </template>
                             </td>
                         </tr>
                     </tbody>
@@ -52,19 +56,25 @@
 	 export default {
         name: 'ListadoUsuario',
         mounted(){
+
+            var usuario = this.$session.get('usuario');
+                console.log(usuario);
+                this.usuarioLoggeado = usuario;
+                
             this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
             this.loading = true;
             axios.get(`${process.env.BASE_URL}/api/usuario/lista-usuarios`, {
                 params: {
                     condiciones: {
-                        orden: 'DESC',
+                        orden: 'ASC',
                         tamanoPagina: this.tamanoPagina,
                         indicePagina: this.indicePagina,
                         campo: 'nombre',
+                        valor: '%%'
                     },
                 }
-            })
+                })
         		.then((res)=>{
                     console.log(res);
                     
@@ -84,6 +94,8 @@
         },
             beforeCreate: function () {
                 var usuario = this.$session.get('usuario');
+                console.log(usuario);
+                this.usuarioLoggeado = usuario;
                 if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
                 this.$router.push('/usuario/login')
                 } 
@@ -97,6 +109,7 @@
                 indicePagina: 0,
                 cantidadPaginas: 0,
                 indexActual: 0,
+                usuarioLoggeado: null,
             }
 
         },

@@ -9,7 +9,7 @@
             {{ resultadoOperacion }}
             
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="eliminiarLocalidad()">
+                <form v-on:submit.prevent="eliminarLocalidad()">
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre de Localidad</label>
                         <input type="text"  class="form-control border-success" v-model="localidad.nombre" id="nombre" disabled="true" placeholder="Nombre de Localidad">

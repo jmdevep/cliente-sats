@@ -60,7 +60,7 @@
                             <td>{{ persona.documento }}</td>
                             <td>
                                 <template v-if="persona.sociedad && persona.sociedad.id != 0">
-                                    <router-link :to="{ name: 'AgregarSocioGrupo', params: { cliente: persona }}"><a href="#" class="btn btn-info" role="button">Agregar socio grupal</a></router-link>
+                                    <router-link :to="{ name: 'AsociarClienteGrupo', params: { cliente: persona }}"><a href="#" class="btn btn-info" role="button">Agregar socio grupal</a></router-link>
                                     <a href="#" class="btn btn-danger" role="button" v-on:click="convertirPersonaEnCliente(persona)">Desasociar</a>
                                 </template>   
                                 <template v-else>
@@ -70,7 +70,6 @@
                         </tr>
                     </tbody>
                 </table>
-                {{ this.indexActualPersonas }}
                 <ul class="pagination">
                     <li class="page-item" v-bind:class="{ 'disabled' : (indexActualPersonas==1) }">
                     <a @click="cargarAnteriorPersonas()" class="page-link" href="#" aria-label="Previous">

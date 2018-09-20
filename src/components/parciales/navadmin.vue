@@ -25,15 +25,9 @@
                     <li class="nav-item">
                         <router-link to="/tramo/principal-tramo"><a class="nav-link" href="#">Tramos</a></router-link>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Prestadores
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <!--<router-link to="/cliente/registro-localidad"><a class="dropdown-item" href="#">Registrar</a></router-link>-->
-                        <router-link to="/prestador/listado-prestador"><a class="dropdown-item" href="#">Listado</a></router-link>
-                        <router-link to="/prestador/registro-prestador"><a class="dropdown-item" href="#">Registro</a></router-link>
-                        </div>
+                    <li class="nav-item">
+                        <router-link to="/prestador/principal-prestador"><a class="nav-link" href="#">Prestadores</a></router-link>
+                    </li>
                      <li class="nav-item">
                         <router-link to="/plan/principal-plan"><a class="nav-link" href="#">Planes</a></router-link>
                     </li>
