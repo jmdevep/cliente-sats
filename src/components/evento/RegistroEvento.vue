@@ -24,11 +24,11 @@
                     </multi-select>
                     <br/> 
 
-                    <button v-on:click.prevent="togglePersona()" >{{ agregarPersona ? "Cancelar" : "Agregar Paciente" }}</button>   
-                    <br/>
-
-                    <template v-if="agregarPersona">
-                        <div class="form-group">
+                    <b-button @click="modalShow = !modalShow">
+                    Agregar Persona
+                    </b-button>
+                    <b-modal v-model="modalShow">
+                                   <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre Completo</label>
                         <input type="text" class="form-control border-success" v-model="persona.nombre" id="nombre" placeholder="Nombre">
                         </div>
@@ -71,23 +71,11 @@
                                 </div>
                             </template>
                         </multi-select>
-                    </template>
+                    </b-modal>
 
-                    
-                    <multi-select v-model="personaSeleccionada" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
-                        
-                        <template slot="option" slot-scope="props">
-                            <div class="option__desc">
-                                <span class="option__title">{{ props.option.nombre }}</span>
-                                <br>
-                                <span class="option__small">{{ props.option.documento }}</span>
-                            </div>
-                        </template>
-                    </multi-select>
-                    <br> 
+                    <br/>
                     
                     <multi-select v-model="servicioSeleccionado" placeholder="Servicios" :optionsLimit="3" :tabindex="2" track-by="nombre" :options="servicios" :option-height="104" :custom-label="customLabelServicios" :show-labels="false">
-                        
                         <template slot="option" slot-scope="props">
                             <div class="option__desc">
                                 <span class="option__title">{{ props.option.nombre }}</span>
@@ -137,205 +125,283 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    import Multiselect from 'vue-multiselect'
+import axios from "axios";
+import Multiselect from "vue-multiselect";
 
-
-	 export default {
-        name: 'RegistroEvento',
-        components: { 'multi-select': Multiselect,                      
-        },
-        mounted(){
-            this.loading = true;
-            this.cargarPersonas();
-            this.cargarServicios();
-            this.cargarTiposEventos();
-            this.cargarLlamados();
-            },
-        beforeCreate: function () {
-            var usuario = this.$session.get('usuario');
-            if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
-            this.$router.push('/usuario/login')
-            } 
-        },
-        data(){
-            return{
-                agregarPersona: null,
-                personaSeleccionada: null,
-                servicioSeleccionado: null,
-                tipoEventoSeleccionado: null,
-                loading: false,
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: false,
-            	localidades: [],
-                errorDisponibilidad: '',
-                evento: {
-                    inicioEvento: '',
-                    direccion: '',
-                    persona: null,
-                    servicio: null,
-                    tipo: null,
-                    direccion: '',
-                    finEvento: ''
-                },
-                personas: [],
-                servicios: [],
-                tiposEventos: [],
-                llamados: [],
-                horaInicio: null,
-                horaFin: null,
-                fechaInicio: null,
-                fechaFin: null,
-                persona: null,
-            }
-        },
-        methods: {
-            togglePersona(){
-                this.agregarPersona = !this.agregarPersona;
-            },
-            customLabelPersonas ({ nombre, documento }) {
-                return `${nombre} – ${documento}`
-            },
-            customLabelServicios ({ nombre, descripcion }) {
-                return `${nombre} – ${descripcion}`
-            },
-            customLabelTiposEventos ({ nombre }) {
-                return `${nombre}`
-            },
-            cargarPersonas(){
-                axios.get(`${process.env.BASE_URL}/api/cliente/lista-personas`, {
-                params: {
-                    }
-                })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.personas = res.data.listaPersonas;
-                    }
-                    this.loading = false;
-        	    });         
-            },
-            cargarServicios(){
-                axios.get(`${process.env.BASE_URL}/api/servicio/lista-servicios`, {
-                params: {
-                    }
-                })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.servicios = res.data.listaServicios;
-                    }
-                    this.loading = false;
-        	    });         
-            },
-            cargarLlamados(){
-                axios.get(`${process.env.BASE_URL}/api/llamado/lista-llamados`, {
-                params: {
-                    }
-                })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.llamados = res.data.listaLlamados;
-                    }
-                    this.loading = false;
-        	    });         
-            },
-            cargarTiposEventos(){
-                axios.get(`${process.env.BASE_URL}/api/evento/lista-tipos-eventos`, {
-                params: {
-                    }
-                })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.tiposEventos = res.data.listaTiposEventos;
-                    }
-                    this.loading = false;
-        	    });         
-            },
-            registrarEvento(){
-                this.evento.inicioEvento  = moment(`${this.fechaInicio} ${this.horaInicio}`, 'YYYY-MM-DD HH:mm:ss').format();
-                this.evento.finEvento  = moment(`${this.fechaFin} ${this.horaFin}`, 'YYYY-MM-DD HH:mm:ss').format();
-                this.loading = true;
-
-                delete this.personaSeleccionada.fechaNacimiento;
-
-                if(this.checkForm()){
-                    this.evento.persona = this.personaSeleccionada;
-                    this.evento.tipo = this.tipoEventoSeleccionado;
-                    this.evento.servicio = this.servicioSeleccionado;
-
-                    var params = this.evento;
-                    console.log(params);
-                    
-                    axios.post(`${process.env.BASE_URL}/api/evento/agregar-evento`, params) 
-                        .then((res)=>{
-                            console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5802){
-                                this.resultadoOperacion = "Evento agregado satisfactoriamente.";
-                                this.limpiarCajas();    
-                            } else if (res.data.resultado == 5803){
-                                this.resultadoOperacion = "Error en el alta.";
-                            }
-                        }); 
-                    this.loading = false;
-                }
-            },
-            limpiarCajas(){
-                this.personaSeleccionada = null;
-                this.servicioSeleccionado = null;
-                this.tipoEventoSeleccionado = null;
-                this.erroresForm = [];
-                this.errorDisponibilidad = '';
-                this.evento = {
-                    inicioEvento: '',
-                    direccion: '',
-                    persona: null,
-                    servicio: null,
-                    tipo: null,
-                    direccion: '',
-                    finEvento: ''
-                },
-                this.horaInicio = null;
-                this.horaFin = null;
-                this.fechaInicio = null;
-                this.fechaFin = null;
-            },
-            checkForm() {
-                if (this.fechaInicio && this.horaInicio && this.direccion != ''
-                && this.personaSeleccionada != null && this.servicioSeleccionado !=  null && this.tipoEventoSeleccionado != null) {
-                    return true;
-                }
-
-                this.erroresForm = [];
-                
-                if (!this.fechaInicio) {
-                    this.erroresForm.push('Fecha inicio requerida.');
-                } 
-                if(!this.horaInicio){
-                    this.erroresForm.push('Hora Inicio requerida');
-                }
-                if(this.direccion == ''){
-                    this.erroresForm.push('Direccion requerida');
-                }
-                if(!this.personaSeleccionada){
-                    this.erroresForm.push("Paciente requerido");
-                }
-                if(!this.servicioSeleccionado){
-                    this.erroresForm.push('Servicio requerido');
-                }
-                if(!this.tipoEventoSeleccionado){
-                    this.erroresForm.push('Tipo de Evento requerido');
-                }
-
-                this.disabled = false;
-                return false;
-            }
-    
-        },    
+export default {
+  name: "RegistroEvento",
+  components: {
+    "multi-select": Multiselect
+  },
+  mounted() {
+    this.loading = true;
+    this.cargarPersonas();
+    this.cargarServicios();
+    this.cargarTiposEventos();
+    this.cargarLlamados();
+    this.cargarPrestadores();
+  },
+  beforeCreate: function() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+      this.$router.push("/usuario/login");
     }
+  },
+  data() {
+    return {
+      modalShow: false,
+      agregarPersona: null,
+      personaSeleccionada: null,
+      servicioSeleccionado: null,
+      tipoEventoSeleccionado: null,
+      loading: false,
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: false,
+      localidades: [],
+      errorDisponibilidad: "",
+      evento: {
+        inicioEvento: "",
+        direccion: "",
+        persona: null,
+        servicio: null,
+        tipo: null,
+        direccion: "",
+        finEvento: ""
+      },
+      isDisabled: false,
+      personas: [],
+      servicios: [],
+      tiposEventos: [],
+      llamados: [],
+      prestadores: [],
+      horaInicio: null,
+      horaFin: null,
+      fechaInicio: null,
+      fechaFin: null,
+      persona: {
+        nombre: "",
+        direccion: "",
+        telefono: "",
+        documento: "",
+        fechaNacimiento: "",
+        sexo: "",
+        prestador: null
+      },
+      personaDisabled: false,
+    };
+  },
+  methods: {
+    togglePersona() {
+      this.agregarPersona = !this.agregarPersona;
+    },
+    customLabelPersonas({ nombre, documento }) {
+      return `${nombre} – ${documento}`;
+    },
+    customLabelServicios({ nombre, descripcion }) {
+      return `${nombre} – ${descripcion}`;
+    },
+    customLabelTiposEventos({ nombre }) {
+      return `${nombre}`;
+    },
+    cargarPrestadores() {
+      axios
+        .get(`${process.env.BASE_URL}/api/cliente/lista-prestadores`)
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 100) {
+            this.prestadores = res.data.prestadores;
+          }
+          this.loading = false;
+        });
+    },
 
+    customLabelPrestadores({ nombreDescriptivo }) {
+      return `${nombreDescriptivo} `;
+    },
+    cargarPersonas() {
+      axios
+        .get(`${process.env.BASE_URL}/api/cliente/lista-personas`, {
+          params: {}
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 100) {
+            this.personas = res.data.listaPersonas;
+          }
+          this.loading = false;
+        });
+    },
+    cargarServicios() {
+      axios
+        .get(`${process.env.BASE_URL}/api/servicio/lista-servicios`, {
+          params: {}
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 100) {
+            this.servicios = res.data.listaServicios;
+          }
+          this.loading = false;
+        });
+    },
+    cargarLlamados() {
+      axios
+        .get(`${process.env.BASE_URL}/api/llamado/lista-llamados`, {
+          params: {}
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 100) {
+            this.llamados = res.data.listaLlamados;
+          }
+          this.loading = false;
+        });
+    },
+    cargarTiposEventos() {
+      axios
+        .get(`${process.env.BASE_URL}/api/evento/lista-tipos-eventos`, {
+          params: {}
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 100) {
+            this.tiposEventos = res.data.listaTiposEventos;
+          }
+          this.loading = false;
+        });
+    },
+    registrarEvento() {
+      this.evento.inicioEvento = moment(
+        `${this.fechaInicio} ${this.horaInicio}`,
+        "YYYY-MM-DD HH:mm:ss"
+      ).format();
+      this.evento.finEvento = moment(
+        `${this.fechaFin} ${this.horaFin}`,
+        "YYYY-MM-DD HH:mm:ss"
+      ).format();
+      this.loading = true;
+
+      delete this.personaSeleccionada.fechaNacimiento;
+
+      if (this.checkForm()) {
+        this.evento.persona = this.personaSeleccionada;
+        this.evento.tipo = this.tipoEventoSeleccionado;
+        this.evento.servicio = this.servicioSeleccionado;
+
+        var params = this.evento;
+        console.log(params);
+
+        axios
+          .post(`${process.env.BASE_URL}/api/evento/agregar-evento`, params)
+          .then(res => {
+            console.log(res.data.resultado);
+            if (res.data.resultado == 5802) {
+              this.resultadoOperacion = "Evento agregado satisfactoriamente.";
+              this.limpiarCajas();
+            } else if (res.data.resultado == 5803) {
+              this.resultadoOperacion = "Error en el alta.";
+            }
+          });
+        this.loading = false;
+      }
+    },
+    limpiarCajas() {
+      this.personaSeleccionada = null;
+      this.servicioSeleccionado = null;
+      this.tipoEventoSeleccionado = null;
+      this.erroresForm = [];
+      this.errorDisponibilidad = "";
+      (this.evento = {
+        inicioEvento: "",
+        direccion: "",
+        persona: null,
+        servicio: null,
+        tipo: null,
+        direccion: "",
+        finEvento: ""
+      }),
+        (this.horaInicio = null);
+      this.horaFin = null;
+      this.fechaInicio = null;
+      this.fechaFin = null;
+    },
+    validarDocumento(documento) {
+      var verificador = documento[documento.length - 1];
+      var aux = 0;
+      var i = 0;
+      if (documento.length <= 6) {
+        for (i = documento.length; i < 7; i++) {
+          documento = "0" + documento;
+        }
+      }
+      for (i = 0; i < 7; i++) {
+        aux += (parseInt("2987634"[i]) * parseInt(documento[i])) % 10;
+      }
+      if (aux % 10 === 0) {
+        return 0 == verificador;
+      } else {
+        return 10 - aux % 10 == verificador;
+      }
+    },
+    verificarDisponibilidad() {
+      if (this.persona.documento != "") {
+        axios
+          .get(`${process.env.BASE_URL}/api/cliente/existe-persona`, {
+            params: {
+              rut: this.persona.documento
+            }
+          })
+          .then(res => {
+            console.log(res);
+            if (res.data.existe == true) {
+              this.personaDisabled = true;
+              this.errorDisponibilidad =
+                "Ya existe una persona registrada con ese documento.";
+            } else {
+              this.errorDisponibilidad = "Documento disponible.";
+              this.personaDisabled = false;
+            }
+          });
+      }
+    },
+    checkForm() {
+      if (
+        this.fechaInicio &&
+        this.horaInicio &&
+        this.direccion != "" &&
+        this.personaSeleccionada != null &&
+        this.servicioSeleccionado != null &&
+        this.tipoEventoSeleccionado != null
+      ) {
+        return true;
+      }
+
+      this.erroresForm = [];
+
+      if (!this.fechaInicio) {
+        this.erroresForm.push("Fecha inicio requerida.");
+      }
+      if (!this.horaInicio) {
+        this.erroresForm.push("Hora Inicio requerida");
+      }
+      if (this.direccion == "") {
+        this.erroresForm.push("Direccion requerida");
+      }
+      if (!this.personaSeleccionada) {
+        this.erroresForm.push("Paciente requerido");
+      }
+      if (!this.servicioSeleccionado) {
+        this.erroresForm.push("Servicio requerido");
+      }
+      if (!this.tipoEventoSeleccionado) {
+        this.erroresForm.push("Tipo de Evento requerido");
+      }
+
+      this.disabled = false;
+      return false;
+    }
+  }
+};
 </script>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

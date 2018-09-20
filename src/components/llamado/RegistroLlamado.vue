@@ -13,8 +13,8 @@
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                     <p>{{ resultadoOperacion }}</p>
 
-                    
-                    <multi-select v-model="llamado.paciente" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
+       
+                <!--    <multi-select v-model="llamado.paciente" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
                         
                         <template slot="option" slot-scope="props">
                             <div class="option__desc">
@@ -24,7 +24,7 @@
                             </div>
                         </template>
                     </multi-select>
-
+                -->
                     <br> 
                     
                     <label>Clasificación: *</label>
@@ -49,16 +49,6 @@
                         <input type="text" class="form-control border-success" v-model="llamado.motivoLlamado" id="motivo" placeholder="motivo">
                     </div>
 
-                    <p>Cobertura de: *</p>
-                    <multi-select v-model="llamado.prestadorCobertura" placeholder="Cobertura de"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="prestadores" :option-height="104" :custom-label="customLabelPrestadores" :show-labels="false">
-                        
-                        <template slot="option" slot-scope="props">
-                            <div class="option__desc">
-                                <span class="option__title">Nombre: {{ props.option.nombreDescriptivo }}</span>
-                            </div>
-                        </template>
-                    </multi-select>
-
                     <div class="form-group">
                         <label for="fecha" class="darkTextCustom">Fecha recibido *</label>
                         <input type="date" class="form-control border-success" v-model="fechaRecibido" id="fecha" placeholder="2019-12-05">
@@ -67,7 +57,7 @@
                         <label for="horaI" class="darkTextCustom">Hora recibido *</label>
                         <input type="time"  class="form-control border-success" id="horaI" v-model="horaRecibido"/>
                     </div>
-
+ <!--
                     <hr>
 
                     <div class="form-group">
@@ -95,7 +85,7 @@
                     <div class="form-group">
                         <label for="horaLlegadaDestino" class="darkTextCustom">Hora de llegada a destino del paciente</label>
                         <input type="time"  class="form-control border-success" id="horaLlegadaDestino" v-model="horaLlegadaDestino"/>
-                    </div> 
+                    </div> -->
 
                     <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore tableHeadingBackground">
                 </form>

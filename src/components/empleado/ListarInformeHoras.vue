@@ -78,28 +78,37 @@
         </div>
         <div class="row">
             <div class="col-sm-12">
-                <download-excel
-                    class   = "btn btn-default"
-                    :data   = "informes"
-                    :fields = "json_fields"
-                    name    = "filename.xls">
-                    Descargar excel
-                </download-excel>
+<download-excel
+	class   = "btn btn-default"
+	:data   = "informes"
+	:fields = "json_fields"
+	name    = "filename.xls">
+
+	Download Excel (you can customize this with html code!)
+
+</download-excel>
             </div>
         </div>
     </div>
 </template>
 <script>
     import axios from 'axios';
+    import JsonExcel from 'vue-json-excel'
+
 	 export default {
         name: 'ListarInformeHoras',
+        components: {
+            'downloadExcel': JsonExcel
+        },
         mounted(){
             this.resultadoOperacion = this.$route.params.resultadoOperacion || '';        
             this.cargarSelectMeses();
             this.loading = true;
             axios.get(`${process.env.BASE_URL}/api/empleado/generar-informe-horas-trabajadas`, {
                 params: {
+                    
                     mes: 9,
+                    
                 }
             })
         		.then((res)=>{
@@ -136,6 +145,28 @@
                     anio: 0
                 },
                 meses: [],
+                json_fields: {
+            'Nombre': 'empleado.nombre',
+            'Apellido': 'empleado.apellido',
+            'Documento': 'empleado.documento',
+            'Diurnas': 'diurnas',
+            'Nocturnas': 'nocturnas',
+            'Extras': 'extra',
+            'Reten': 'reten',
+            'Viaticos + 400': 'viaticosMayores',
+            'Viaticos - 400': 'viaticosMenores',
+            'Viaticos por cantidad': 'cantidadKmViaticos',
+
+        },
+        json_data: [],
+        json_meta: [
+            [
+                {
+                    'key': 'charset',
+                    'value': 'utf-8'
+                }
+            ]
+        ],
             }
 
         },
@@ -145,9 +176,9 @@
                 console.log(index);
                 axios.get(`${process.env.BASE_URL}/api/empleado/generar-informe-horas-trabajadas`, {
                 params: {
-                    condiciones: {
+                   
                         mes: 9,
-                    },
+           
                 }
             })
         		.then((res)=>{

@@ -4,54 +4,76 @@
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Traslado </div>
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="registrarViaje()">
-                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p v-if="erroresForm.length">
-                        <b>Por favor corrija lo siguiente:</b>
-                        <ul>
-                            <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
-                        </ul>
-                    </p>
-                    <p v-if="resultadoOperacion">{{ resultadoOperacion }}</p>
+                <template v-if="!existeViaje">
+                    <p>Este evento no tiene un traslado registrado.</p>
+                    <button @click="mostrarForm = !mostrarForm" class="btn marginBefore tableHeadingBackground">
+                        {{ mostrarForm ? "Cancelar" : "Ingresar Traslado"}}
+                    </button>
+                </template>
+                <template v-else>
+                    <button @click="disabled = !disabled" class="btn marginBefore tableHeadingBackground">
+                        {{ disabled ? "Editar" : "Cancelar " }}
+                    </button>
+                </template>
+                <template v-if="mostrarForm">
+                    <form v-on:submit.prevent="registrarViaje()">
+                        <i v-show="loading" class="fa fa-spinner fa-spin"></i>
+                        <p v-if="erroresForm.length">
+                            <b>Por favor corrija lo siguiente:</b>
+                            <ul>
+                                <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
+                            </ul>
+                        </p>
+                        <p v-if="resultadoOperacion">{{ resultadoOperacion }}</p>
 
-                    <p>Insitución que solicita el traslado </p>
-                    <multi-select v-model="viaje.solicitante" placeholder="Institución solicitante"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="prestadores" :option-height="104" :custom-label="customLabelPrestadores" :show-labels="false">
-                        
-                        <template slot="option" slot-scope="props">
-                            <div class="option__desc">
-                                <span class="option__title">Nombre: {{ props.option.nombreDescriptivo }}</span>
-                            </div>
-                        </template>
-                    </multi-select>
+                        <p>Insitución que solicita el traslado </p>
+                        <multi-select :disabled="disabled" v-model="viaje.solicitante" placeholder="Institución solicitante"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="prestadores" :option-height="104" :custom-label="customLabelPrestadores" :show-labels="false">
+                            
+                            <template slot="option" slot-scope="props">
+                                <div class="option__desc">
+                                    <span class="option__title">Nombre: {{ props.option.nombreDescriptivo }}</span>
+                                </div>
+                            </template>
+                        </multi-select>
 
-                    <br>
-                    <p>Tramos </p>
+                        <br>
+                        <p>Tramos </p>
 
-                    <multi-select v-model="tramoSeleccionado" @select="cambioSelect" placeholder="Tramos"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="tramos" :option-height="104" :custom-label="customLabelTramos" :show-labels="false">
-                        
-                        <template slot="option" slot-scope="props">
-                            <div class="option__desc">
-                                <span class="option__title">Origen: {{ props.option.localidadOrigen.nombre }}</span>
-                                <br>
-                                <span class="option__small">Destino: {{ props.option.localidadDestino.nombre }}</span>
-                            </div>
-                        </template>
-                    </multi-select>
+                        <multi-select :disabled="disabled" v-model="tramoSeleccionado" @select="cambioSelect" placeholder="Tramos"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="tramos" :option-height="104" :custom-label="customLabelTramos" :show-labels="false">
+                            
+                            <template slot="option" slot-scope="props">
+                                <div class="option__desc">
+                                    <span class="option__title">Origen: {{ props.option.localidadOrigen.nombre }}</span>
+                                    <br>
+                                    <span class="option__small">Destino: {{ props.option.localidadDestino.nombre }}</span>
+                                </div>
+                            </template>
+                        </multi-select>
 
+                        <br> 
 
-                    <p v-if="viaje.listaTramos != null && viaje.listaTramos.length">
-                        <b>Tramos Seleccionados:</b>
-                        <ol>
-                            <li v-for="(tramo, index) in viaje.listaTramos" :key="index">
-                                {{ tramo.localidadOrigen.nombre }} => {{ tramo.localidadDestino.nombre }} 
-                                <a href="#" @click="removerTramo(tramo)">
-                                    - <i class="fas fa-trash-alt"></i>    
+                        <template v-if="viaje.listaTramos != null && viaje.listaTramos.length">
+                            <p>
+                                <b>Tramos Seleccionados:</b>
+                            </p>
+                            <div class="list-group">
+                                <a v-for="(tramo, index) in viaje.listaTramos" :key="index" href="#" class="list-group-item lista-tramos list-group-item-action flex-column align-items-start list-group-flush no-pointer">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">Origen: {{ tramo.localidadOrigen.nombre }}</h5>
+                                        <template v-if="!disabled">
+                                            <small class="small-x-large"><a href="#" @click="removerTramo(tramo)"><i class="fas fa-trash"></i></a></small>
+                                        </template>
+                                    </div>
+                                    <p class="mb-1">Destino: {{ tramo.localidadDestino.nombre }} </p>
+                                    <small>Cantidad de kilómetros: {{ tramo.cantidadKm }}</small>
                                 </a>
-                            </li>
-                        </ol>
-                    </p>
-                    <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore tableHeadingBackground">
-                </form>
+                            </div>
+                        </template>
+                        <template v-if="!disabled">
+                            <input type="submit" value="Actualizar Traslado" class="btn marginBefore tableHeadingBackground">
+                        </template>
+                    </form>
+                </template>
             </div>
         </div>
     </div>
@@ -79,6 +101,8 @@
         	},
         data(){
             return{
+                mostrarForm: false,
+                existeViaje: false,
                 evento: null,
                 loading: false,
                 resultadoOperacion: null,
@@ -93,6 +117,7 @@
                     fechaInicio: null,
                     fechaFin: null,
                 },
+                disabled: true
             }
         },
         methods: {
@@ -121,6 +146,8 @@
                     console.log(res.data.viaje)
                     if(res.data.resultado == 5950){
                         this.viaje = res.data.viaje;
+                        this.existeViaje = true;
+                        this.mostrarForm = true;
                         this.viaje.listaTramos.forEach( tramo => {
                             this.tramos.forEach( t => {
                                 if(tramo.id == t.id){
@@ -229,3 +256,17 @@
     }
 </script>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+<style>
+.lista-tramos{
+    width: fit-content;
+    min-width: 60%;
+}
+
+.no-pointer{
+    cursor: default;
+}
+
+.small-x-large{
+    font-size: larger;
+}
+</style>
