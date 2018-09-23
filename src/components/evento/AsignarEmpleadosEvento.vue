@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Asignar Funcionarios</div>
+        <div class="mb-3 card">
             <div class="card-body darkTextCustom">
+            <i v-show="loading" class="fa fa-spinner fa-spin"></i>                
                 <template v-if="!tieneEmpleados">
                     <p>Este evento no tiene empleados asignados.</p>
                     <button @click="toggleForm()" class="btn marginBefore tableHeadingBackground">
@@ -11,7 +11,7 @@
                 </template>
                 <template v-else>
                     <button @click="toggleEditar()" class="btn marginBefore tableHeadingBackground">
-                        {{ disabled ?  "Cancelar " : "Editar"  }}
+                        {{ disabled ?  "Editar " : "Cancelar"  }}
                     </button>
                 </template>
                 <template v-if="mostrarForm">
@@ -22,7 +22,6 @@
                                 <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                             </ul>
                         </p>
-                        <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                         <p>{{ resultadoOperacion }}</p>
                         
                         <template v-if="mostrarEquipos">
@@ -156,8 +155,8 @@
                             </template>
                         </div>
 
-                        <template v-if="disabled">
-                            <input type="submit" v-on:submit.prevent="asignarEmpleados()" :disabled="disabled" value="Asignar" class="btn marginBefore tableHeadingBackground">
+                        <template v-if="!disabled">
+                            <input type="submit" @click="asignarEmpleados()" value="Asignar" class="btn marginBefore tableHeadingBackground">
                         </template>
                     </form>
                 </template>
@@ -177,7 +176,7 @@
         },
         mounted(){
             this.loading = true;
-            this.evento = this.$route.params.evento;
+            this.evento = this.$parent.evento;
             this.evento.listaEmpleados = [];
             this.cargarRoles();
             this.cargarEmpleados();
@@ -199,7 +198,7 @@
                 empleadosOriginales: [],
                 loading: false,
                 erroresForm: [],
-                disabled: false,
+                disabled: true,
                 mostrarForm: false,
                 errorDisponibilidad: '',
                 evento: {

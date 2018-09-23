@@ -2,16 +2,18 @@
     <div>
         <hr class="titleUnderline">
         <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Seguro desea eliminar este servicio?</div>
+            
             {{ resultadoOperacion }}
             
+            <p>Seguro que desea eliminar este llamado?</p>
+
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="eliminarServicio()">
+                <form>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre de Servicio</label>
                         <input type="text"  class="form-control border-success" v-model="servicio.nombre" id="nombre" disabled="true" placeholder="Nombre de Servicio">
                     </div>
-                    <input type="submit" value="Eliminar" class="btn marginBefore tableHeadingBackground">
+                    <input @click="eliminarServicio()" type="submit" value="Eliminar" class="btn marginBefore tableHeadingBackground">
                 </form>
             </div>
         </div>
@@ -23,7 +25,7 @@
 	 export default {
         name: 'EliminarServicio',
         mounted(){
-            this.servicio = this.$route.params.servicio;
+            this.servicio = this.$parent.servicio;
             },
             beforeCreate: function () {
                 var usuario = this.$session.get('usuario');

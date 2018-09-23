@@ -39,6 +39,7 @@
 	 export default {
         name: 'RegistroUsuario',
         mounted(){
+            console.log("Registro Usuario");
             this.loading = true;
             axios.get(`${process.env.BASE_URL}/api/tipo-usuario/lista-tipos`)
         		.then((res)=>{

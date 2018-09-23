@@ -1,9 +1,11 @@
 <template>
     <div>
-        <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Modificar Servicio</div>
+        <div class="card mb-3">
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="modificarServicio()">
+                <form>
+                    <button @click="disabled = !disabled" class="btn marginBefore tableHeadingBackground">
+                        {{ disabled ? "Editar" : "Cancelar"}}
+                    </button>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
@@ -15,17 +17,19 @@
 
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre </label>
-                        <input type="text" class="form-control border-success" v-model="servicio.nombre" id="nombre" placeholder="Nombre">
+                        <input type="text" :disabled="disabled" class="form-control border-success" v-model="servicio.nombre" id="nombre" placeholder="Nombre">
                     </div>
                     <div class="form-group">
                         <label for="descripcion" class="darkTextCustom">Descripción</label>
-                        <input type="text" class="form-control border-success" v-model="servicio.descripcion" id="descripcion" placeholder="descripcion">
+                        <input type="text" :disabled="disabled" class="form-control border-success" v-model="servicio.descripcion" id="descripcion" placeholder="descripcion">
                     </div>
                     <div class="form-group">
                         <label for="costo" class="darkTextCustom">Costo</label>
-                        <input type="text" class="form-control border-success" v-model="servicio.costo" id="costo" placeholder="Costo">            
+                        <input type="text" :disabled="disabled" class="form-control border-success" v-model="servicio.costo" id="costo" placeholder="Costo">            
                     </div>
-                    <input type="submit" value="Modificar" class="btn marginBefore tableHeadingBackground">
+                    <template v-if="disabled">
+                       <input type="submit" value="Modificar" @click="modificarServicio()" class="btn marginBefore tableHeadingBackground">
+                    </template>
                 </form>
             </div>
         </div>
@@ -37,7 +41,7 @@
 	 export default {
         name: 'RegistroServicio',
         mounted(){
-            this.servicio = this.$route.params.servicio;
+            this.servicio = this.$parent.servicio;
         	},
         data(){
             return{
@@ -49,6 +53,7 @@
                     descripcion: '',
                     costo: 0,
                 },
+                disabled: true,
             }
         },
         methods: {

@@ -7,35 +7,8 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav">
-                    <li class="nav-item active">
-                        <router-link to="/"><a class="nav-link" href="#">Inicio<span class="sr-only">(current)</span></a></router-link>
-                    </li>
                     <li class="nav-item">
-                        <router-link to="/turno/principal-turno"><a class="nav-link" href="#">Turnos</a></router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link to="/servicio/principal-servicio"><a class="nav-link" href="#">Servicios</a></router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link to="/evento/principal-evento"><a class="nav-link" href="#">Eventos</a></router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link to="/empleado/principal-empleado"><a class="nav-link" href="#">Empleados</a></router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link to="/cliente/principal-cliente"><a class="nav-link" href="#">Clientes</a></router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link to="/tramo/principal-tramo"><a class="nav-link" href="#">Tramos</a></router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link to="/prestador/principal-prestador"><a class="nav-link" href="#">Prestadores</a></router-link>
-                    </li>
-                     <li class="nav-item">
-                        <router-link to="/plan/principal-plan"><a class="nav-link" href="#">Planes</a></router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link to="/empleado/listar-informe-horas"><a class="nav-link" href="#">Informe horas</a></router-link>
+                        <router-link to="/turno/principal-turno"><a class="nav-link" href="#">Turnos<span class="sr-only">(current)</span></a></router-link>
                     </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
@@ -55,7 +28,7 @@
 <script>
 
 export default {
-  name: 'navadmin',
+  name: 'NavEmpleado',
   data(){
       return{
           logeado: false,

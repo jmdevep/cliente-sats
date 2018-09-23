@@ -4,6 +4,24 @@
         <template v-if="verMarcar">
         <div class="row">
             <div class="col-sm-12">
+              <div class="form-group">
+                <label class="darkTextCustom">Fecha Inicio</label>
+                <datetime type="datetime" value-zone="America/Montevideo"
+  zone="America/Montevideo"
+  format="yyyy-MM-dd HH:mm:ss"
+  :phrases="{ok: 'Continuar', cancel: 'Cancelar'}" v-model="fechaInicioSeleccionada"></datetime>
+                {{ this.fechaInicioSeleccionada }} <!-- https://mariomka.github.io/vue-datetime/ -->
+              </div>
+              <div class="form-group">
+                <label class="darkTextCustom">Fecha Fin</label>
+                <datetime type="datetime"   value-zone="America/Montevideo"
+  zone="America/Montevideo"
+  format="yyyy-MM-dd HH:mm:ss"
+  :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  v-model="fechaFinSeleccionada"></datetime>
+                {{ this.fechaFinSeleccionada }}
+              </div>
+              <b-btn class="btn btn-success" @click="filtroActualizado()">Buscar <i class="fas fa-search"></i></b-btn>
+              
                 <template v-if="turnosActivos.length > 0">
                     <table class="table table-responsive table-hover">
                         <caption class="captionCustom"><h3>Turno activo</h3> <i v-show="loading" class="fa fa-spinner fa-spin"></i> </caption>
@@ -186,24 +204,24 @@
                     </tbody>
                 </table>
                 <b-modal id="marcarHoraModal" ref="marcarHoraModal" v-model="mostrarModalHora" title="Marcar turno">
-                                            <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                                            <p class="my-4">Turno seleccionado: {{puestoSeleccionado.inicio}} a {{puestoSeleccionado.fin}}</p>
-                                            <div class="form-group">
-                                                <label for="horaI" class="darkTextCustom">Hora de ingreso a marcar</label>
-                                                <input type="time" class="form-control border-success" id="horaI" v-model="marcarHoraIngreso"/>
-                                            </div>
-                                            <div class="form-group">
-                                                    <label for="horaS" class="darkTextCustom">Hora de salida a marcar</label>
-                                                    <input type="time" class="form-control border-success" id="horaS" v-model="marcarHoraSalida"/>
-                                                    <p> {{ resultadoOperacionMarcar }}</p>
-                                            </div>
-                                            <div slot="modal-footer" class="w-100">
-                                                <p class="float-left"></p>
-                                                <b-btn size="sm" id="btnMarcarHora" :disabled="habilitarBotonHora" class="float-right" variant="primary" @click="controlarEventoMarcarTurno(); mostrar=false">
-                                                    Marcar hora
-                                                </b-btn>
-                                            </div>
-                                        </b-modal>
+                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
+                    <p class="my-4">Turno seleccionado: {{puestoSeleccionado.inicio}} a {{puestoSeleccionado.fin}}</p>
+                    <div class="form-group">
+                        <label for="horaI" class="darkTextCustom">Hora de ingreso a marcar</label>
+                        <input type="time" class="form-control border-success" id="horaI" v-model="marcarHoraIngreso"/>
+                    </div>
+                    <div class="form-group">
+                            <label for="horaS" class="darkTextCustom">Hora de salida a marcar</label>
+                            <input type="time" class="form-control border-success" id="horaS" v-model="marcarHoraSalida"/>
+                            <p> {{ resultadoOperacionMarcar }}</p>
+                    </div>
+                    <div slot="modal-footer" class="w-100">
+                        <p class="float-left"></p>
+                        <b-btn size="sm" id="btnMarcarHora" :disabled="habilitarBotonHora" class="float-right" variant="primary" @click="controlarEventoMarcarTurno(); mostrar=false">
+                            Marcar hora
+                        </b-btn>
+                    </div>
+                </b-modal>
                 <ul class="pagination">
                     <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==1) }">
                         <a @click="cargarAnterior()" class="page-link"  aria-label="Previous">
@@ -225,444 +243,407 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    const moment = require('moment-timezone');
-	 export default {
-        name: 'ListadoTurno',
-        mounted(){
-            this.resultadoOperacion = this.$route.params.resultadoOperacion;
-            this.loading = true;
-            var usuario = this.$session.get('usuario');
-            if(usuario.tipo.id == 1){
-                this.verModificar = false;
-                this.verMarcar = true;
-            }
-            else if(usuario.tipo.id == 2){
-                this.verModificar = true;
-                this.verMarcar = true;
-            }
-            else if(usuario.tipo.id == 3){
-                this.verModificar = true;
-                this.verMarcar = false;
-            }
-            axios.get(`${process.env.BASE_URL}/api/turno/lista-turnos-activos`, {
-                params: {
-                    condiciones: {
-                        campo: 'id_empleado',
-                        valor: '10',
-                        fechaInicio: this.obtenerFechaActual(),
-                        fechaFin: this.obtenerFechaActual(),
-                    },
-                }
-            })
-            .then((res)=>{
-                console.log(res);
-                if(res.data.resultado == 100){
-                    this.turnosActivos = res.data.listaTurnos;
-                    if(res.data.cantidadElementos <= this.tamanoPagina){
-                        this.cantidadPaginas = 1;
-                    } else {
-                        this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
-                    }
-                    console.log(this.cantidadPaginas);
-                    this.indexActual = 1;
-                }
-                this.loading = false;
-        	});
-            axios.get(`${process.env.BASE_URL}/api/turno/lista-turnos-activables`, {
-                params: {
-                    condiciones: {
-                        campo: 'id_empleado',
-                        valor: '10',
-                        fechaInicio: this.obtenerFechaActual(),
-                        fechaFin: this.obtenerFechaActual(),
-                    },
-                }
-            })
-            .then((res)=>{
-                console.log(res);
-                
-                if(res.data.resultado == 100){
-                    this.turnosActivables = res.data.listaTurnos;
-                    if(res.data.cantidadElementos <= this.tamanoPagina){
-                        this.cantidadPaginas = 1;
-                    } else {
-                        this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
-                    }
-                    console.log(this.cantidadPaginas);
-                    this.indexActual = 1;
-                }
-                this.loading = false;
-        	});
-            axios.get(`${process.env.BASE_URL}/api/turno/lista-turnos`, {
-                params: {
-                    condiciones: {
-                        orden: 'DESC',
-                        tamanoPagina: this.tamanoPagina,
-                        indicePagina: this.indicePagina,
-                        campo: 'id_empleado',
-                        valor: '10',
-                        fechaInicio: '2018-09-03 00:00:00',
-                        fechaFin: '2018-09-31 23:59:59',
-                    },
-                }
-            })
-        		.then((res)=>{
-                    console.log(res);
-                    
-        			if(res.data.resultado == 100){
-                        this.turnos = res.data.listaTurnos;
-                        if(res.data.cantidadElementos <= this.tamanoPagina){
-                            this.cantidadPaginas = 1;
-                        } else {
-                            this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
-                        }
-                        console.log(this.cantidadPaginas);
-                        this.indexActual = 1;
-                    }
-                    this.loading = false;
-        	});
-            this.loaded = true;
-        },
-        beforeCreate: function () {
-            var usuario = this.$session.get('usuario');
-            if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
-            this.$router.push('/usuario/login')
-            } 
-            if(usuario.tipo.id == 1){
-                this.verModificar = false;
-                this.verMarcar = true;
-            }
-            else if(usuario.tipo.id == 2){
-                this.verModificar = true;
-                this.verMarcar = false;
-            }
-            else if(usuario.tipo.id == 3){
-                this.verModificar = true;
-                this.verMarcar = false;
-            }
-        },
-        data(){
-            return{
-                resultadoOperacion: '',
-                loading: false,
-                loaded:false,
-                turnos: [],
-                turnosActivables: [],
-                turnosActivos: [],
-                tamanoPagina: 2,
-                indicePagina: 0,
-                cantidadPaginas: 0,
-                indexActual: 0,
-                marcarFechaIngreso: null,
-                marcarFechaSalida: null,
-                marcarHoraIngreso: null,
-                marcarHoraSalida: null,
-                resultadoOperacionMarcar: '',
-                verModificar: true,
-                verMarcar: true,
-                mostrarModalIngreso: false,
-                mostrarModalSalida: false,
-                mostrarModalHora: false,
-                habilitarBotonIngreso: false,
-                habilitarBotonSalida: false,
-                habilitarBotonHora: false,
-                puestoSeleccionado: {
-                    id: 0,
-                    inicio: '',
-                    fin: '',
-                    rol: {
-                        id: 0,
-                        nombre: '',
-                        descripcion: '',
-                    },
-                    empleado: null,
-                    estado: 0,
-                    tipo: 0,
-                    idTurno: 0,
-                },
-                turnoSeleccionado:{
-                    id: 0,
-                    inicio: '',
-                    fin: ''
-                },
-            }
-        },
-        methods: {
-            cargarDatos(index){
-                this.loading = true;
-                console.log(index);
-                axios.get(`${process.env.BASE_URL}/api/turno/lista-turnos-activos`, {
-                params: {
-                    condiciones: {
-                        campo: 'id_empleado',
-                        valor: '10',
-                        fechaInicio: this.obtenerFechaActual(),
-                        fechaFin: this.obtenerFechaActual(),
-                    },
-                }
-                })
-        		.then((res)=>{
-                    console.log("SI ANDA ESTO");
-                    console.log(res);
-                    console.log(res.data.resultado);
-        			if(res.data.resultado == 100){
-                        this.turnosActivos = res.data.listaTurnos;
-                        console.log(this.turnos);
-                        console.log(res.data.listaTurnos);
-                        this.indexActual = index;
-                    }
-        	    });
-                axios.get(`${process.env.BASE_URL}/api/turno/lista-turnos-activables`, {
-                params: {
-                    condiciones: {
-                        campo: 'id_empleado',
-                        valor : '10',
-                        fechaInicio: this.obtenerFechaActual(),
-                        fechaFin: this.obtenerFechaActual(),
-                    },
-                }
-                })
-        		.then((res)=>{
-                    console.log("SI ANDA ESTO");
-                    console.log(res);
-                    console.log(res.data.resultado);
-        			if(res.data.resultado == 100){
-                        this.turnosActivables = res.data.listaTurnos;
-                        console.log(this.turnos);
-                        console.log(res.data.listaTurnos);
-                        this.indexActual = index;
-                    }
-        	    });
-                axios.get(`${process.env.BASE_URL}/api/turno/lista-turnos`, {
-                    params: {
-                        condiciones: {
-                            orden: 'DESC',
-                            tamanoPagina: this.tamanoPagina,
-                            indicePagina: index -1,
-                            campo: 'id_empleado',
-                            valor : '10',
-                            fechaInicio: '2018-09-03 00:00:00',
-                            fechaFin: '2018-09-31 23:59:59',
-                        },
-                    }
-                })
-        		.then((res)=>{
-                    console.log("SI ANDA ESTO");
-                    console.log(res);
-                    console.log(res.data.resultado);
-        			if(res.data.resultado == 100){
-                        this.turnos = res.data.listaTurnos;
-                        console.log(this.turnos);
-                        console.log(res.data.listaTurnos);
-                        this.indexActual = index;
-                    }
-        	    });
-                this.loading = false;
-            },
-            limpiarCajas(){
-                this.loading = false,
-                this.loaded = false,
-                this.marcarFechaIngreso = null,
-                this.marcarFechaSalida = null,
-                this.marcarHoraIngreso = null,
-                this.marcarHoraSalida = null,
-                this.mostrarModalIngreso = false,
-                this.mostrarModalSalida = false,
-                this.mostrarModalHora = false,
-                this.habilitarBotonIngreso = false,
-                this.habilitarBotonSalida = false,
-                this.habilitarBotonHora = false,
-                this.puestoSeleccionado = {
-                    id: 0,
-                    inicio: '',
-                    fin: '',
-                    rol: {
-                        id: 0,
-                        nombre: '',
-                        descripcion: '',
-                    },
-                    empleado: null,
-                    estado: 0,
-                    tipo: 0,
-                    idTurno: 0,
-                };
-                this.turnoSeleccionado = {
-                    id: 0,
-                    inicio: '',
-                    fin: ''
-                };
-            },
-            obtenerFechasFiltro(inicio){
-                var fechaActual = this.obtenerFechaActual();
-                if(inicio){
-                    fechaActual.setHours(0,0,0,0);
-                }else{
-                    fechaActual.setHours(23,0,59,0);
-                }
-            },
-            controlarEventoMarcarTurnoSalida(puesto, turno){
-                if (!this.marcarHoraSalida) {
-                    this.resultadoOperacionMarcar = "Debe ingresar hora";
-                } else {
-                    this.marcarTurno(false);
-                }
-            },
-            controlarEventoMarcarTurnoEntrada(){
-                console.log(this.marcarHoraIngreso);
-                if (!this.marcarHoraIngreso) {
-                    this.resultadoOperacionMarcar = "Debe ingresar hora";
-                    return true;
-                } else {
-                    this.marcarTurno(true);
-                }
-            },
-            controlarEventoMarcarTurno(){
-                this.loading = true;
-                console.log(this.marcarHoraIngreso);
-                if (!this.marcarHoraIngreso || !this.marcarHoraSalida) {
-                    this.resultadoOperacionMarcar = "Debe ingresar hora de entrada y salida";
-                    return true;
-                } else {
-                    this.marcarTurno(true);
-                }
-            },
-            marcarTurno(ingreso){
-                this.habilitarBotones(true);
-                console.log(ingreso);
-                this.loading = true;
-                var fecha;
-                if(ingreso){
-                    console.log(this.marcarFechaIngreso);
-                    var fechaSola = this.marcarFechaIngreso.split(" ");
-                    fechaSola[0] = moment.parseZone(fechaSola[0], 'DD/MM/YYYY').format('YYYY-MM-DD');
-                    console.log(fechaSola[0]);
-                    fecha  = moment.parseZone(`${fechaSola[0]} ${this.marcarHoraIngreso}`, 'YYYY-MM-DD HH:mm:ss').format();
-                    fecha = fecha.replace("T", " ");
-                    fecha = fecha.replace("Z", "");
-                    console.log(fecha);
-
-                    console.log(fecha);
-                var idPuesto = this.puestoSeleccionado.id;
-                console.log(this.turnoSeleccionado);
-                axios.get(`${process.env.BASE_URL}/api/turno/marcar-ingreso-turno`, {
-                params: {
-                    condiciones:{
-                        idPuesto: idPuesto,
-                        hora: fecha,
-                    }
-                }
-                })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 3004){
-                        var resultado = res.data.filasAfectadas;
-                        console.log("resullllll");
-                        console.log(resultado);
-                        if(resultado > 0){
-                            /*this.ocultarModales();*/
-                            this.limpiarCajas();
-                            resultadoOperacionMarcar = 'Se ha marcado ingreso satisfactoriamente.';
-                        } else {
-                            this.resultadoOperacionMarcar = 'No se han realizado cambios.';                            
-                        }
-                        console.log(resultado);
-                    }
-                    else{
-                        this.resultadoOperacionMarcar = 'Ocurrió un error.';
-                    }
-                    
-                });
-                }
-                else{
-                    console.log(this.marcarFechaSalida);
-                    var fechaSola = this.marcarFechaSalida.split(" ");
-                    fechaSola[0] = moment.parseZone(fechaSola[0], 'DD/MM/YYYY').format('YYYY-MM-DD');
-                    console.log(fechaSola[0]);
-                    fecha = moment.parseZone(`${fechaSola[0]} ${this.marcarHoraSalida}`, 'YYYY-MM-DD HH:mm:ss').format();
-                    fecha = fecha.replace("T", " ");
-                    fecha = fecha.replace("Z", "");
-                    console.log(fecha);
-
-                var idPuesto = this.puestoSeleccionado.id;
-                console.log(this.puestoSeleccionado);
-                console.log(this.turnoSeleccionado);
-                axios.get(`${process.env.BASE_URL}/api/turno/marcar-salida-turno`, {
-                params: {
-                    puesto: this.puestoSeleccionado,
-                    turno: this.turnoSeleccionado,
-                    hora: fecha,
-                }
-                })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 3004){
-                        var resultado = res.data.filasAfectadas;
-                        console.log("resullllll");
-                        console.log(resultado);
-                        if(resultado > 0){
-                            /*this.ocultarModales();*/
-                            this.limpiarCajas();
-                            resultadoOperacionMarcar = 'Se ha marcado salida satisfactoriamente.';
-                        } else {
-                            this.resultadoOperacionMarcar = 'No se han realizado cambios.';                            
-                        }
-                        console.log(resultado);
-                    }
-                    else{
-                        this.resultadoOperacionMarcar = 'Ocurrió un error.';
-                    }
-                    
-                });
-                }
-                
-                this.loading = false;
-                this.cargarDatos(this.indexActual);
-            },
-            ocultarModales(){
-                this.mostrarModalIngreso = false;
-                this.mostrarModalSalida = false;
-                this.mostrarModalHora = false;
-            },
-            habilitarBotones(habilitar){
-                console.log("habilitar");
-                console.log(habilitar);
-               this.habilitarBotonHora = habilitar;
-               this.habilitarBotonIngreso = habilitar;
-               this.habilitarBotonSalida = habilitar;
-            },
-            obtenerFechaActual(){
-                var fechaActual = moment(new Date(), 'YYYY-MM-DD HH:mm:ss');
-                fechaActual.tz("America/Argentina/Buenos_Aires").format('YYYY-MM-DD HH:mm:ss');
-                console.log(fechaActual);
-                return moment.parseZone(fechaActual).format('YYYY-MM-DD HH:mm:ss');
-            },
-            obtenerHoraActual(){
-                var horaActual = moment(new Date(), 'HH:mm:ss');
-                horaActual.tz("America/Argentina/Buenos_Aires").format('HH:mm:ss');
-                console.log(horaActual);
-                return moment.parseZone(horaActual).format('HH:mm:ss');
-            },
-            guardarDatosParaMarcarHora(ingreso, salida, turno, puesto){
-                this.habilitarBotones(false);
-                this.turnoSeleccionado = turno;
-                this.puestoSeleccionado = puesto;
-                console.log(turno);
-                console.log(puesto);
-                if(ingreso){
-                    this.marcarFechaIngreso = puesto.inicio;
-                }
-                if(salida){
-                    this.marcarFechaSalida = puesto.fin;
-                }
-                return true;
-            },
-            cargarSiguiente(){
-                this.cargarDatos(this.indexActual + 1);
-            },
-            cargarAnterior(){
-                this.cargarDatos(this.indexActual - 1);
-            }   
-        },    
+import axios from "axios";
+const moment = require("moment-timezone");
+export default {
+  name: "ListadoTurno",
+  mounted() {
+    this.fechaInicioSeleccionada = moment()
+      .startOf("day")
+      .format("YYYY-MM-DD HH:mm:ss");
+    this.fechaFinSeleccionada = moment()
+      .endOf("day")
+      .format("YYYY-MM-DD HH:mm:ss");
+    this.resultadoOperacion = this.$route.params.resultadoOperacion;
+    this.loading = true;
+    this.cargarUsuarioLogueado();
+    this.loaded = true;
+  },
+  beforeCreate: function() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null) {
+      this.$router.push("/usuario/login");
     }
+    if (usuario.tipo.id == 1) {
+      this.verModificar = false;
+      this.verMarcar = true;
+    } else if (usuario.tipo.id == 2) {
+      this.verModificar = true;
+      this.verMarcar = false;
+    } else if (usuario.tipo.id == 3) {
+      this.verModificar = true;
+      this.verMarcar = false;
+    }
+  },
+  data() {
+    return {
+      fechaInicioSeleccionada: null,
+      fechaFinSeleccionada: null,
+      usuarioLogueado: null,
+      resultadoOperacion: "",
+      loading: false,
+      loaded: false,
+      turnos: [],
+      turnosActivables: [],
+      turnosActivos: [],
+      tamanoPagina: 2,
+      indicePagina: 0,
+      cantidadPaginas: 0,
+      indexActual: 0,
+      marcarFechaIngreso: null,
+      marcarFechaSalida: null,
+      marcarHoraIngreso: null,
+      marcarHoraSalida: null,
+      resultadoOperacionMarcar: "",
+      verModificar: true,
+      verMarcar: true,
+      mostrarModalIngreso: false,
+      mostrarModalSalida: false,
+      mostrarModalHora: false,
+      habilitarBotonIngreso: false,
+      habilitarBotonSalida: false,
+      habilitarBotonHora: false,
+      idEmpleado: 0,
+      puestoSeleccionado: {
+        id: 0,
+        inicio: "",
+        fin: "",
+        rol: {
+          id: 0,
+          nombre: "",
+          descripcion: ""
+        },
+        empleado: null,
+        estado: 0,
+        tipo: 0,
+        idTurno: 0
+      },
+      turnoSeleccionado: {
+        id: 0,
+        inicio: "",
+        fin: ""
+      }
+    };
+  },
+  methods: {
+    cargarUsuarioLogueado() {
+      this.usuarioLogueado = this.$session.get("usuario");
+      if (this.usuarioLogueado.tipo.id == 1) {
+        this.verModificar = false;
+        this.verMarcar = true;
+        this.idEmpleado = this.usuarioLogueado.empleado.id;
+        this.cargarDatos(0);
+      } else if (this.usuarioLogueado.tipo.id == 2) {
+        this.verModificar = true;
+        this.verMarcar = true;
+        this.idEmpleado = 0;
+        this.cargarTurnos(0);
+      } else if (this.usuarioLogueado.tipo.id == 3) {
+        this.verModificar = true;
+        this.verMarcar = false;
+        this.idEmpleado = 0;
+        this.cargarTurnos(0);
+      }
+      console.log(this.usuarioLogueado);
+    },
+    cargarTurnosActivables() {
+      axios
+        .get(`${process.env.BASE_URL}/api/turno/lista-turnos-activables`, {
+          params: {
+            condiciones: {
+              campo: "id_empleado",
+              valor: String(this.idEmpleado),
+              fechaInicio: this.obtenerFechaActual(),
+              fechaFin: this.fechaFinSeleccionada
+            }
+          }
+        })
+        .then(res => {
+          console.log(res);
+
+          if (res.data.resultado == 100) {
+            this.turnosActivables = res.data.listaTurnos;
+            if (res.data.cantidadElementos <= this.tamanoPagina) {
+              this.cantidadPaginas = 1;
+            } else {
+              this.cantidadPaginas = Math.ceil(
+                res.data.cantidadElementos / this.tamanoPagina
+              );
+            }
+            console.log(this.cantidadPaginas);
+            this.indexActual = 1;
+          }
+          this.loading = false;
+        });
+    },
+    cargarTurnosActivos() {
+      axios
+        .get(`${process.env.BASE_URL}/api/turno/lista-turnos-activos`, {
+          params: {
+            condiciones: {
+              campo: "id_empleado",
+              valor: String(this.idEmpleado),
+              fechaInicio: this.fechaInicioSeleccionada,
+              fechaFin: this.fechaFinSeleccionada
+            }
+          }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 100) {
+            this.turnosActivos = res.data.listaTurnos;
+            if (res.data.cantidadElementos <= this.tamanoPagina) {
+              this.cantidadPaginas = 1;
+            } else {
+              this.cantidadPaginas = Math.ceil(
+                res.data.cantidadElementos / this.tamanoPagina
+              );
+            }
+            console.log(this.cantidadPaginas);
+            this.indexActual = 1;
+          }
+          this.loading = false;
+        });
+    },
+    cargarTurnos(index) {
+      console.log("Index: ", index);
+      console.log("Fecha Inicio: ", this.fechaInicioSeleccionada);
+      var fechaInicio = this.obtenerFechaFormateada(this.fechaInicioSeleccionada);
+      console.log("Fecha Inicio Formateada: ", fechaInicio);
+      var fechaFin = this.obtenerFechaFormateada(this.fechaFinSeleccionada);
+      console.log(fechaInicio);
+      console.log(fechaFin);
+      axios
+        .get(`${process.env.BASE_URL}/api/turno/lista-turnos`, {
+          params: {
+            condiciones: {
+              orden: "DESC",
+              tamanoPagina: this.tamanoPagina,
+              indicePagina: index,
+              campo: "id_empleado",
+              valor: String(this.idEmpleado),
+              fechaInicio: fechaInicio,
+              fechaFin: fechaFin
+            }
+          }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 100) {
+            this.turnos = res.data.listaTurnos;
+            this.indexActual = index;
+          } else if (res.data.resultado == 101) {
+            this.turnos = [];
+          }
+        });
+      this.loading = false;
+    },
+    filtroActualizado() {
+      this.cargarTurnos(0);
+    },
+    cargarDatos(index) {
+      this.loading = true;
+      console.log(index);
+      this.cargarTurnosActivos();
+      this.cargarTurnosActivables();
+      this.cargarTurnos(index);
+      this.loading = false;
+    },
+    limpiarCajas() {
+      (this.loading = false),
+        (this.loaded = false),
+        (this.marcarFechaIngreso = null),
+        (this.marcarFechaSalida = null),
+        (this.marcarHoraIngreso = null),
+        (this.marcarHoraSalida = null),
+        (this.mostrarModalIngreso = false),
+        (this.mostrarModalSalida = false),
+        (this.mostrarModalHora = false),
+        (this.habilitarBotonIngreso = false),
+        (this.habilitarBotonSalida = false),
+        (this.habilitarBotonHora = false),
+        (this.puestoSeleccionado = {
+          id: 0,
+          inicio: "",
+          fin: "",
+          rol: {
+            id: 0,
+            nombre: "",
+            descripcion: ""
+          },
+          empleado: null,
+          estado: 0,
+          tipo: 0,
+          idTurno: 0
+        });
+      this.turnoSeleccionado = {
+        id: 0,
+        inicio: "",
+        fin: ""
+      };
+    },
+    obtenerFechasFiltro(inicio) {
+      var fechaActual = this.obtenerFechaActual();
+      if (inicio) {
+        fechaActual.setHours(0, 0, 0, 0);
+      } else {
+        fechaActual.setHours(23, 0, 59, 0);
+      }
+    },
+    controlarEventoMarcarTurnoSalida(puesto, turno) {
+      if (!this.marcarHoraSalida) {
+        this.resultadoOperacionMarcar = "Debe ingresar hora";
+      } else {
+        this.marcarTurnoSalida();
+      }
+    },
+    obtenerFechaFormateadaPuesto(fecha){
+      return fecha.replace("T", " ");
+    },
+    obtenerFechaFormateada(fecha) {
+      console.log("Fecha sin formato: ", fecha);
+      var fechaFormateada = moment(fecha, "YYYY-MM-DD HH:mm:ss");
+      console.log("Fecha despues de formato: ", fechaFormateada);
+      console.log("Retorno: ", moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss"));
+      return moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
+     
+    },
+    marcarTurnoSalida() {
+      var fecha = this.obtenerFechaFormateada(this.marcarFechaSalida);
+      var idPuesto = this.puestoSeleccionado.id;
+      axios
+        .get(`${process.env.BASE_URL}/api/turno/marcar-salida-turno`, {
+          params: {
+            puesto: this.puestoSeleccionado,  
+            turno: this.turnoSeleccionado,
+            hora: fecha
+          }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 3004) {
+            var resultado = res.data.filasAfectadas;
+            console.log("resullllll");
+            console.log(resultado);
+            if (resultado > 0) {
+              /*this.ocultarModales();*/
+              this.limpiarCajas();
+              resultadoOperacionMarcar =
+                "Se ha marcado salida satisfactoriamente.";
+            } else {
+              this.resultadoOperacionMarcar = "No se han realizado cambios.";
+            }
+            console.log(resultado);
+          } else {
+            this.resultadoOperacionMarcar = "Ocurrió un error.";
+          }
+        });
+      this.cargarDatos();
+    },
+    marcarTurnoEntrada() {
+      var fecha = this.obtenerFechaFormateada(this.marcarFechaIngreso);
+      var idPuesto = this.puestoSeleccionado.id;
+      console.log(this.turnoSeleccionado);
+      return axios
+        .get(`${process.env.BASE_URL}/api/turno/marcar-ingreso-turno`, {
+          params: {
+            condiciones: {
+              idPuesto: idPuesto,
+              hora: fecha
+            }
+          }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 3004) {
+            var resultado = res.data.filasAfectadas;
+            console.log("resullllll");
+            console.log(resultado);
+            if (resultado > 0) {
+              this.limpiarCajas();
+              this.resultadoOperacionMarcar =
+                "Se ha marcado ingreso satisfactoriamente.";
+              return true;
+            } else {
+              this.resultadoOperacionMarcar = "No se han realizado cambios.";
+            }
+            console.log(resultado);
+          } else {
+            this.resultadoOperacionMarcar = "Ocurrió un error.";
+          }
+          return false;
+        });
+      this.cargarDatos();
+    },
+    controlarEventoMarcarTurnoEntrada() {
+      console.log(this.marcarHoraIngreso);
+      if (!this.marcarHoraIngreso) {
+        this.resultadoOperacionMarcar = "Debe ingresar hora";
+      } else {
+        this.marcarTurnoEntrada();
+      }
+    },
+    controlarEventoMarcarTurno() {
+      this.loading = true;
+      console.log(this.marcarHoraIngreso);
+      if (!this.marcarHoraIngreso || !this.marcarHoraSalida) {
+        this.resultadoOperacionMarcar =
+          "Debe ingresar hora de entrada y salida";
+        return true;
+      } else {
+        this.marcarTurnoEntrada().then(respuestaCorrecta => {
+          if (respuestaCorrecta) {
+            this.marcarTurnoSalida();
+          } else {
+            //ERROR EN MARCAR ENTRADA NO SE MARCA SALIDA.
+          }
+        });
+      }
+    },
+    ocultarModales() {
+      this.mostrarModalIngreso = false;
+      this.mostrarModalSalida = false;
+      this.mostrarModalHora = false;
+    },
+    habilitarBotones(habilitar) {
+      console.log("habilitar");
+      console.log(habilitar);
+      this.habilitarBotonHora = habilitar;
+      this.habilitarBotonIngreso = habilitar;
+      this.habilitarBotonSalida = habilitar;
+    },
+    obtenerFechaActual() {
+      var fechaActual = moment(new Date(), "YYYY-MM-DD HH:mm:ss");
+      fechaActual
+        .tz("America/Argentina/Buenos_Aires")
+        .format("YYYY-MM-DD HH:mm:ss");
+      console.log(fechaActual);
+      return moment.parseZone(fechaActual).format("YYYY-MM-DD HH:mm:ss");
+    },
+    obtenerHoraActual() {
+      var horaActual = moment(new Date(), "HH:mm:ss");
+      horaActual.tz("America/Argentina/Buenos_Aires").format("HH:mm:ss");
+      console.log(horaActual);
+      return moment.parseZone(horaActual).format("HH:mm:ss");
+    },
+    guardarDatosParaMarcarHora(ingreso, salida, turno, puesto) {
+      this.habilitarBotones(false);
+      this.turnoSeleccionado = turno;
+      this.puestoSeleccionado = puesto;
+      if (ingreso) {
+        this.marcarFechaIngreso = this.obtenerFechaFormateadaPuesto(puesto.inicio);
+      }
+      if (salida) {
+        this.marcarFechaSalida = this.obtenerFechaFormateadaPuesto(puesto.fin);
+      }
+      return true;
+    },
+    cargarSiguiente() {
+      this.cargarDatos(this.indexActual + 1);
+    },
+    cargarAnterior() {
+      this.cargarDatos(this.indexActual - 1);
+    }
+  }
+};
 </script>

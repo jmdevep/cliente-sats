@@ -7,15 +7,19 @@ import VueSession from 'vue-session'
 import dotenv from 'dotenv'
 import BootstrapVue from 'bootstrap-vue'
 import JsonExcel from 'vue-json-excel'
+import Datetime from 'vue-datetime'
+// You need a specific loader for CSS files
+import 'vue-datetime/dist/vue-datetime.css'
+
 
 dotenv.config()
 
 var options = {
   persist: true
 }
-
 Vue.use(VueSession, options)
 Vue.use(BootstrapVue);
+Vue.use(Datetime)
 Vue.config.productionTip = false
 Vue.component('downloadExcel', JsonExcel)
 /*

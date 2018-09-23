@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1 class="mainTitle">
-            Eventos
+            Servicios
         </h1>
         <hr class="titleUnderline">
             <ul class="nav nav-tabs">
@@ -24,35 +24,28 @@
 <script>
     import axios from 'axios';
 
-    import RegistroEvento from './RegistroEvento.vue'
-    import ListadoEvento from './ListadoEvento.vue'
-    import RegistroLlamado from '../llamado/RegistroLlamado.vue'
-    import ListadoLlamado from '../llamado/ListadoLlamado.vue'
-    import DetalleEvento from './DetalleEvento'
+    import ListadoServicio from './ListadoServicio.vue'
+    import RegistroServicio from './RegistroServicio.vue'
+    import DetalleServicio from './DetalleServicio.vue'
     
 
 	export default {
-        name: 'PrincipalEvento',
+        name: 'PrincipalServicio',
         mounted(){
 
         },
          components: {
-            RegistroEvento,
-            ListadoEvento,
-            RegistroLlamado,
-            ListadoLlamado,
-            DetalleEvento,
-
+            RegistroServicio,
+            ListadoServicio,
+            DetalleServicio,
         },
         data(){
             return {
-            currentTab: ListadoEvento,
+            currentTab: ListadoServicio,
             tabs: [
-                { component: RegistroEvento, title: 'Registrar Evento'},
-                { component: ListadoEvento, title: 'Lista Eventos' },
-                { component: RegistroLlamado, title: 'Registrar Llamado'},
-                { component: ListadoLlamado, title: 'Lista Llamados'},
-                { component: DetalleEvento, title: 'Detalle Evento', disabled: true},
+                { component: ListadoServicio, title: 'Lista Servicios' },
+                { component: RegistroServicio, title: 'Registrar Servicio'},
+                { compomnent: DetalleServicio, title: 'Detalle Servicio'}
             ],
             }
         },

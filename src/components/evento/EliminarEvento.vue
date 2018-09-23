@@ -1,9 +1,8 @@
 <template>
     <div>
         <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Seguro desea eliminar este evento?</div>
-            {{ resultadoOperacion }}
-            
+            {{ resultadoOperacion}}
+            <p>Seguro que desea eliminar este evento?</p>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="eliminarEvento()">
                     <input type="submit" value="Eliminar" class="btn marginBefore tableHeadingBackground">
@@ -18,7 +17,7 @@
 	 export default {
         name: 'EliminarEvento',
         mounted(){
-            this.evento = this.$route.params.evento;
+            this.evento = this.$parent.evento;
             },
             beforeCreate: function () {
                 var usuario = this.$session.get('usuario');
@@ -42,9 +41,9 @@
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5800){
-                            this.$router.push({ name: 'PrincipalEvento', params: { resultadoOperacion: "Evento eliminado satisfactoriamente." }});                                                        
+                            this.$parent.currentTab = this.$parent.tabs[6].component;                                              
                         } else if (res.data.resultado == 5801){
-                            this.$router.push({ name: 'PrincipalEvento', params: { resultadoOperacion: "El evento seleccionado no existe." }});                                                        
+                            this.resultadoOperacion = "El evento seleccionado no existe.";                                                      
                         }
                     });
             }

@@ -1,6 +1,11 @@
 <template>
-  <div id="app">   
-    <navadmin/>
+  <div id="app">
+    <template v-if="admin">   
+        <nav-admin/>
+    </template>
+    <template v-else-if="empleado">
+        <nav-empleado/>
+    </template>
     <div id="contenido" class="container">
         <router-view/>
     </div>
@@ -8,13 +13,34 @@
 </template>
 
 <script>
-import navadmin from './components/parciales/navadmin'
+import navadmin from './components/parciales/navadmin';
+import NavEmpleado from './components/parciales/NavEmpleado';
 
 export default {
   name: 'App',
   components: {
-      navadmin
-  }
+      'nav-admin': navadmin,
+      'nav-empleado': NavEmpleado
+  },
+  data() {
+    return {
+        admin: false,
+        empleado: true,
+        logueado: false,
+    };
+  },
+  mounted() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null) {
+      this.$router.push("/usuario/login");
+    } else if(usuario.tipo.id == 1){
+        this.empleado = true;
+        this.logueado = true;
+    } else if (usuario.tipo.id == 2){
+        this.admin = true;
+        this.logueado = true;        
+    }
+  },
 }
 
 window.setInterval(function(){

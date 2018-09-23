@@ -1,9 +1,13 @@
 <template>
     <div>
-        <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Editar de Eventos</div>
+        <div class="mb-3 card">
             <div class="card-body darkTextCustom">
-                <form v-on:submit.prevent="modificarEvento()">
+                <form>
+                    <template v-if="!tieneEmpleados">
+                        <button @click="disabled = !disabled" class="btn marginBefore tableHeadingBackground">
+                            {{ disabled ? "Editar" : "Cancelar"}}
+                        </button>
+                    </template>
                     <p v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
@@ -12,10 +16,8 @@
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                     <p>{{ resultadoOperacion }}</p>
-
                     
-                    <multi-select v-model="personaSeleccionada" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
-                        
+                    <multi-select :disabled="disabled" v-model="personaSeleccionada" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
                         <template slot="option" slot-scope="props">
                             <div class="option__desc">
                                 <span class="option__title">{{ props.option.nombre }}</span>
@@ -26,8 +28,7 @@
                     </multi-select>
                     <br> 
                     
-                    <multi-select v-model="servicioSeleccionado" placeholder="Servicios" :optionsLimit="3" :tabindex="2" track-by="nombre" :options="servicios" :option-height="104" :custom-label="customLabelServicios" :show-labels="false">
-                        
+                    <multi-select  :disabled="disabled" v-model="servicioSeleccionado" placeholder="Servicios" :optionsLimit="3" :tabindex="2" track-by="nombre" :options="servicios" :option-height="104" :custom-label="customLabelServicios" :show-labels="false">  
                         <template slot="option" slot-scope="props">
                             <div class="option__desc">
                                 <span class="option__title">{{ props.option.nombre }}</span>
@@ -38,8 +39,7 @@
                     </multi-select>
                     <br>
 
-                    <multi-select v-model="tipoEventoSeleccionado" placeholder="Tipo Evento"  :optionsLimit="3" :tabindex="3" track-by="nombre" :options="tiposEventos" :option-height="104" :custom-label="customLabelTiposEventos" :show-labels="false">
-                        
+                    <multi-select :disabled="disabled" v-model="tipoEventoSeleccionado" placeholder="Tipo Evento"  :optionsLimit="3" :tabindex="3" track-by="nombre" :options="tiposEventos" :option-height="104" :custom-label="customLabelTiposEventos" :show-labels="false">
                         <template slot="option" slot-scope="props">
                             <div class="option__desc">
                                 <span class="option__title">{{ props.option.nombre }}</span>
@@ -51,26 +51,29 @@
                 
                     <div class="form-group">
                         <label for="fecha" class="darkTextCustom">Fecha</label>
-                        <input type="date" class="form-control border-success" v-model="fechaInicio" id="fecha" placeholder="2019-12-05">
+                        <input type="date" :disabled="disabled" class="form-control border-success" v-model="fechaInicio" id="fecha" placeholder="2019-12-05">
                     </div>
                     <div class="form-group">
                         <label for="horaI" class="darkTextCustom">Hora Inicio</label>
-                        <input type="time"  class="form-control border-success" id="horaI" v-model="horaInicio"/>
+                        <input type="time" :disabled="disabled" class="form-control border-success" id="horaI" v-model="horaInicio"/>
                     </div>
                     <div class="form-group">
                         <label for="fechaF" class="darkTextCustom">Fecha Finalización</label>
-                        <input type="date" class="form-control border-success" v-model="fechaFin" id="fechaF" placeholder="2019-12-05">
+                        <input type="date" :disabled="disabled" class="form-control border-success" v-model="fechaFin" id="fechaF" placeholder="2019-12-05">
                     </div>
                     <div class="form-group">
                         <label for="horaF" class="darkTextCustom">Hora Finalización (Opcional) </label>
-                        <input type="time"  class="form-control border-success" id="horaF" v-model="horaFin"/>
+                        <input type="time" :disabled="disabled" class="form-control border-success" id="horaF" v-model="horaFin"/>
                     </div>
                     <div class="form-group">
                         <label for="direccion" class="darkTextCustom">Dirección</label>
-                        <input type="text" class="form-control border-success" v-model="evento.direccion" id="direccion" placeholder="direccion">
+                        <input type="text" :disabled="disabled" class="form-control border-success" v-model="evento.direccion" id="direccion" placeholder="direccion">
                     </div>
 
-                    <input type="submit" :disabled="disabled" value="Modificar" class="btn marginBefore tableHeadingBackground">
+                    <template v-if="!disabled">
+                        <input type="submit" @click="modificarEvento()" value="Modificar" class="btn marginBefore tableHeadingBackground">
+                    </template>
+
                 </form>
             </div>
         </div>
@@ -91,7 +94,7 @@
             this.cargarServicios();
             this.cargarTiposEventos();
 
-            this.evento = this.$route.params.evento;
+            this.evento = this.$parent.evento;
             this.personaSeleccionada = this.evento.persona; 
             this.servicioSeleccionado = this.evento.servicio; 
             this.tipoEventoSeleccionado = this.evento.tipo;
@@ -117,7 +120,7 @@
                 loading: false,
                 resultadoOperacion: '',
                 erroresForm: [],
-                disabled: false,
+                disabled: true,
             	localidades: [],
                 errorDisponibilidad: '',
                 evento: {
@@ -200,7 +203,7 @@
                 this.evento.finEvento  = moment(`${this.fechaFin} ${this.horaFin}`, 'YYYY-MM-DD HH:mm:ss').format();
                 this.loading = true;
 
-                delete this.personaSeleccionada.fechaNacimiento;
+                //delete this.personaSeleccionada.fechaNacimiento;
 
                 if(this.checkForm()){
                     this.evento.persona = this.personaSeleccionada;
@@ -214,8 +217,7 @@
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5804){
-                                this.$router.push({ name: 'PrincipalEvento', params: { resultadoOperacion: "Evento agregado satisfactoriamente." }});                            
-                                this.limpiarCajas();    
+                                this.resultadoOperacion = "Evento modificado"; 
                             } else if (res.data.resultado == 5805){
                                 this.resultadoOperacion = "Error en modificacion.";
                             }

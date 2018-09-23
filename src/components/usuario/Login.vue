@@ -33,81 +33,87 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'Login',
-        mounted(){
-            var usuario = this.$session.get('usuario');
-            if (this.$session.exists() && usuario != null) {
-                this.$router.push('/');
-            } 
-        	},
-        data(){
-            return{
-                loading: false,
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: true,
-            	usuario: {
-                    nombre: '',
-                    contrasena: '',
-                    tipo: {
-                        id: 0,
-                    },
-                    idEmpleado: 0,
-                },
-                errorDisponibilidad: '',
-            }
-
-        },
-        methods: {
-            login() {
-                
-                if(this.usuario.nombre != ''){
-                    var params = this.usuario;
-                    console.log(params);
-                    axios.post(`${process.env.BASE_URL}/api/usuario/validar-usuario`, params)
-                        .then((res)=>{
-                            console.log(res);
-                            if(res.data.resultado == 1110){
-                                this.disabled = true;
-                                this.$session.start();
-                                this.$session.set('usuario', res.data.usuario);
-                                window.location.reload();
-                                this.$router.push('/');
-                            } else {
-                                this.resultadoOperacion = "Error en los datos de acceso.";                              
-                            }
-                    });
-                }
-            },
-
-            limpiarCajas(){
-                this.usuario.nombre = '';
-                this.usuario.contrasena = '';
-                this.usuario.idEmpleado = 0;
-                errorDisponibilidad: '';
-            },
-            cargarEmpleadosDisponibles(){
-
-            },
-            checkForm() {
-                if (this.usuario.nombre && this.usuario.contrasena ) {
-                    return true;
-                }
-
-                this.erroresForm = [];
-
-                if (!this.usuario.nombre) {
-                    this.erroresForm.push('Nombre requerido.');
-                }
-                if (!this.usuario.contrasena) {
-                    this.erroresForm.push('Contraseña requerida.');
-                }
-                this.disabled = false;
-                return false;
-            }
-    
-        },    
+import axios from "axios";
+export default {
+  name: "Login",
+  mounted() {
+    var usuario = this.$session.get("usuario");
+    if (this.$session.exists() && usuario != null) {
+      this.$router.push("/");
     }
+  },
+  data() {
+    return {
+      loading: false,
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: true,
+      usuario: {
+        nombre: "",
+        contrasena: "",
+        tipo: {
+          id: 0
+        },
+        idEmpleado: 0
+      },
+      errorDisponibilidad: ""
+    };
+  },
+  methods: {
+    login() {
+      if (this.usuario.nombre != "") {
+        var params = this.usuario;
+        console.log(params);
+        axios
+          .post(`${process.env.BASE_URL}/api/usuario/validar-usuario`, params)
+          .then(res => {
+            console.log(res);
+            if (res.data.resultado == 1110) {
+              this.disabled = true;
+              this.$session.start();
+              this.$session.set("usuario", res.data.usuario);
+              console.log(res.data.usuario);
+              window.location.reload();
+              this.redireccionar();
+            } else {
+              this.resultadoOperacion = "Error en los datos de acceso.";
+            }
+          });
+      }
+    },
+    redireccionar() {
+       var usuario = this.$session.get("usuario");
+      if (!this.$session.exists() || usuario == null) {
+        this.$router.push("/usuario/login");
+      } else if (usuario.tipo.id == 1) {
+        this.$router.push("/turno/principal-turno");
+      } else if (usuario.tipo.id == 2 || usuario.tipo.id == 3) {
+        this.$router.push("/");
+      }
+    },
+    limpiarCajas() {
+      this.usuario.nombre = "";
+      this.usuario.contrasena = "";
+      this.usuario.idEmpleado = 0;
+      errorDisponibilidad: "";
+    },
+    cargarEmpleadosDisponibles() {},
+    checkForm() {
+      if (this.usuario.nombre && this.usuario.contrasena) {
+        return true;
+      }
+
+      this.erroresForm = [];
+
+      if (!this.usuario.nombre) {
+        this.erroresForm.push("Nombre requerido.");
+      }
+      if (!this.usuario.contrasena) {
+        this.erroresForm.push("Contraseña requerida.");
+      }
+      this.disabled = false;
+      return false;
+    }
+  }
+};
 </script>

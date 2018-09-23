@@ -48,7 +48,6 @@
                         <label for="motivo" class="darkTextCustom">Motivo del llamado *</label>
                         <input type="text" class="form-control border-success" v-model="llamado.motivoLlamado" id="motivo" placeholder="motivo">
                     </div>
-
                     <div class="form-group">
                         <label for="fecha" class="darkTextCustom">Fecha recibido *</label>
                         <input type="date" class="form-control border-success" v-model="fechaRecibido" id="fecha" placeholder="2019-12-05">

@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import HelloWorld from '@/components/HelloWorld';
+import Inicio from '@/components/Inicio';
 
 // Usuario
 const RegistroUsuario = () => import('@/components/usuario/RegistroUsuario');
@@ -89,10 +89,12 @@ const AsignarViaje = () => import('@/components/evento/AsignarViaje');
 const RegistroLlamado = () => import('@/components/llamado/RegistroLlamado');
 const EditarLlamado = () => import('@/components/llamado/EditarLlamado');
 const EliminarLlamado = () => import('@/components/llamado/EliminarLlamado');
+const DetalleEvento = () => import('@/components/evento/DetalleEvento');
 
 //Principales
 const PrincipalPrestador= () => import('@/components/prestador/PrincipalPrestador')
 const PrincipalEmpleado = () => import('@/components/empleado/PrincipalEmpleado')
+const PrincipalServicio = () => import('@/components/servicio/PrincipalServicio')
 const PrincipalCliente = () => import('@/components/cliente/PrincipalCliente')
 const PrincipalEvento  = () => import('@/components/evento/PrincipalEvento')
 const PrincipalTramo = () => import('@/components/tramo/PrincipalTramo')
@@ -106,7 +108,7 @@ Vue.use(Router)
 export default new Router({
   mode: 'history',
   routes: [
-    {path: '/', name: 'PruebaTabla', component: PruebaTabla},    
+    {path: '/', name: 'home', component: Inicio},    
     //Usuario
     {path: '/usuario/registro-usuario', name: 'RegistroUsuario', component: RegistroUsuario},
     {path: '/usuario/listado-usuario', name: 'ListadoUsuario', component: ListadoUsuario},
@@ -189,6 +191,7 @@ export default new Router({
     {path: '/evento/editar-evento', name: 'EditarEvento', component: EditarEvento},
     {path: '/evento/eliminar-evento', name: 'EliminarEvento', component: EliminarEvento},
     {path: '/evento/asignar-empleados-evento', name: 'AsignarEmpleadosEvento', component: AsignarEmpleadosEvento},
+    {path: '/evento/detalle-evento', name: 'DetalleEvento', component: DetalleEvento},
     {path: '/evento/asignar-viaje', name: 'AsignarViaje', component: AsignarViaje},
     {path: '/evento/registro-llamado', name: 'RegistroLlamado', component: RegistroLlamado},
     {path: '/evento/editar-llamado', name: 'EditarLlamado', component: EditarLlamado},
@@ -197,6 +200,7 @@ export default new Router({
     //Principales
     {path: '/prestador/principal-prestador', name: 'PrincipalPrestador', component: PrincipalPrestador},    
     {path: '/empleado/principal-empleado', name: 'PrincipalEmpleado', component: PrincipalEmpleado},
+    {path: '/servicio/principal-servicio', name: 'PrincipalServicio', component: PrincipalServicio},
     {path: '/cliente/principal-cliente', name: 'PrincipalCliente', component: PrincipalCliente},
     {path: '/evento/principal-evento', name: 'PrincipalEvento', component: PrincipalEvento},
     {path: '/tramo/principal-tramo', name: 'PrincipalTramo', component: PrincipalTramo},

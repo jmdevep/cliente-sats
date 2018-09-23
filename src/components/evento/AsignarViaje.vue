@@ -1,8 +1,7 @@
 <template>
     <div>
     
-        <div class="card border-success mb-3">
-            <div class="card-header greenBackground">Traslado </div>
+        <div class="mb-3 card">
             <div class="card-body darkTextCustom">
                 <template v-if="!existeViaje">
                     <p>Este evento no tiene un traslado registrado.</p>
@@ -87,7 +86,7 @@
         name: 'AsignarViaje',
         components: { 'multi-select': Multiselect },                           
         mounted(){
-            this.evento = this.$route.params.evento;
+            this.evento = this.$parent.evento;
             
             this.loading = true;    
 
