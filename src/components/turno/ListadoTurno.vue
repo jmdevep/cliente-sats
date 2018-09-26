@@ -1,23 +1,21 @@
 <template>
     <div>
         {{ resultadoOperacion }}
+        <br> 
         <template v-if="verMarcar">
         <div class="row">
             <div class="col-sm-12">
               <div class="form-group">
                 <label class="darkTextCustom">Fecha Inicio</label>
-                <datetime type="datetime" value-zone="America/Montevideo"
-  zone="America/Montevideo"
-  format="yyyy-MM-dd HH:mm:ss"
-  :phrases="{ok: 'Continuar', cancel: 'Cancelar'}" v-model="fechaInicioSeleccionada"></datetime>
+                <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}" v-model="fechaInicioSeleccionada"></datetime>
                 {{ this.fechaInicioSeleccionada }} <!-- https://mariomka.github.io/vue-datetime/ -->
               </div>
               <div class="form-group">
                 <label class="darkTextCustom">Fecha Fin</label>
                 <datetime type="datetime"   value-zone="America/Montevideo"
-  zone="America/Montevideo"
-  format="yyyy-MM-dd HH:mm:ss"
-  :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  v-model="fechaFinSeleccionada"></datetime>
+                  zone="America/Montevideo"
+                  format="yyyy-MM-dd HH:mm:ss"
+                  :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  v-model="fechaFinSeleccionada"></datetime>
                 {{ this.fechaFinSeleccionada }}
               </div>
               <b-btn class="btn btn-success" @click="filtroActualizado()">Buscar <i class="fas fa-search"></i></b-btn>
@@ -41,8 +39,8 @@
                         <tbody v-for="(turno, index) in turnosActivos" :key="index" class="tableBodyBackground">
                             <tr v-for="(puesto, index) in turno.puestos" :key="index">
                                 <th scope="row">{{ index + 1 }}</th>
-                                <td>{{ turno.inicio }}</td>
-                                <td>{{ turno.fin }}</td>
+                                <td>{{ puesto.inicio }}</td>
+                                <td>{{ puesto.fin }}</td>
                                 <template v-if="puesto.tipo == 1">
                                     <td>Guardia</td>
                                 </template>
@@ -122,9 +120,8 @@
                                             <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                                             <p class="my-4">Turno seleccionado: {{puestoSeleccionado.inicio}} a {{puestoSeleccionado.fin}}</p>
                                             <div class="form-group">
-                                                <label for="horaI" class="darkTextCustom">Hora de ingreso a marcar</label>
-                                                <input type="time" class="form-control border-success" id="horaI" v-model="marcarHoraIngreso"/>
-                                                <p>{{ resultadoOperacionMarcar }}</p>
+                                              <label for="horaI" class="darkTextCustom">Hora de ingreso a marcar</label>
+                                              <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  class="form-control border-success" v-model="marcarFechaIngreso"></datetime>
                                             </div>
                                             <div slot="modal-footer" class="w-100">
                                                 <p class="float-left"></p>
@@ -137,11 +134,11 @@
                                             <form @submit.stop.prevent="handleSubmit">
                                                 <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                                                 <p class="my-4">Turno seleccionado: {{puestoSeleccionado.inicio}} a {{puestoSeleccionado.fin}}</p>
-                                                <div class="form-group">
-                                                    <label for="horaS" class="darkTextCustom">Hora de salida a marcar</label>
-                                                    <input type="time" class="form-control border-success" id="horaS" v-model="marcarHoraSalida"/>
-                                                    <p> {{ resultadoOperacionMarcar }}</p>
-                                                </div>
+                                              <div class="form-group">
+                                                      <label for="horaS" class="darkTextCustom">Hora de salida a marcar</label>
+                                                      <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  class="form-control border-success" v-model="marcarFechaSalida"></datetime>
+                                                      <p> {{ resultadoOperacionMarcar }} </p>
+                                              </div>
                                             </form>
                                             <div slot="modal-footer" class="w-100">
                                                 <p class="float-left"></p>
@@ -208,11 +205,11 @@
                     <p class="my-4">Turno seleccionado: {{puestoSeleccionado.inicio}} a {{puestoSeleccionado.fin}}</p>
                     <div class="form-group">
                         <label for="horaI" class="darkTextCustom">Hora de ingreso a marcar</label>
-                        <input type="time" class="form-control border-success" id="horaI" v-model="marcarHoraIngreso"/>
+                <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  class="form-control border-success" v-model="marcarFechaIngreso"></datetime>
                     </div>
                     <div class="form-group">
                             <label for="horaS" class="darkTextCustom">Hora de salida a marcar</label>
-                            <input type="time" class="form-control border-success" id="horaS" v-model="marcarHoraSalida"/>
+                <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  class="form-control border-success" v-model="marcarFechaSalida"></datetime>
                             <p> {{ resultadoOperacionMarcar }}</p>
                     </div>
                     <div slot="modal-footer" class="w-100">
@@ -223,15 +220,15 @@
                     </div>
                 </b-modal>
                 <ul class="pagination">
-                    <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==1) }">
-                        <a @click="cargarAnterior()" class="page-link"  aria-label="Previous">
+                    <li class="page-item" v-bind:class="{ 'disabled' : (indexActualListadoGeneral==1) }">
+                        <a @click="cargarAnteriorListadoGeneral()" class="page-link"  aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                             <span class="sr-only">Anterior</span>
                         </a>
                     </li> 
-                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="cargarDatos(index)" class="page-link" >{{ index }}</a></li>
-                    <li class="page-item"  v-bind:class="{ 'disabled' : (indexActual==cantidadPaginas) }">
-                        <a @click="cargarSiguiente()" class="page-link"  aria-label="Next">
+                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActualListadoGeneral) }" v-for="index in cantidadPaginasListadoGeneral" :key="index"><a @click="cargarTurnos(index - 1)" class="page-link" >{{ index }}</a></li>
+                    <li class="page-item"  v-bind:class="{ 'disabled' : (indexActualListadoGeneral==cantidadPaginas) }">
+                        <a @click="cargarSiguienteListadoGeneral()" class="page-link"  aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                             <span class="sr-only">Siguiente</span>
                         </a>
@@ -289,7 +286,9 @@ export default {
       tamanoPagina: 2,
       indicePagina: 0,
       cantidadPaginas: 0,
+      cantidadPaginasListadoGeneral: 0,
       indexActual: 0,
+      indexActualListadoGeneral: 0,
       marcarFechaIngreso: null,
       marcarFechaSalida: null,
       marcarHoraIngreso: null,
@@ -408,7 +407,9 @@ export default {
     cargarTurnos(index) {
       console.log("Index: ", index);
       console.log("Fecha Inicio: ", this.fechaInicioSeleccionada);
-      var fechaInicio = this.obtenerFechaFormateada(this.fechaInicioSeleccionada);
+      var fechaInicio = this.obtenerFechaFormateada(
+        this.fechaInicioSeleccionada
+      );
       console.log("Fecha Inicio Formateada: ", fechaInicio);
       var fechaFin = this.obtenerFechaFormateada(this.fechaFinSeleccionada);
       console.log(fechaInicio);
@@ -429,9 +430,20 @@ export default {
         })
         .then(res => {
           console.log(res);
+
           if (res.data.resultado == 100) {
+            this.servicios = res.data.listaServicios;
             this.turnos = res.data.listaTurnos;
-            this.indexActual = index;
+            this.indexActualListadoGeneral = index;
+            if (res.data.cantidadElementos <= this.tamanoPagina) {
+              this.cantidadPaginasListadoGeneral = 1;
+            } else {
+              this.cantidadPaginasListadoGeneral = Math.ceil(
+                res.data.cantidadElementos / this.tamanoPagina
+              );
+            }
+            console.log(this.cantidadPaginasListadoGeneral);
+            this.indexActualListadoGeneral = 1;
           } else if (res.data.resultado == 101) {
             this.turnos = [];
           }
@@ -491,30 +503,44 @@ export default {
       }
     },
     controlarEventoMarcarTurnoSalida(puesto, turno) {
-      if (!this.marcarHoraSalida) {
-        this.resultadoOperacionMarcar = "Debe ingresar hora";
+      if (!this.marcarFechaSalida) {
+        this.resultadoOperacionMarcar = "Debe ingresar fecha";
       } else {
         this.marcarTurnoSalida();
       }
     },
-    obtenerFechaFormateadaPuesto(fecha){
-      return fecha.replace("T", " ");
+    obtenerFechaFormateadaPuesto(fecha) {
+      fecha.replace("T", " ");
+      var fechaFormateada = moment(fecha, "DD/MM/YYYY HH:mm:ss");
+      fechaFormateada = moment(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
+      return fechaFormateada;
     },
     obtenerFechaFormateada(fecha) {
       console.log("Fecha sin formato: ", fecha);
       var fechaFormateada = moment(fecha, "YYYY-MM-DD HH:mm:ss");
       console.log("Fecha despues de formato: ", fechaFormateada);
-      console.log("Retorno: ", moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss"));
+      console.log(
+        "Retorno: ",
+        moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss")
+      );
       return moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
-     
     },
     marcarTurnoSalida() {
+      this.puestoSeleccionado.fin = this.obtenerFechaFormateada(
+        this.marcarFechaSalida
+      );
+      console.log("Inicio Puesto sin formatear: ", this.puestoSeleccionado.inicio);
+      this.puestoSeleccionado.inicio = this.obtenerFechaFormateada(
+        this.puestoSeleccionado.inicio
+      );
+      console.log("Inicio puesto formateado: ", this.puestoSeleccionado.inicio);
       var fecha = this.obtenerFechaFormateada(this.marcarFechaSalida);
-      var idPuesto = this.puestoSeleccionado.id;
+      console.log("fecha ingresa formateada", fecha);
+
       axios
         .get(`${process.env.BASE_URL}/api/turno/marcar-salida-turno`, {
           params: {
-            puesto: this.puestoSeleccionado,  
+            puesto: this.puestoSeleccionado,
             turno: this.turnoSeleccionado,
             hora: fecha
           }
@@ -530,6 +556,7 @@ export default {
               this.limpiarCajas();
               resultadoOperacionMarcar =
                 "Se ha marcado salida satisfactoriamente.";
+              this.cargarDatos();
             } else {
               this.resultadoOperacionMarcar = "No se han realizado cambios.";
             }
@@ -538,10 +565,11 @@ export default {
             this.resultadoOperacionMarcar = "Ocurrió un error.";
           }
         });
-      this.cargarDatos();
     },
     marcarTurnoEntrada() {
       var fecha = this.obtenerFechaFormateada(this.marcarFechaIngreso);
+      console.log("fecha ingresa formateada", fecha);
+
       var idPuesto = this.puestoSeleccionado.id;
       console.log(this.turnoSeleccionado);
       return axios
@@ -560,7 +588,6 @@ export default {
             console.log("resullllll");
             console.log(resultado);
             if (resultado > 0) {
-              this.limpiarCajas();
               this.resultadoOperacionMarcar =
                 "Se ha marcado ingreso satisfactoriamente.";
               return true;
@@ -573,11 +600,10 @@ export default {
           }
           return false;
         });
-      this.cargarDatos();
     },
     controlarEventoMarcarTurnoEntrada() {
-      console.log(this.marcarHoraIngreso);
-      if (!this.marcarHoraIngreso) {
+      console.log(this.marcarFechaIngreso);
+      if (!this.marcarFechaIngreso) {
         this.resultadoOperacionMarcar = "Debe ingresar hora";
       } else {
         this.marcarTurnoEntrada();
@@ -585,8 +611,7 @@ export default {
     },
     controlarEventoMarcarTurno() {
       this.loading = true;
-      console.log(this.marcarHoraIngreso);
-      if (!this.marcarHoraIngreso || !this.marcarHoraSalida) {
+      if (!this.marcarFechaIngreso || !this.marcarFechaSalida) {
         this.resultadoOperacionMarcar =
           "Debe ingresar hora de entrada y salida";
         return true;
@@ -627,22 +652,22 @@ export default {
       return moment.parseZone(horaActual).format("HH:mm:ss");
     },
     guardarDatosParaMarcarHora(ingreso, salida, turno, puesto) {
+      console.log("Puesto seleccionado");
+      console.log(puesto);
       this.habilitarBotones(false);
       this.turnoSeleccionado = turno;
       this.puestoSeleccionado = puesto;
       if (ingreso) {
-        this.marcarFechaIngreso = this.obtenerFechaFormateadaPuesto(puesto.inicio);
-      }
-      if (salida) {
-        this.marcarFechaSalida = this.obtenerFechaFormateadaPuesto(puesto.fin);
+        this.marcarFechaIngreso = puesto.inicio;
+        this.marcarFechaSalida = puesto.fin;
       }
       return true;
     },
-    cargarSiguiente() {
-      this.cargarDatos(this.indexActual + 1);
+    cargarSiguienteListadoGeneral() {
+      this.cargarTurnos(this.indexActualListadoGeneral + 1);
     },
-    cargarAnterior() {
-      this.cargarDatos(this.indexActual - 1);
+    cargarAnteriorListadoGeneral() {
+      this.cargarTurnos(this.indexActualListadoGeneral - 1);
     }
   }
 };

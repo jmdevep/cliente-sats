@@ -5,6 +5,7 @@
             <i v-show="loading" class="fa fa-spinner fa-spin"></i>                
                 <template v-if="!tieneEmpleados">
                     <p>Este evento no tiene empleados asignados.</p>
+                    
                     <button @click="toggleForm()" class="btn marginBefore tableHeadingBackground">
                         {{ mostrarForm ? "Cancelar" : "Asignar empleados"}}
                     </button>
@@ -296,7 +297,7 @@
                                     break;
                                 case "MED.":
                                     this.medicos.lista.push(empleado);
-                                    this.medicoSeleccionado(medico);
+                                    this.medicoSeleccionado = empleado;
                                     break;
                                 case "CHOF. ENF.":
                                     this.choferesEnfermeros.lista.push(empleado);
