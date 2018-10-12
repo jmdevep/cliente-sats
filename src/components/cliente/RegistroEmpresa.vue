@@ -1,6 +1,8 @@
 <template>
     <div>
 
+
+        
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Registro de Empresa</div>
             <div class="card-body darkTextCustom">

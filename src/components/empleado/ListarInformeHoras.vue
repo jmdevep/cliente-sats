@@ -84,7 +84,7 @@
 	:fields = "json_fields"
 	name    = "filename.xls">
 
-	Download Excel (you can customize this with html code!)
+                    <input type="submit" value="Exportar como planilla" class="btn marginBefore tableHeadingBackground">
 
 </download-excel>
             </div>

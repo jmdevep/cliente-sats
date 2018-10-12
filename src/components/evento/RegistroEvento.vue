@@ -24,6 +24,19 @@
                     </multi-select>
                     <br/> 
 
+
+                    <multi-select v-model="personaSeleccionada" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
+                        
+                        <template slot="option" slot-scope="props">
+                            <div class="option__desc">
+                                <span class="option__title">{{ props.option.nombre }}</span>
+                                <br>
+                                <span class="option__small">{{ props.option.documento }}</span>
+                            </div>
+                        </template>
+                    </multi-select>
+                    <br/> 
+
                     <b-button @click="modalShow = !modalShow">
                     Agregar Persona
                     </b-button>

@@ -1,6 +1,43 @@
 <template>
     <div>
+  <b-row>
+      <b-col md="6" class="my-1">
+        <b-form-group horizontal label="Filtrar" class="mb-0">
+          <b-input-group>
+            <b-form-input v-model="filtrado" placeholder="Escribe para buscar" />
+            <b-input-group-append>
+              <b-btn :disabled="!filtrado" @keyup.enter="cargarDatos(0)" @click="filtrado = ''">Limpiar</b-btn>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
+      </b-col>
+      <b-col md="6" class="my-1">
+        <b-form-group horizontal label="Ordenar" class="mb-0">
+          <b-input-group>
+            <b-form-select v-model="campoFiltrado" :options="opcionesFiltrado">
+              <option slot="first" :value="null">-- ninguno --</option>
+            </b-form-select>
+            <b-form-select :disabled="!campoFiltrado" v-model="ordenFiltradoAsc" slot="append">
+              <option :value="false">Asc</option>
+              <option :value="true">Desc</option>
+            </b-form-select>
+          </b-input-group>
+        </b-form-group>
+      </b-col>
 
+      <b-col md="6" class="my-1">
+        <b-form-group horizontal label="Por página" class="mb-0">
+          <b-form-select :options="paginasFiltrado" v-model="tamanoPagina" />
+        </b-form-group>
+      </b-col>
+
+    <b-col md="6" class="my-1">
+        <b-form-group horizontal label="" class="mb-0">
+            <b-btn class="btn btn-success" @click="cargarDatos(0)">Buscar <i class="fas fa-search"></i></b-btn>
+        </b-form-group>
+      </b-col>
+    </b-row>
+    
         {{ resultadoOperacion }}
         <div class="row">
             <div class="col-sm-12">
@@ -105,10 +142,19 @@
                 resultadoOperacion: '',
                 loading: false,
                 planes: [],
-                tamanoPagina: 2,
-                indicePagina: 0,
-                cantidadPaginas: 0,
-                indexActual: 0,
+                //inicio propiedades tabla
+                    tamanoPagina: 5,
+                    indicePagina: 0,
+                    cantidadPaginas: 0,
+                    indexActual: 0,
+                    filtrado: "",
+                    campoFiltrado: "",
+                    opcionesFiltrado: [
+                        { value: 'nombre_usuario', text: 'Nombre de Usuario' },
+                    ],
+                    ordenFiltradoAsc: null,
+                    paginasFiltrado: [5, 10, 15]
+                    //fin propiedades tabla
             }
         },
         methods: {

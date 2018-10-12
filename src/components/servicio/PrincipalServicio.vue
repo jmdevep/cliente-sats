@@ -26,7 +26,7 @@
 
     import ListadoServicio from './ListadoServicio.vue'
     import RegistroServicio from './RegistroServicio.vue'
-    import DetalleServicio from './DetalleServicio.vue'
+    //import DetalleServicio from './DetalleServicio.vue'
     
 
 	export default {
@@ -37,7 +37,7 @@
          components: {
             RegistroServicio,
             ListadoServicio,
-            DetalleServicio,
+          //  DetalleServicio,
         },
         data(){
             return {
@@ -45,7 +45,7 @@
             tabs: [
                 { component: ListadoServicio, title: 'Lista Servicios' },
                 { component: RegistroServicio, title: 'Registrar Servicio'},
-                { compomnent: DetalleServicio, title: 'Detalle Servicio'}
+               // { compomnent: DetalleServicio, title: 'Detalle Servicio'}
             ],
             }
         },

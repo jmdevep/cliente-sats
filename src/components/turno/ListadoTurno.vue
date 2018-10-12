@@ -3,23 +3,61 @@
         {{ resultadoOperacion }}
         <br> 
         <template v-if="verMarcar">
-        <div class="row">
-            <div class="col-sm-12">
-              <div class="form-group">
-                <label class="darkTextCustom">Fecha Inicio</label>
+            <b-row>
+            <b-col md="6" class="my-1">
+        <b-form-group horizontal label="Fecha Inicio" class="mb-0">
                 <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}" v-model="fechaInicioSeleccionada"></datetime>
-                {{ this.fechaInicioSeleccionada }} <!-- https://mariomka.github.io/vue-datetime/ -->
-              </div>
-              <div class="form-group">
-                <label class="darkTextCustom">Fecha Fin</label>
-                <datetime type="datetime"   value-zone="America/Montevideo"
+        </b-form-group>
+      </b-col>
+
+              
+      <b-col md="6" class="my-1">
+        <b-form-group horizontal label="Fecha Inicio" class="mb-0">
+<datetime type="datetime"   value-zone="America/Montevideo"
                   zone="America/Montevideo"
                   format="yyyy-MM-dd HH:mm:ss"
                   :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  v-model="fechaFinSeleccionada"></datetime>
-                {{ this.fechaFinSeleccionada }}
-              </div>
-              <b-btn class="btn btn-success" @click="filtroActualizado()">Buscar <i class="fas fa-search"></i></b-btn>
-              
+                          </b-form-group>
+      </b-col>
+      <b-col md="6" class="my-1">
+        <b-form-group horizontal label="Filtrar" class="mb-0">
+          <b-input-group>
+            <b-form-input v-model="filtrado" placeholder="Escribe para buscar" />
+            <b-input-group-append>
+              <b-btn :disabled="!filtrado" @keyup.enter="cargarDatos(0)" @click="filtrado = ''">Limpiar</b-btn>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
+      </b-col>
+      <b-col md="6" class="my-1">
+        <b-form-group horizontal label="Ordenar" class="mb-0">
+          <b-input-group>
+            <b-form-select v-model="campoFiltrado" :options="opcionesFiltrado">
+              <option slot="first" :value="null">-- ninguno --</option>
+            </b-form-select>
+            <b-form-select :disabled="!campoFiltrado" v-model="ordenFiltradoAsc" slot="append">
+              <option :value="false">Asc</option>
+              <option :value="true">Desc</option>
+            </b-form-select>
+          </b-input-group>
+        </b-form-group>
+      </b-col>
+
+      <b-col md="6" class="my-1">
+        <b-form-group horizontal label="Por página" class="mb-0">
+          <b-form-select :options="paginasFiltrado" v-model="tamanoPagina" />
+        </b-form-group>
+      </b-col>
+
+    <b-col md="6" class="my-1">
+        <b-form-group horizontal label="" class="mb-0">
+            <b-btn class="btn btn-success" @click="cargarDatos(0)">Buscar <i class="fas fa-search"></i></b-btn>
+        </b-form-group>
+      </b-col>
+    </b-row>
+        <div class="row">
+            <div class="col-sm-12">
+
                 <template v-if="turnosActivos.length > 0">
                     <table class="table table-responsive table-hover">
                         <caption class="captionCustom"><h3>Turno activo</h3> <i v-show="loading" class="fa fa-spinner fa-spin"></i> </caption>
@@ -283,7 +321,7 @@ export default {
       turnos: [],
       turnosActivables: [],
       turnosActivos: [],
-      tamanoPagina: 2,
+      tamanoPagina: 10,
       indicePagina: 0,
       cantidadPaginas: 0,
       cantidadPaginasListadoGeneral: 0,

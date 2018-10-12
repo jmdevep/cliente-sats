@@ -30,19 +30,27 @@
                                 <div class="col-lg-12">
                                 <p>
                                     <a href="#" @click="equipo = 3" class="btn btn-sq-lg btn-info equipo3">
-                                    <br/>
-                                    Médico <br>
-                                    Chofer <br>
-                                    Enfermero
+                                        <div class="button-overlay">
+                                         Médico
+                                            Chofer <br>
+                                            Enfermero
+                                        </div>
                                     </a>
                                     <a href="#"  @click="equipo = 2" class="btn btn-sq-lg btn-info equipo2">
-                                    <br/>
-                                    Chofer <br>
-                                    Enfermero
+                                        <div class="button-overlay">
+                                            Chofer Esp.<br>
+                                            Enfermero
+                                        </div>
                                     </a>
                                     <a href="#"  @click="equipo = 1" class="btn btn-sq-lg btn-info equipo1">
-                                    <br/>
-                                    Chofer - Enfermero
+                                        <div class="button-overlay">    
+                                            Chofer Enfermero
+                                        </div>
+                                    </a>
+                                    <a href="#"  @click="equipo = 0" class="btn btn-sq-lg btn-info equipo1">
+                                        <div class="button-overlay">
+                                            Chofer Esp.
+                                        </div>
                                     </a>
                                 </p>
                                 </div>
@@ -230,11 +238,14 @@
                 } else if( val == 1){
                     this.medicoSeleccionado = null;
                     this.enfermeroSeleccionado = null;
+                } else if(val == 3){
+                    this.choferEnfermeroSeleccionado = null;
                 } else {
+                    this.medicoSeleccionado = null;
+                    this.enfermeroSeleccionado = null;
                     this.choferEnfermeroSeleccionado = null;
                 }
-            }
-                
+            }    
         },
         methods: {
             toggleEditar(){
@@ -417,7 +428,7 @@
                 return true;
             },
             chofer(){
-                if(this.equipo == 3 || this.equipo == 2)
+                if(this.equipo == 3 || this.equipo == 2 || this.equipo == 0)
                     return true;
                 return false;
             },
@@ -469,22 +480,29 @@
     background-image: url(https://cdn2.iconfinder.com/data/icons/medical-services-set-3-1/64/x-01-512.png);
     background-size:70% 70%;    
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: top;
 }
 
 .equipo1{
     background-image: url(https://cdn2.iconfinder.com/data/icons/medical-services-set-3-1/64/x-01-512.png);
     background-size:70% 70%;    
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: top;
 }
 
 .equipo2{
     background-image: url(https://cdn2.iconfinder.com/data/icons/medical-services-set-3-1/64/x-01-512.png);
     background-size:70% 70%;    
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: top;
 }
+
+.button-overlay{
+    background-color: rgba(0, 0, 0, 0.09);
+    position: relative;
+    top: 50%;
+}
+
 </style>
 <style>
 .lista-tramos{
