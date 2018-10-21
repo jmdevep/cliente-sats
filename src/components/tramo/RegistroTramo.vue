@@ -5,14 +5,15 @@
             <div class="card-header greenBackground">Registro de Tramos</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="registrarTramo()">
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <label>Seleccionar localidad de Origen:</label>
                     <select class="form-control" v-model="tramo.localidadOrigen" @change="cambioSelectOrigen()">
                         <option v-for="(localidad,index) in localidades" :key="index" :disabled="localidad.disabled" v-bind:value="localidad">
@@ -41,9 +42,9 @@
                     </p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Cantidad de Kilómetros</label>
-                        <input type="number" class="form-control border-success" v-model="tramo.cantidadKm" id="cantidadKm" placeholder="Cantidad km">
+                        <input type="number" min="0" max="2140000000" class="form-control border-success" v-model="tramo.cantidadKm" id="cantidadKm" placeholder="Cantidad km">
                     </div>
-                    <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore tableHeadingBackground">
+                    <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore btn-success">
                 </form>
             </div>
         </div>
@@ -90,6 +91,8 @@
                     localidadDestino: null,
                     cantidadKm: null
                 },
+                alerta: false,
+                informacion: false,
             }
         },
         methods: {
@@ -113,6 +116,7 @@
             },
             registrarTramo(){
                 this.loading = true;
+                this.limpiarResultado();
                 if(this.checkForm()){
                     this.tramo.localidadOrigen.disabled = undefined;
                     this.tramo.localidadDestino.disabled = undefined;
@@ -122,14 +126,31 @@
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5702){
-                                this.$router.push({ name: 'PrincipalTramo', params: { resultadoOperacion: "Tramo registrado satisfactoriamente." }});                                                            
                                 this.limpiarCajas();
-                            } else if (res.data.resultado == 5703){
+                                this.resultadoOperacion = "Tramo registrado satisfactoriamente.";
+                                this.informacion = true;
+                                this.$router.push({ name: 'PrincipalTramo', params: { resultadoOperacion: "Tramo registrado satisfactoriamente." }});                                                            
+                            } else if (res.data.resultado == 5700 || res.data.resultado == 5703){
                                 this.resultadoOperacion = "Ya existe un tramo con esas localidades.";
+                                this.alerta = true;
+                            }else{
+                                this.resultadoOperacion = "Ha surgido un error en el proceso. Inténtelo nuevamente.";
+                                this.alerta = true;
                             }
-                        });
-                    this.loading = false;
+                            this.loading = false;
+                        })
+                        .catch((error)=>{
+                        this.alerta = true;
+                        this.resultadoOperacion = 'Ha surgido un error en el sistema. Inténtelo nuevamente.';
+                        console.log(error);
+                        this.loading = false;
+                    });
                 }
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             },
             limpiarCajas(){
                 this.tramo.localidadOrigen = '';

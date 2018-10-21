@@ -190,9 +190,6 @@
                 }
             },
             esFechaMenorAActual(fecha){
-                console.log(fecha);
-                console.log(new Date());
-                console.log(fecha <= new Date());
                 return this.convertirStringAFecha(fecha) <= new Date();
             },
             convertirStringAFecha(fecha) {

@@ -4,15 +4,15 @@
             <div class="card-header greenBackground">Modificar puesto</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="modificarPuesto()">
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
-
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>   
                     
                     <multi-select v-model="puesto.empleado" placeholder="Empleados"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="empleados" :option-height="104" :custom-label="customLabelEmpleados" :show-labels="false">
                         
@@ -92,6 +92,8 @@
                     tipo: 0,
                     idTurno: 0,
                 },
+                alerta: false,
+                informacion: false,
             }
         },
         methods: {
@@ -116,7 +118,13 @@
                         this.empleados = res.data.listaEmpleados;
                     }
                     this.loading = false;
-        	    });         
+                })
+                .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error al cargar el listado. Inténtelo nuevamente.';
+                            console.log(error);
+                            this.loading = false;
+                    });     
             },
             modificarPuesto(){
                 this.loading = true;
@@ -132,11 +140,27 @@
                                 this.$router.push({ name: 'PrincipalTurno', params: { resultadoOperacion: "Turno modificado satisfactoriamente." }});                            
                                 this.limpiarCajas();    
                             } else if (res.data.resultado == 5805){
+                                this.alerta = true;
                                 this.resultadoOperacion = "Error en modificación.";
+                            }else{
+                                this.alerta = true;
+                                this.resultadoOperacion = 'Ha surgido un error en el sistema. Inténtelo nuevamente.';
+                                console.log(error);
                             }
-                        }); 
-                    this.loading = false;
+                            this.loading = false;
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error en el sistema. Inténtelo nuevamente.';
+                            console.log(error);
+                            this.loading = false;
+                    });
                 }
+            },
+            limpiarResultado(){
+                this.alerta = false;
+                this.informacion = false;
+                this.resultadoOperacion = '';
             },
             limpiarCajas(){
                 errorDisponibilidad: '';
@@ -159,6 +183,7 @@
             },
         verificarDisponibilidad() {
                 this.errorDisponibilidad = "Verificando...";
+                this.disabled = true;
                 if(this.puesto.inicio && this.puesto.fin){
                     axios.get(`${process.env.BASE_URL}/api/turno/esta-empleado-ocupado`, this.puesto)
                         .then((res)=>{
@@ -174,6 +199,12 @@
                                 this.errorDisponibilidad = "Hubo un error en la verificación, recargue la página e inténtelo nuevamente."
                                 this.disabled = true;
                             }
+                    })
+                    .catch((error)=>{
+                            this.errorDisponibilidad = 'Ha surgido un error durante la veificación. Inténtelo nuevamente.';
+                            console.log(error);
+                            this.disabled = true;
+                            this.loading = false;
                     });
                 }
             },

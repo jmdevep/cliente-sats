@@ -14,12 +14,12 @@
                     <p>{{ resultadoOperacion }}</p>
                     <div class="form-group">
                         <label for="motivo" class="darkTextCustom">Motivo del descuento</label>
-                        <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="descuento.motivo" id="motivo" placeholder="Motivo descriptivo del descuento">
+                        <input type="text" maxlength="45" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="descuento.motivo" id="motivo" placeholder="Motivo descriptivo del descuento">
                         <small id="nameHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>
                     </div>
                     <div class="form-group">
                         <label for="porcentaje" class="darkTextCustom">Porcentaje de descuento</label>
-                        <input type="text" class="form-control border-success" v-model="descuento.porcentaje" id="porcentaje" placeholder="Porcentaje descuento">
+                        <input type="number" maxlength="3" min="0" max="100" class="form-control border-success" v-model="descuento.porcentaje" id="porcentaje" placeholder="Porcentaje descuento">
                     </div>
                     <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore btn-success">
                 </form>

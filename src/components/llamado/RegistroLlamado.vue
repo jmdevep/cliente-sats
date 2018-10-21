@@ -34,19 +34,18 @@
                         </option>
                     </select>
 
-
                     <div class="form-group">
                         <label for="ubicacionPaciente" class="darkTextCustom">Ubicación paciente *</label>
-                        <input type="text" class="form-control border-success" v-model="llamado.ubicacionPaciente" id="ubicacionPaciente" placeholder="Ubicación del paciente">
+                        <input type="text" maxlength="150" class="form-control border-success" v-model="llamado.ubicacionPaciente" id="ubicacionPaciente" placeholder="Ubicación del paciente">
                     </div>
                     <div class="form-group">
                         <label for="destinoPaciente" class="darkTextCustom">Destino paciente *</label>
-                        <input type="text" class="form-control border-success" v-model="llamado.destinoPaciente" id="destinoPaciente" placeholder="Destino del paciente">
+                        <input type="text" maxlength="150" class="form-control border-success" v-model="llamado.destinoPaciente" id="destinoPaciente" placeholder="Destino del paciente">
                     </div>
 
                     <div class="form-group">
                         <label for="motivo" class="darkTextCustom">Motivo del llamado *</label>
-                        <input type="text" class="form-control border-success" v-model="llamado.motivoLlamado" id="motivo" placeholder="motivo">
+                        <input type="text" maxlength="150" class="form-control border-success" v-model="llamado.motivoLlamado" id="motivo" placeholder="motivo">
                     </div>
                     <div class="form-group">
                         <label for="fecha" class="darkTextCustom">Fecha recibido *</label>

@@ -18,7 +18,7 @@
                     <p>{{ resultadoOperacion }}</p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre descriptivo</label>
-                        <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="prestador.nombreDescriptivo" id="nombre" placeholder="Nombre descriptivo">
+                        <input type="text" maxlength="45" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="prestador.nombreDescriptivo" id="nombre" placeholder="Nombre descriptivo">
                         <small id="nameHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>
                     </div>
                     <div class="form-group">

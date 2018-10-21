@@ -144,7 +144,7 @@ export default {
               tamanoPagina: this.tamanoPagina,
               indicePagina: this.indexActual,
               campo: this.campoFiltrado || "nombre_usuario",
-              valor: this.filtrado || "%%"
+              valor: "%" + this.filtrado + "%"|| "%%"
             }
           }
         })

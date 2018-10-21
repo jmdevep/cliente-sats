@@ -8,7 +8,7 @@
                             {{ disabled ? "Editar" : "Cancelar"}}
                         </button>
                     </template>
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
@@ -67,7 +67,7 @@
                     </div>
                     <div class="form-group">
                         <label for="direccion" class="darkTextCustom">Dirección</label>
-                        <input type="text" :disabled="disabled" class="form-control border-success" v-model="evento.direccion" id="direccion" placeholder="direccion">
+                        <input type="text" maxlength="150" :disabled="disabled" class="form-control border-success" v-model="evento.direccion" id="direccion" placeholder="direccion">
                     </div>
 
                     <template v-if="!disabled">

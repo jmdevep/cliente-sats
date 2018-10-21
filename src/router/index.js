@@ -27,6 +27,7 @@ const ListadoTurno= () => import('@/components/turno/ListadoTurno');
 const ListadoAsistenciaEvento= () => import('@/components/turno/ListadoAsistenciaEvento');
 const EditarPuesto= () => import('@/components/turno/EditarPuesto');
 const EliminarPuesto= () => import('@/components/turno/EliminarPuesto');
+const IntercambiarTurno= () => import('@/components/turno/IntercambiarTurno');
 
 //Cliente
 const RegistroPersona = () => import('@/components/cliente/RegistroPersona');
@@ -101,8 +102,6 @@ const PrincipalTramo = () => import('@/components/tramo/PrincipalTramo')
 const PrincipalTurno = () => import('@/components/turno/PrincipalTurno')
 const PrincipalPlan = () => import('@/components/plan/PrincipalPlan')
 
-const PruebaTabla = () => import('@/components/pruebas/PruebaTabla')
-
 Vue.use(Router)
 
 export default new Router({
@@ -133,6 +132,7 @@ export default new Router({
     {path: '/turno/listado-asistencia-evento', name: 'ListadoAsistenciaEvento', component: ListadoAsistenciaEvento},
     {path: '/turno/editar-turno', name: 'EditarPuesto', component: EditarPuesto},
     {path: '/turno/eliminar-puesto', name: 'EliminarPuesto', component: EliminarPuesto},
+    {path: '/turno/intercambiar-turno', name: 'IntercambiarTurno', component: IntercambiarTurno},
 
     //Persona
     {path: '/persona/registro-persona', name: 'RegistroPersona', component: RegistroPersona},

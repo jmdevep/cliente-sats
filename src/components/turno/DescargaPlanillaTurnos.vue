@@ -1,6 +1,7 @@
 <template>
     <div>
-        {{ resultadoOperacion }}
+        <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+        <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
         <i v-show="loading" class="fa fa-spinner fa-spin"></i>        
         <div class="row">
             <div class="col-sm-12">
@@ -125,7 +126,7 @@
         </div>
         <div class="row">
             <div class="col-sm-12">
-              <a @click="descargarPlanilla()" target="_blank" class="btn btn-success" role="button">Descargar Planilla</a>
+                <a href="#" class="btn btn-success" @click="descargarPlanilla()" role="button">Descargar plantilla</a>
             </div>
         </div>
     </div>
@@ -169,23 +170,32 @@
                     textoMes: 'textoMes', 
                     anio: 0
                 },
+                alerta: false,
+                informacion: false
             }
         },
         methods: {
             descargarPlanilla(){
                 console.log(JSON.stringify(this.empleadosRequest));
-                this.loading = true;
-                axios({
-                    url: `${process.env.BASE_URL}/api/turno/descargar-planilla`, 
-                    params: { empleados: this.empleadosRequest, anio: this.mesSeleccionado.anio, mes: this.mesSeleccionado.mes + 1},
-                    method: 'GET',
-                    responseType: 'blob',
-                    headers: {'Access-Control-Allow-Origin': '*'}
-                })
-                .then((res)=>{
-                    console.log(res);
-                    FileDownload(res.data, 'Planilla-Turnos.xlsx')
-                });
+                if(this.chequearDatos()){
+                    this.loading = true;
+                    this.limpiarResultado();
+                    this.resultadoOperacion = "Descargando...";
+                    this.informacion = true;
+                    axios({
+                        url: `${process.env.BASE_URL}/api/turno/descargar-planilla`, 
+                        params: { empleados: this.empleadosRequest, anio: this.mesSeleccionado.anio, mes: this.mesSeleccionado.mes + 1},
+                        method: 'GET',
+                        responseType: 'blob',
+                        headers: {'Access-Control-Allow-Origin': '*'}
+                    })
+                    .then((res)=>{
+                        this.limpiarResultado();
+                        this.loading = false;
+                        FileDownload(res.data, 'Planilla-Turnos.xlsx');
+                        
+                    });
+                }
             },
             quitarEmpleado(empleado){
                 this.empleados.push(empleado);
@@ -258,6 +268,19 @@
                     case 11: return 'Diciembre';
                     default: return 'Mes no definido';
                 }
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
+            },
+            chequearDatos(){
+                this.limpiarResultado();
+                if(this.empleadosSeleccionados.length > 0){
+                    return true;
+                }
+                this.resultadoOperacion = "Debe seleccionar al menos un empleado para generar la plantilla de turnos.";
+                this.alerta = true;
             },
             cargarDatos(index){
                 this.empleados = [];

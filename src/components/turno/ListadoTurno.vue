@@ -226,7 +226,8 @@
                                     <template v-if="verMarcar">
                                         <div>
                                             <b-btn class="btn btn-success" @click="guardarDatosParaMarcarHora(true, true, turno, puesto); mostrarModalHora=true;"><i class="fas fa-user-clock"></i></b-btn>
-                                            <b-btn class="btn btn-success"><i class="fas fa-sync"></i></b-btn>
+                                            <router-link :to="{ name: 'IntercambiarTurno', params: { puesto: puesto }}"><a class="btn btn-success" role="button"><i class="fas fa-sync"></i></a></router-link>
+                                            <!--<b-btn class="btn btn-success"><i class="fas fa-sync"></i></b-btn>-->
                                         </div>
                                     </template> 
                                     <template v-if="verModificar">

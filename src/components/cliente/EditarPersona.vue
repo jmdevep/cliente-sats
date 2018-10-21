@@ -15,19 +15,19 @@
                     <p>{{ resultadoOperacion }}</p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre Completo</label>
-                        <input type="text" class="form-control border-success" v-model="persona.nombre" id="nombre" placeholder="Nombre">
+                        <input type="text" maxlength="150" class="form-control border-success" v-model="persona.nombre" id="nombre" placeholder="Nombre">
                     </div>
                     <div class="form-group">
                         <label for="direccion" class="darkTextCustom">Dirección</label>
-                        <input type="text" class="form-control border-success" v-model="persona.direccion" id="direccion" placeholder="Dirección">
+                        <input type="text" maxlength="150" class="form-control border-success" v-model="persona.direccion" id="direccion" placeholder="Dirección">
                     </div>
                     <div class="form-group">
                         <label for="telefono" class="darkTextCustom">Teléfono</label>
-                        <input type="text" class="form-control border-success" v-model="persona.telefono" id="telefono" placeholder="Teléfono">
+                        <input type="number" maxlength="18" class="form-control border-success" v-model="persona.telefono" id="telefono" placeholder="Teléfono">
                     </div>
                     <div class="form-group">
                         <label for="documento" class="darkTextCustom">Documento</label>
-                        <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="persona.documento" id="documento" placeholder="Documento">
+                        <input type="number" maxlength="15" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="persona.documento" id="documento" placeholder="Documento">
                         <small id="emailHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>
                     </div>
                     <div class="form-group">
@@ -183,8 +183,33 @@
                 };
                 this.errorDisponibilidad = '';
             },
+            validarDocumento(documento){
+                var verificador = documento[documento.length - 1];
+                var aux = 0;
+                var i = 0;
+                if(documento.length <= 6){
+                    for(i = documento.length; i < 7; i++){
+                        documento = '0' + documento;
+                    }
+                }
+                for(i = 0; i < 7; i++){
+                    aux += (parseInt("2987634"[i]) * parseInt(documento[i])) % 10;
+                }
+                if(aux%10 === 0){
+                    return 0 == verificador;
+                }else{
+                    return (10 - aux % 10) == verificador;
+                }
+            },
+            contieneSoloNumeros(texto){
+                var reg = new RegExp('^\\d+$');
+                return reg.test(texto);
+            },
+            esFechaMenorAActual(fecha){
+                return this.convertirStringAFecha(fecha) <= new Date();
+            },
             checkForm() {
-                if (this.persona.nombre && this.persona.direccion && this.persona.telefono && this.persona.documento && this.persona.fechaNacimiento) {
+                if (this.persona.nombre && this.persona.direccion && this.persona.telefono && !isNaN(this.persona.telefono) && this.persona.documento && this.persona.fechaNacimiento && this.esFechaMenorAActual(this.persona.fechaNacimiento) && this.persona.sexo && !isNaN(this.persona.documento) && this.validarDocumento(this.persona.documento)) {
                     return true;
                 }
 

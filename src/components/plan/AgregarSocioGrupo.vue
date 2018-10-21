@@ -19,7 +19,7 @@
                     </div>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre descriptivo</label>
-                        <input type="text" class="form-control border-success" v-model="cliente.sociedad.nombre" id="nombre" disabled="true" placeholder="Nombre descriptivo">
+                        <input type="text" maxlength="45" class="form-control border-success" v-model="cliente.sociedad.nombre" id="nombre" disabled="true" placeholder="Nombre descriptivo">
                     </div>
                     <div v-if="planes.length" class="form-group">
                         <label>Seleccione el plan a asociar:</label>

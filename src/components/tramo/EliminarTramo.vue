@@ -46,7 +46,7 @@
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5700){
-                            this.$router.push({ name: 'ListadoTramo', params: { resultadoOperacion: "Tramo eliminado satisfactoriamente." }});                            
+                            this.$router.push({ name: 'PrincipalTramo', params: { resultadoOperacion: "Tramo eliminado satisfactoriamente." }});                            
                         } else if (res.data.resultado == 5701){
                             this.resultadoOperacion = "El tramo seleccionado no existe.";
                         }

@@ -14,7 +14,7 @@
                     <p>{{ resultadoOperacion }}</p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre descriptivo</label>
-                        <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="plan.nombre" id="nombre" placeholder="Nombre descriptivo">
+                        <input type="text" maxlength="45" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="plan.nombre" id="nombre" placeholder="Nombre descriptivo">
                         <small id="nameHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>
                     </div>
                     <div class="form-group">
@@ -197,7 +197,7 @@
             checkForm() {
                 this.limpiarMensajes();
 
-                if (this.plan.nombre && this.plan.cuota && this.plan.cuota >= 0 && this.plan.descuento && this.plan.descuento.id != 0) {
+                if (this.plan.nombre && this.plan.cuota && this.plan.cuota >= 0 && this.plan.cuota <= 2140000000 && this.plan.descuento && this.plan.descuento.id != 0) {
                     return true;
                 }
 
@@ -210,6 +210,10 @@
                 else if(this.plan.cuota < 0){
                     this.erroresForm.push('Valor de la cuota debe ser un número positivo.');
                 }
+                else if(this.plan.cuota > 2140000000){
+                    this.erroresForm.push('El valor de la cuota no puede ser mayor a 2.140.000.000.');
+                }
+
                 if(!this.plan.descuento || this.plan.descuento.id == 0){
                     this.erroresForm.push('Debe seleccionar un descuento.');
                 }

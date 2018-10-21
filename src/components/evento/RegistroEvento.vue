@@ -128,7 +128,7 @@
                     </div>
                     <div class="form-group">
                         <label for="direccion" class="darkTextCustom">Dirección</label>
-                        <input type="text" class="form-control border-success" v-model="evento.direccion" id="direccion" placeholder="direccion">
+                        <input type="text" maxlength="150" class="form-control border-success" v-model="evento.direccion" id="direccion" placeholder="direccion">
                     </div>
 
                     <button v-on:click.prevent="registrarEvento()" :disabled="disabled" class="btn marginBefore tableHeadingBackground"> Registrar </button>

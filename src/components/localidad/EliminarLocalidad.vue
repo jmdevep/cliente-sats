@@ -51,7 +51,7 @@
                     .then((res)=>{
                         console.log(res);
                         if(res.data.resultado == 5600){
-                            this.$router.push({ name: 'ListadoLocalidad', params: { resultadoOperacion: "Localidad eliminada satisfactoriamente." }});
+                            this.$router.push({ name: 'PrincipalTramo', params: { resultadoOperacion: "Localidad eliminada satisfactoriamente." }});
                         } else if (res.data.resultado == 5601){
                             this.resultadoOperacion = "La localidad seleccionada ya no existe.";
                         }

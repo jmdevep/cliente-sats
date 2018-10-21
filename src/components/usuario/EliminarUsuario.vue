@@ -2,7 +2,9 @@
     <div>
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Seguro desea eliminar este usuario?</div>
-            {{ resultadoOperacion }}
+            <i v-show="loading" class="fa fa-spinner fa-spin"></i>
+            <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+            <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
             
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="eliminarUsuario()">
@@ -44,6 +46,9 @@
                     },
                     idEmpleado: 0,
                 },
+                loading: false,
+                alerta: false,
+                informacion: false
             }
         },
         methods: {
@@ -55,8 +60,14 @@
                             this.$router.push({ name: 'PrincipalEmpleado', params: { resultadoOperacion: "Usuario eliminado satisfactoriamente." }});
                         } else if (res.data.resultado == 1101){
                             this.resultadoOperacion = "El usuario seleccionado no existe.";
+                            this.alerta = true;
                         }
                     });
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             }
         },    
     }

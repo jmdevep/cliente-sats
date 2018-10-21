@@ -41,7 +41,7 @@
         </b-form-group>
       </b-col>
     </b-row>
-        {{ resultadoOperacion }}
+        <p v-show="resultadoOperacion != ''" class="text-info"><i v-show="resultadoOperacion != ''" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
         <div class="row">
             <div class="col-sm-12">
                 <table class="table">

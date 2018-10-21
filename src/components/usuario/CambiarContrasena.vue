@@ -24,15 +24,15 @@
                     </div>
                     <div class="form-group">
                         <label for="contrasenaVieja" class="darkTextCustom">Contraseña actual</label>
-                        <input type="password" class="form-control border-success" v-model="contrasenaVieja" id="contrasenaVieja" placeholder="Contraseña actual">
+                        <input type="password" maxlength="80" class="form-control border-success" v-model="contrasenaVieja" id="contrasenaVieja" placeholder="Contraseña actual">
                     </div>
                     <div class="form-group">
                         <label for="contrasenaNueva" class="darkTextCustom">Contraseña nueva</label>
-                        <input type="password" class="form-control border-success" v-model="contrasenaNueva" id="contrasenaNueva" placeholder="Contraseña nueva">
+                        <input type="password" maxlength="80" class="form-control border-success" v-model="contrasenaNueva" id="contrasenaNueva" placeholder="Contraseña nueva">
                     </div>
                     <div class="form-group">
                         <label for="repetirContrasenaNueva" class="darkTextCustom">Repetir contraseña nueva</label>
-                        <input type="password" class="form-control border-success" v-model="contrasenaNuevaRepetida" id="repetirContrasenaNueva" placeholder="Repetir contraseña nueva">
+                        <input type="password" maxlength="16" class="form-control border-success" v-model="contrasenaNuevaRepetida" id="repetirContrasenaNueva" placeholder="Repetir contraseña nueva">
                     </div>
                     <input type="submit" value="Modificar" class="btn marginBefore tableHeadingBackground">
                 </form>
@@ -121,9 +121,14 @@
                 this.resultadoOperacion = '';
                 this.erroresForm = [];
             },
+            validarContrasena(texto){
+                var reg = new RegExp("^(?=[a-zA-Z0-9?@.-]{8,16}$)(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9]).*");
+                return reg.test(texto);
+            },
             checkForm() {
                 this.limpiarMensaje();
-                if (this.contrasenaVieja && this.contrasenaNueva && this.contrasenaNuevaRepetida && this.contrasenaNueva == this.contrasenaNuevaRepetida && this.usuario != null && this.usuario.id > 0) {
+                var contrasenaValida = this.validarContrasena(this.contrasenaNueva);
+                if (this.contrasenaVieja && contrasenaValida && this.contrasenaNueva && this.contrasenaNuevaRepetida && this.contrasenaNueva == this.contrasenaNuevaRepetida && this.usuario != null && this.usuario.id > 0) {
                     return true;
                 }
 
@@ -135,6 +140,9 @@
                 if (!this.contrasenaNueva) {
                     this.erroresForm.push('Contraseña nueva requerida.');
                 }
+                else if(!contrasenaValida){
+                    this.erroresForm.push('La contraseña debe contener entre 8 y 16 caracteres: al menos una letra mayúscula, una minúscula y un número. Puede contener caracteres especiales como "?", "@", "." y "-".');
+                }
                 if (!this.contrasenaNuevaRepetida) {
                     this.erroresForm.push('Segundo ingreso de nueva contraseña requerido.');
                 }
@@ -144,7 +152,6 @@
                 this.disabled = false;
                 return false;
             }
-    
         },    
     }
 </script>

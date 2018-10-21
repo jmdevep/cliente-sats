@@ -5,14 +5,15 @@
             <div class="card-header greenBackground">Modificar Tramo</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="modificarTramo()">
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <label>Seleccionar localidad de Origen:</label>
                     <select class="form-control" v-model="tramo.localidadOrigen" @change="cambioSelectOrigen()">
                         <option v-for="(localidad,index) in localidades" :key="index" :disabled="localidad.disabled" v-bind:value="localidad">
@@ -41,9 +42,9 @@
                     </p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Cantidad de Kilómetros</label>
-                        <input type="number" class="form-control border-success" v-model="tramo.cantidadKm" id="cantidadKm" placeholder="Cantidad km">
+                        <input type="number" min="0" max="2140000000" class="form-control border-success" v-model="tramo.cantidadKm" id="cantidadKm" placeholder="Cantidad km">
                     </div>
-                    <input type="submit" :disabled="disabled" value="Modificar" class="btn marginBefore tableHeadingBackground">
+                    <input type="submit" :disabled="disabled" value="Modificar" class="btn marginBefore btn-success">
                 </form>
             </div>
         </div>
@@ -58,7 +59,7 @@
             this.tramo = this.$route.params.tramo;
             this.tramo.localidadOrigen.disabled = true;
             this.tramo.localidadDestino.disabled = true;
-    
+            this.limpiarResultado();
 
             this.loading = true;
             axios.get(`${process.env.BASE_URL}/api/localidad/lista-localidades`, {
@@ -74,7 +75,7 @@
                     }
                     this.loading = false;
         	});
-                    this.cambioSelectOrigen();
+            this.cambioSelectOrigen();
             this.cambioSelectDestino();
             },
         beforeCreate: function () {
@@ -132,7 +133,18 @@
 
                             } else if (res.data.resultado == 5705){
                                 this.resultadoOperacion = "Error, ya existe un tramo con el mismo origen y destino.";
+                                this.alerta = true;
                             }
+                            else if(res.data.resultado == 200){
+                                this.resultadoOperacion = "Hubo un error de conexión. Inténtelo nuevamente.";
+                                this.alerta = tre;
+                            }
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error en el sistema. Inténtelo nuevamente.';
+                            console.log(error);
+                            this.loading = false;
                         });
                     this.loading = false;
                 }
@@ -142,6 +154,11 @@
                 this.tramo.localidadDestino = '';
                 this.tramo.cantidadKm = 0;
                 errorDisponibilidad: '';
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             },
             checkForm() {
                 if (this.tramo.localidadOrigen && this.tramo.localidadDestino && this.tramo.cantidadKm != 0) {

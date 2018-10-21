@@ -5,13 +5,14 @@
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="modificarEmpleado()">
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
-                    <p v-if="resultadoOperacion">{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <div v-if="roles.length" class="form-group">
                         <label>Seleccione los roles del empleado:</label>
                         <select id="roles" class="form-control" v-model="rolSeleccionado" @change="cambioSelect()">
@@ -32,16 +33,16 @@
                     </p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre </label>
-                        <input type="text" class="form-control border-success" v-model="empleado.nombre" id="nombre" placeholder="Nombre">
+                        <input type="text" maxlength="45" class="form-control border-success" v-model="empleado.nombre" id="nombre" placeholder="Nombre">
                     </div>
                     <div class="form-group">
                         <label for="apellido" class="darkTextCustom">Apellido</label>
-                        <input type="text" class="form-control border-success" v-model="empleado.apellido" id="apellido" placeholder="Apellidos">
+                        <input type="text" maxlength="45" class="form-control border-success" v-model="empleado.apellido" id="apellido" placeholder="Apellidos">
                     </div>
                     <div class="form-group">
                         <label for="documento" class="darkTextCustom">Documento de Identidad</label>
                         <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="empleado.documento" id="documento" placeholder="Documento">
-                        <small id="emailHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>                    
+                        <small id="emailHelp" maxlength="21" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>                    
                     </div>
                     <div class="form-group">
                         <label for="fechaNacimiento" class="darkTextCustom">Fecha de Nacimiento</label>
@@ -49,11 +50,11 @@
                     </div>
                     <div class="form-group">
                         <label for="domicilio" class="darkTextCustom">Domicilio</label>
-                        <input type="text" class="form-control border-success" v-model="empleado.domicilio" id="domicilio" placeholder="Domicilio">
+                        <input type="text" maxlength="80" class="form-control border-success" v-model="empleado.domicilio" id="domicilio" placeholder="Domicilio">
                     </div>
                     <div class="form-group">
                         <label for="telefono" class="darkTextCustom">Teléfono</label>
-                        <input type="text" class="form-control border-success" v-model="empleado.telefono" id="telefono" placeholder="Teléfono">
+                        <input type="text" maxlength="15" class="form-control border-success" v-model="empleado.telefono" id="telefono" placeholder="Teléfono">
                     </div>
                     <div class="form-group">
                         <label for="vencimientoCarnetSalud" class="darkTextCustom">Vencimiento Carnet Salud</label>
@@ -63,7 +64,7 @@
                         <label for="vencimientoCarnetChofer" class="darkTextCustom">Vencimiento Libreta de Conducir</label>
                         <input type="date" class="form-control border-success" v-model="empleado.vencimientoCarnetChofer" id="vencimientoCarnetChofer" placeholder="2019-12-05">
                     </div>
-                    <input type="submit" value="Modificar" class="btn marginBefore tableHeadingBackground">
+                    <input type="submit" :disabled="disabled" value="Modificar" class="btn marginBefore btn-success">
                 </form>
             </div>
         </div>
@@ -76,6 +77,15 @@
         name: 'EditarEmpleado',
         mounted(){
             this.empleado = this.$route.params.empleado;
+            if(this.empleado.fechaNacimiento){
+                this.empleado.fechaNacimiento = moment(this.empleado.fechaNacimiento).format('YYYY-MM-DD');
+            }
+            if(this.empleado.vencimientoCarnetSalud){
+                this.empleado.vencimientoCarnetSalud = moment(this.empleado.vencimientoCarnetSalud).format('YYYY-MM-DD');
+            }
+            if(this.empleado.vencimientoCarnetChofer){
+                this.empleado.vencimientoCarnetChofer = moment(this.empleado.vencimientoCarnetChofer).format('YYYY-MM-DD');
+            }
             this.documentoOriginal = this.$route.params.empleado.documento;
             console.log(this.empleado);
             this.cargarListaRoles();
@@ -100,6 +110,8 @@
                 roles: [],
                 rolesSeleccionados: [],
                 rolSeleccionado: [],
+                alerta: false,
+                informacion: false,
             }
         },
         methods: {
@@ -162,7 +174,13 @@
                     this.disabled = false;
                 }
             },
+            limpiarResultado(){
+                this.alerta = false;
+                this.informacion = false;
+                this.resultadoOperacion = '';
+            },
             modificarEmpleado(){
+                this.limpiarResultado();
                 this.loading = true;
                 if(this.checkForm()){
                     this.empleado.listaRoles = this.rolesSeleccionados;
@@ -173,13 +191,22 @@
                             console.log(res);
                             if(res.data.resultado == 1304){
                                 this.$router.push({ name: 'PrincipalEmpleado', params: { resultadoOperacion: "Empleado modificado satisfactoriamente." }});                                                            
-                            } else if(res.data.resultado == 4){
-                                this.resultadoOperacion = "Error 0004."
+                            } else if(res.data.resultado == 200){
+                                this.alerta = true;
+                                this.resultadoOperacion = 'Error de conexión, inténtelo nuevamente.';
+                            }else{
+                                this.alerta = true;
+                                this.resultadoOperacion = 'Ha ocurrido un error, por favor comuníquese con el soporte.';
                             }
-                        });
-                        this.loading = false;
+                            this.loading = false;
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error en el sistema. Inténtelo nuevamente.';
+                            console.log(error);
+                            this.loading = false;
+                    });
                 }
-
             },
             limpiarCajas(){
                 this.empleado.nombre = '';
@@ -190,9 +217,7 @@
                 this.empleado.telefono = '';
                 this.empleado.vencimientoCarnetSalud = '';
                 this.empleado.vencimientoCarnetChofer = '';
-                
             },
-
             checkForm() {
                 if (this.empleado.nombre && this.empleado.apellido && this.empleado.documento && this.empleado.fechaNacimiento && this.empleado.domicilio
                     && this.empleado.telefono ) {

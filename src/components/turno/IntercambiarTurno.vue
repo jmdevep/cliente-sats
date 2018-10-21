@@ -14,11 +14,7 @@
                             <th scope="col">Nombre</th>
                             <th scope="col">Apellido</th>
                             <th scope="col">Documento</th>
-                            <th scope="col">Domicilio</th>
-                            <th scope="col">Telefono</th>
-                            <th scope="col">Carnet de Salud</th>
-                            <th scope="col">Carnet de Chofer</th>
-                            <th scope="col">Usuario</th>                            
+                            <th scope="col">Rol</th>                           
                             <th scope="col">Acciones</th>
                         </tr>
                     </thead>
@@ -29,21 +25,9 @@
                             <td>{{ empleado.nombre }}</td>
                             <td>{{ empleado.apellido }}</td>
                             <td>{{ empleado.documento }}</td>
-                            <td>{{ empleado.domicilio }}</td>
-                            <td>{{ empleado.telefono }}</td>
-                            <td>{{ empleado.vencimientoCarnetSalud }}</td>
-                            <td>{{ empleado.vencimientoCarnetChofer }}</td>
-                            <template v-if="empleado.usuario.id != 0">
-                                <td>{{ empleado.usuario.id }}</td> 
-                            </template>   
-                            <template v-else>
-                                <td>
-                                    <router-link :to="{ name: 'AsociarUsuario', params: { empleado: empleado }}"><a href="#" class="btn btn-info" role="button">Asociar</a></router-link>                                                                                            
-                                </td>   
-                            </template>
+                            <td>{{ empleado.documento }}</td>
                             <td>
-                                <router-link :to="{ name: 'EditarEmpleado', params: { empleado: empleado }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
-                                <router-link :to="{ name: 'EliminarEmpleado', params: { empleado: empleado }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>                                
+                                <b-btn class="btn btn-success" @click="guardarDatosParaMarcarHora(true, true, turno, puesto); mostrarModalHora=true;">Elegir</b-btn>                              
                             </td>
  
                         </tr>
@@ -72,34 +56,39 @@
 <script>
 	import axios from 'axios';
 	 export default {
-        name: 'ListadoEmpleado',
+        name: 'IntercambiarTurno',
         mounted(){
-            this.resultadoOperacion = this.$route.params.resultadoOperacion || '';        
+            this.puesto = this.$route.params.puesto;
 
-            this.loading = true;
-            axios.get(`${process.env.BASE_URL}/api/empleado/lista-empleados`, {
-                params: {
+            this.resultadoOperacion = this.$route.params.resultadoOperacion || '';        
+            var params = {
                     condiciones: {
                         orden: 'DESC',
                         tamanoPagina: this.tamanoPagina,
                         indicePagina: this.indicePagina,
                         campo: 'nombre',
+                        valor: 'enfermero',
                     },
-                }
+                    puesto: this.puesto
+                };
+            console.log(params);
+            this.loading = true;
+            axios.get(`${process.env.BASE_URL}/api/empleado/lista-empleados-intercambio`, {
+                params
             })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.empleados = res.data.listaEmpleados;
-                        if(res.data.cantidadElementos <= this.tamanoPagina){
-                            this.cantidadPaginas = 1;
-                        } else {
-                            this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
-                        }
-                        console.log(this.cantidadPaginas);
-                        this.indexActual = 1;
+            .then((res)=>{
+                console.log(res);
+                if(res.data.resultado == 100){
+                    this.empleados = res.data.listaEmpleados;
+                    if(res.data.cantidadElementos <= this.tamanoPagina){
+                        this.cantidadPaginas = 1;
+                    } else {
+                        this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
                     }
-                    this.loading = false;
+                    console.log(this.cantidadPaginas);
+                    this.indexActual = 1;
+                }
+                this.loading = false;
         	});
 
         	},
@@ -111,6 +100,48 @@
                 indicePagina: 0,
                 cantidadPaginas: 0,
                 indexActual: 0,
+                puesto: {
+                    id: 0,
+                    inicio: '',
+                    fin: '',
+                    rol: {
+                        id: 0,
+                        nombre: '',
+                        descripcion: '',
+                    },
+                    empleado: null,
+                    estado: 0,
+                    tipo: 0,
+                    idTurno: 0,
+                },
+                intercambio:{
+                    id:0,
+                    puestoViejo: {
+                        id: 0,
+                        inicio: '',
+                        fin: '',
+                        rol: {
+                            id: 0,
+                            nombre: '',
+                            descripcion: '',
+                        },
+                        empleado: null,
+                        estado: 0,
+                        tipo: 0,
+                        idTurno: 0,
+                    },
+                    empleadoIntercambio:{
+                        nombre: '',
+                        apellido: '',
+                        documento: '',
+                        fechaNacimiento: '',
+                        domicilio: '',
+                        telefono: '',
+                        vencimientoCarnetSalud: '',
+                        vencimientoCarnetChofer: '',
+                    },
+                    estado: 0,
+                }
             }
 
         },
@@ -118,7 +149,7 @@
             cargarDatos(index){
                 this.loading = true;
                 console.log(index);
-                axios.get(`${process.env.BASE_URL}/api/empleado/lista-empleados`, {
+                axios.get(`${process.env.BASE_URL}/api/empleado/lista-empleados-intercambio`, {
                 params: {
                     condiciones: {
                         orden: 'DESC',
@@ -136,6 +167,42 @@
                     }
                     this.loading = false;
         	    });
+            },
+            intercambiarTurno(empleado){
+                this.loading = true;
+
+                if(this.checkForm()){
+                    var params = this.puesto;
+                    console.log(params);
+                    
+                    axios.post(`${process.env.BASE_URL}/api/turno/modificar-puesto`, params) 
+                        .then((res)=>{
+                            console.log(res.data.resultado);                            
+                            if(res.data.resultado == 5804){
+                                this.$router.push({ name: 'PrincipalTurno', params: { resultadoOperacion: "Turno modificado satisfactoriamente." }});                            
+                                this.limpiarCajas();    
+                            } else if (res.data.resultado == 5805){
+                                this.resultadoOperacion = "Error en modificación.";
+                            }
+                        }); 
+                    this.loading = false;
+                }
+            },
+            checkForm() {
+                if (this.puesto != null && this.puesto.empleado != null) {
+                    return true;
+                }
+
+                this.erroresForm = [];
+                
+                if (!this.puesto) {
+                    this.erroresForm.push('Debe elegir un puesto a modificar.');
+                } 
+                if(!this.puesto.empleado){
+                    this.erroresForm.push('Debe seleccionar un empleado asignado.');
+                }
+                this.disabled = false;
+                return false;
             },
             cargarSiguiente(){
                 this.cargarDatos(this.indexActual + 1);

@@ -6,7 +6,6 @@
         <hr class="titleUnderline">
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Iniciar Sesión</div>
-            {{ resultadoOperacion }}
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="login()">
                     <p v-if="erroresForm.length">
@@ -16,7 +15,8 @@
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre de Usuario</label>
                         <input type="text" class="form-control border-success" v-model="usuario.nombre" id="nombre" placeholder="Nombre de Usuario">
@@ -56,17 +56,22 @@ export default {
         },
         idEmpleado: 0
       },
-      errorDisponibilidad: ""
+      errorDisponibilidad: "",
+      alerta: false,
+      informacion: false
     };
   },
   methods: {
     login() {
+      this.limpiarResultado();
+      this.loading = true;
       if (this.usuario.nombre != "") {
         var params = this.usuario;
         console.log(params);
         axios
           .post(`${process.env.BASE_URL}/api/usuario/validar-usuario`, params)
           .then(res => {
+            this.loading = false;
             console.log(res);
             if (res.data.resultado == 1110) {
               this.disabled = true;
@@ -76,6 +81,7 @@ export default {
               window.location.reload();
               this.redireccionar();
             } else {
+              this.alerta = true;
               this.resultadoOperacion = "Error en los datos de acceso.";
             }
           });
@@ -97,7 +103,11 @@ export default {
       this.usuario.idEmpleado = 0;
       errorDisponibilidad: "";
     },
-    cargarEmpleadosDisponibles() {},
+    limpiarResultado(){
+      this.resultadoOperacion = "";
+      this.alerta = false;
+      this.informacion = false;
+    },
     checkForm() {
       if (this.usuario.nombre && this.usuario.contrasena) {
         return true;

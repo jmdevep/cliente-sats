@@ -17,19 +17,19 @@
                     <p>{{ resultadoOperacion }}</p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Razón Social</label>
-                        <input type="text" class="form-control border-success" v-model="empresa.nombre" id="nombre" placeholder="Nombre Empresa">
+                        <input type="text" maxlength="150" class="form-control border-success" v-model="empresa.nombre" id="nombre" placeholder="Nombre Empresa">
                     </div>
                     <div class="form-group">
                         <label for="direccion" class="darkTextCustom">Dirección</label>
-                        <input type="text" class="form-control border-success" v-model="empresa.direccion" id="direccion" placeholder="Dirección">
+                        <input type="text" maxlength="150" class="form-control border-success" v-model="empresa.direccion" id="direccion" placeholder="Dirección">
                     </div>
                     <div class="form-group">
                         <label for="telefono" class="darkTextCustom">Teléfono</label>
-                        <input type="text" class="form-control border-success" v-model="empresa.telefono" id="telefono" placeholder="Teléfono">
+                        <input type="text" maxlength="18" class="form-control border-success" v-model="empresa.telefono" id="telefono" placeholder="Teléfono">
                     </div>
                     <div class="form-group">
                         <label for="rut" class="darkTextCustom">Rut</label>
-                        <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="empresa.rut" id="rut" placeholder="RUT">
+                        <input type="text" maxlength="25" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="empresa.rut" id="rut" placeholder="RUT">
                         <small id="emailHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>
                     </div>
                     <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore btn-success">
