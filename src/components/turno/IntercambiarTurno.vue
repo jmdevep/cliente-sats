@@ -1,20 +1,20 @@
 <template>
     <div>
-        {{ resultadoOperacion }}
+        <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+        <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
+        <i v-show="loading" class="fa fa-spinner fa-spin"></i>   
         <div class="row">
             <div class="col-sm-12">
                 <table class="table">
                     
-                    <caption class="captionCustom"><h3>Lista de Empleados</h3></caption>
-                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
+                    <caption class="captionCustom"><h3>Lista de empleados {{puesto.rol.nombre}} disponibles</h3></caption>
                     <thead class="greenBackground">
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">ID</th>
                             <th scope="col">Nombre</th>
                             <th scope="col">Apellido</th>
-                            <th scope="col">Documento</th>
-                            <th scope="col">Rol</th>                           
+                            <th scope="col">Documento</th>                      
                             <th scope="col">Acciones</th>
                         </tr>
                     </thead>
@@ -24,7 +24,6 @@
                             <td>{{ empleado.id }}</td>
                             <td>{{ empleado.nombre }}</td>
                             <td>{{ empleado.apellido }}</td>
-                            <td>{{ empleado.documento }}</td>
                             <td>{{ empleado.documento }}</td>
                             <td>
                                 <b-btn class="btn btn-success" @click="guardarDatosParaMarcarHora(true, true, turno, puesto); mostrarModalHora=true;">Elegir</b-btn>                              
@@ -67,7 +66,7 @@
                         tamanoPagina: this.tamanoPagina,
                         indicePagina: this.indicePagina,
                         campo: 'nombre',
-                        valor: 'enfermero',
+                        valor: this.puesto.rol.id,
                     },
                     puesto: this.puesto
                 };
@@ -80,7 +79,11 @@
                 console.log(res);
                 if(res.data.resultado == 100){
                     this.empleados = res.data.listaEmpleados;
-                    if(res.data.cantidadElementos <= this.tamanoPagina){
+                    if(res.data.cantidadElementos == 0){
+                        this.resultadoOperacion = "No hay empleados con los que realizar intercambio."
+                        this.alerta = true;
+                    }
+                    else if(res.data.cantidadElementos <= this.tamanoPagina){
                         this.cantidadPaginas = 1;
                     } else {
                         this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
@@ -89,8 +92,14 @@
                     this.indexActual = 1;
                 }
                 this.loading = false;
-        	});
-
+            })
+                .catch((error)=>{
+                    this.alerta = true;
+                    this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                    console.log(error);
+                    this.loading = false;
+                    this.listaEmpleados = [];
+            });
         	},
         data(){
             return{
@@ -141,7 +150,9 @@
                         vencimientoCarnetChofer: '',
                     },
                     estado: 0,
-                }
+                },
+                alerta: false,
+                informacion: false,
             }
 
         },

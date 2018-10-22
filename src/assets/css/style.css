@@ -87,3 +87,13 @@ hr{
 .nav-item .disabled{
     color: #5fb95f !important;
 }
+
+.whiteText{
+    color: #ffffff !important;
+}
+.whiteText:hover{
+    color: #ffffff !important;
+}
+a:not([href]):not([tabindex]){
+    color: #ffffff !important;
+}

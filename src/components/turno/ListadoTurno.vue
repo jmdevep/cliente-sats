@@ -95,10 +95,10 @@
                                 <td>
                                     <b-button-group vertical>
                                         <div>
-                                            <b-btn class="btn btn-success" v-b-modal.marcarSalidaModal @click="guardarDatosParaMarcarHora(false, true, turno, puesto)"><i class="fas fa-door-closed"></i> Marcar salida</b-btn>
+                                            <b-btn class="btn btn-success" v-b-modal.marcarSalidaModal @click="guardarDatosParaMarcarHora(false, true, turno, puesto)"><i class="fas fa-door-closed whiteText"></i> Marcar salida</b-btn>
                                         </div>
                                         <template v-if="puesto.tipo == 2">
-                                            <router-link :to="{ name: 'ListadoAsistenciaEvento', params: { turno: turno, puesto: puesto, ingreso: false, activacionReten: true }}"><a  class="btn btn-success" role="button"><i class="fas fa-ambulance"></i> Marcar activación retén</a></router-link>
+                                            <router-link :to="{ name: 'ListadoAsistenciaEvento', params: { turno: turno, puesto: puesto, ingreso: false, activacionReten: true }}"><a  class="btn btn-success whiteText" role="button"><i class="fas fa-ambulance"></i> Marcar activación retén</a></router-link>
                                         </template>
                                     </b-button-group>
                                 </td>
@@ -142,7 +142,7 @@
                                 <td>{{ puesto.estado }}</td>
                                 <td>
                                     <div>
-                                        <b-btn class="btn btn-success" v-b-modal.marcarIngresoModal @click="guardarDatosParaMarcarHora(true, false, turno, puesto)"><i class="fas fa-door-open"></i> Marcar ingreso</b-btn>
+                                        <b-btn class="btn btn-success" v-b-modal.marcarIngresoModal @click="guardarDatosParaMarcarHora(true, false, turno, puesto)"><i class="fas fa-door-open whiteText"></i> Marcar ingreso</b-btn>
                                     </div>
                                 </td>
                             </tr>
@@ -226,13 +226,13 @@
                                     <template v-if="verMarcar">
                                         <div>
                                             <b-btn class="btn btn-success" @click="guardarDatosParaMarcarHora(true, true, turno, puesto); mostrarModalHora=true;"><i class="fas fa-user-clock"></i></b-btn>
-                                            <router-link :to="{ name: 'IntercambiarTurno', params: { puesto: puesto }}"><a class="btn btn-success" role="button"><i class="fas fa-sync"></i></a></router-link>
+                                            <router-link :to="{ name: 'IntercambiarTurno', params: { puesto: puesto }}"><a class="btn btn-success whiteText" role="button"><i class="fas fa-sync"></i></a></router-link>
                                             <!--<b-btn class="btn btn-success"><i class="fas fa-sync"></i></b-btn>-->
                                         </div>
                                     </template> 
                                     <template v-if="verModificar">
-                                        <router-link :to="{ name: 'EditarPuesto', params: { puesto: puesto }}"><a  class="btn btn-success" role="button"><i class="far fa-edit"></i></a></router-link>
-                                        <router-link :to="{ name: 'EliminarPuesto', params: { puesto: puesto }}"><a  class="btn btn-danger" role="button"><i class="fas fa-trash-alt"></i></a></router-link>
+                                        <router-link :to="{ name: 'EditarPuesto', params: { puesto: puesto }}"><a  class="btn btn-success whiteText" role="button"><i class="far fa-edit"></i></a></router-link>
+                                        <router-link :to="{ name: 'EliminarPuesto', params: { puesto: puesto }}"><a  class="btn btn-danger whiteText" role="button"><i class="fas fa-trash-alt"></i></a></router-link>
                                     </template> 
                                 </b-button-group>
                             </td>
@@ -275,6 +275,23 @@
                 </ul>
             </div>
         </div>
+        <p class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> Estados de turno: 
+          <ol>
+            <li>Planificado</li>
+            <li>Cancelado (intercambiado)</li>
+            <li>Activo (guardia)</li>
+            <li>Inactivo (retén)</li>
+            <li>Activo (retén)</li>
+            <li>Cumplido (planificado)</li>
+            <li>Sin planificar</li>
+            <li>Activo (intercambiado guardia)</li>
+            <li>Activo (intercambiado retén)</li>
+            <li>Planificado (intercambiado)</li>
+            <li>Cumplido (intercambiado)</li>
+            <li>Activo (sin planificar)</li>
+            <li>Cumplido (sin planificar)</li>
+          </ol>
+        </p>
     </div>
 </template>
 
