@@ -1,8 +1,6 @@
 <template>
     <div>
         {{ resultadoOperacion }}
-        {{ campoFiltrado }}
-        
             <b-row>
       <b-col md="6" class="my-1">
         <b-form-group horizontal label="Filtrar" class="mb-0">

@@ -63,21 +63,21 @@
                         </tr>
                     </tbody>
                 </table>
-                <ul class="pagination">
-                    <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==1) }">
-                    <a @click="cargarAnterior()" class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                        <span class="sr-only">Anterior</span>
-                    </a>
-                    </li> 
-                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="cargarDatos(index)" class="page-link" href="#">{{ index }}</a></li>
-                    <li class="page-item"  v-bind:class="{ 'disabled' : (indexActual==cantidadPaginas) }">
-                    <a @click="cargarSiguiente()" class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                        <span class="sr-only">Siguiente</span>
-                    </a>
-                    </li>
-                </ul>
+                               <ul class="pagination">
+                        <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==0) }">
+                        <a @click="cargarAnterior()" class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Anterior</span>
+                        </a>
+                        </li> 
+                        <li class="page-item" v-bind:class="{ 'disabled' : (index - 1 == indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="indexActual = index -1; cargarDatos()" class="page-link" href="#">{{ index }}</a></li>
+                        <li class="page-item"  v-bind:class="{ 'disabled' : (indexActual==cantidadPaginas) }">
+                        <a @click="cargarSiguiente()" class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Siguiente</span>
+                        </a>
+                        </li>
+                    </ul>
             </div>
         </div>
     </div>
@@ -90,36 +90,7 @@ export default {
   mounted() {
     this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
-    this.loading = true;
-    axios
-      .get(`${process.env.BASE_URL}/api/cliente/lista-descuentos`, {
-        params: {
-          condiciones: {
-            orden: "DESC",
-            tamanoPagina: this.tamanoPagina,
-            indicePagina: this.indicePagina,
-            campo: "motivo_descuento"
-          }
-        }
-      })
-      .then(res => {
-        console.log(res);
-
-        if (res.data.resultado == 100) {
-          this.descuentos = res.data.descuentos;
-          if (res.data.cantidadElementos <= this.tamanoPagina) {
-            this.cantidadPaginas = 1;
-          } else {
-            this.cantidadPaginas = Math.ceil(
-              res.data.cantidadElementos / this.tamanoPagina
-            );
-          }
-          console.log(this.cantidadPaginas);
-          this.indexActual = 1;
-        }
-        this.loading = false;
-        console.log(this.descuentos);
-      });
+    this.cargarDatos();
   },
   beforeCreate: function() {
     var usuario = this.$session.get("usuario");
@@ -140,7 +111,7 @@ export default {
       filtrado: "",
       campoFiltrado: "",
       opcionesFiltrado: [
-        { value: "nombre_usuario", text: "Nombre de Usuario" }
+        { value: "motivo_descuento", text: "Motivo de Descuento" }
       ],
       ordenFiltradoAsc: null,
       paginasFiltrado: [5, 10, 15]
@@ -155,31 +126,36 @@ export default {
         .get(`${process.env.BASE_URL}/api/cliente/lista-descuentos`, {
           params: {
             condiciones: {
-              orden: "DESC",
+              orden: this.ordenFiltradoAsc ? "ASC" : "DESC",
               tamanoPagina: this.tamanoPagina,
-              indicePagina: index - 1,
-              campo: "nombre"
+              indicePagina: this.indexActual,
+              campo: this.campoFiltrado || "motivo_descuento",
+              valor: "%" + this.filtrado + "%" || "%%"
             }
           }
         })
         .then(res => {
-          console.log("SI ANDA ESTO");
           console.log(res);
-          console.log(res.data.resultado);
           if (res.data.resultado == 100) {
             this.descuentos = res.data.descuentos;
-            console.log(this.descuentos);
-            console.log(res.data.descuentos);
-            this.indexActual = index;
+            this.cantidadPaginas =
+              res.data.cantidadElementos <= this.tamanoPagina
+                ? 1
+                : Math.ceil(res.data.cantidadElementos / this.tamanoPagina);
+          } else {
+            this.descuentos = [];
+            this.indexActual = 0;
           }
           this.loading = false;
         });
     },
     cargarSiguiente() {
-      this.cargarDatos(this.indexActual + 1);
+      this.indexActual += 1;
+      this.cargarDatos();
     },
     cargarAnterior() {
-      this.cargarDatos(this.indexActual - 1);
+      this.indexActual -= 1;
+      this.cargarDatos();
     }
   }
 };
