@@ -33,28 +33,28 @@
                         </ul>
                     </p>
                     <div class="form-group">
-                        <label for="nombre" class="darkTextCustom">Nombre </label>
+                        <label for="nombre" class="darkTextCustom">Nombre *</label>
                         <input type="text" maxlength="45" class="form-control border-success" v-model="empleado.nombre" id="nombre" placeholder="Nombre">
                     </div>
                     <div class="form-group">
-                        <label for="apellido" class="darkTextCustom">Apellido</label>
+                        <label for="apellido" class="darkTextCustom">Apellido *</label>
                         <input type="text" maxlength="45" class="form-control border-success" v-model="empleado.apellido" id="apellido" placeholder="Apellidos">
                     </div>
                     <div class="form-group">
-                        <label for="documento" class="darkTextCustom">Documento de Identidad</label>
+                        <label for="documento" class="darkTextCustom">Documento de Identidad *</label>
                         <input type="text" maxlength="21" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="empleado.documento" id="documento" placeholder="Documento">
                         <small id="emailHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>                    
                     </div>
                     <div class="form-group">
-                        <label for="fechaNacimiento" class="darkTextCustom">Fecha de Nacimiento</label>
+                        <label for="fechaNacimiento" class="darkTextCustom">Fecha de Nacimiento *</label>
                         <input type="date" class="form-control border-success" v-model="empleado.fechaNacimiento" id="fechaNacimiento" placeholder="2019-12-05">
                     </div>
                     <div class="form-group">
-                        <label for="domicilio" maxlength="80" class="darkTextCustom">Domicilio</label>
+                        <label for="domicilio" maxlength="80" class="darkTextCustom">Domicilio *</label>
                         <input type="text" class="form-control border-success" v-model="empleado.domicilio" id="domicilio" placeholder="Domicilio">
                     </div>
                     <div class="form-group">
-                        <label for="telefono" maxlength="15" class="darkTextCustom">Teléfono</label>
+                        <label for="telefono" maxlength="15" class="darkTextCustom">Teléfono *</label>
                         <input type="text" class="form-control border-success" v-model="empleado.telefono" id="telefono" placeholder="Teléfono">
                     </div>
                     <div class="form-group">
@@ -171,9 +171,15 @@
                                 this.resultadoOperacion = 'Error de conexión, inténtelo nuevamente.';
                             }else{
                                 this.alerta = true;
-                                this.resultadoOperacion = 'Ha ocurrido un error, por favor comuníquese con el soporte.';
+                                this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
                             }
-                        });  
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                    });  
                 }
                 this.loading = false;
             },

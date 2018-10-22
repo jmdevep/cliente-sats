@@ -196,13 +196,13 @@
                                 this.resultadoOperacion = 'Error de conexión, inténtelo nuevamente.';
                             }else{
                                 this.alerta = true;
-                                this.resultadoOperacion = 'Ha ocurrido un error, por favor comuníquese con el soporte.';
+                                this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
                             }
                             this.loading = false;
                         })
                         .catch((error)=>{
                             this.alerta = true;
-                            this.resultadoOperacion = 'Ha surgido un error en el sistema. Inténtelo nuevamente.';
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
                             console.log(error);
                             this.loading = false;
                     });

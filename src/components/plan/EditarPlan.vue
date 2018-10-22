@@ -11,7 +11,8 @@
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre descriptivo</label>
                         <input type="text" maxlength="45" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="plan.nombre" id="nombre" placeholder="Nombre descriptivo">
@@ -99,6 +100,8 @@
                 errorDisponibilidad: '',
                 descuentos:[],
                 nombreOriginal: '',
+                informacion: false,
+                alerta: false,
             }
         },
         methods: {
@@ -124,6 +127,13 @@
                                 this.errorDisponibilidad = "Nombre disponible.";    
                                 this.disabled = false;                              
                             }
+                    })
+                    .catch((error)=>{
+                        this.alerta = true;
+                        this.errorDisponibilidad = 'Ha surgido un error durante la verificación. Inténtelo nuevamente.';
+                        console.log(error);
+                        this.loading = false;
+                        this.disabled = true;
                     });
                     this.loading = false;
                 }
@@ -143,11 +153,27 @@
                             this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Plan modificado satisfactoriamente." }});
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 5401){
+                                this.alerta = true;
                                 this.resultadoOperacion = "El plan seleccionado no existe.";
+                            }else {
+                               this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                               this.alerta = true;
                             }
-                        });
+                            this.loading = false;
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                    });
                 }
 
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             },
             limpiarCajas(){
                 this.plan.id = 0;

@@ -1,20 +1,18 @@
 <template>
     <div>
-
-
-        
         <div class="card border-success mb-3">
             <div class="card-header greenBackground">Registro de Empresa</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="registrarEmpresa()">
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Razón Social</label>
                         <input type="text" maxlength="150" class="form-control border-success" v-model="empresa.nombre" id="nombre" placeholder="Nombre Empresa">
@@ -65,6 +63,8 @@
                     rut: '',
                 },
                 errorDisponibilidad: '',
+                informacion: false,
+                alerta: false,
             }
 
         },
@@ -85,10 +85,18 @@
                                 this.errorDisponibilidad = "Rut disponible.";    
                                 this.disabled = false;                              
                             }
+                    })
+                    .catch((error)=>{
+                        this.alerta = true;
+                        this.errorDisponibilidad = 'Ha surgido un error durante la verificación. Inténtelo nuevamente.';
+                        console.log(error);
+                        this.loading = false;
+                        this.disabled = true;
                     });
                 }
             },
             registrarEmpresa(){
+                this.limpiarResultado();
                 this.loading = true;
                 if(this.checkForm()){
                     var params = this.empresa;
@@ -97,15 +105,22 @@
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5202){
+                                this.informacion = true;
                                 this.resultadoOperacion = "Empresa agregada satisfactoriamente.";
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 5303){
+                                this.alerta = true;
                                 this.resultadoOperacion = "Ya existe una empresa con ese rut.";
                             }
                         });
                     this.loading = false;
                 }
 
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             },
             limpiarCajas(){
                 this.empresa.nombre = '',

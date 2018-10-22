@@ -53,7 +53,6 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Nombre</th>
-                            <th scope="col">Existe convenio</th>
                             <th scope="col">Acciones</th>
                         </tr>
                     </thead>
@@ -61,14 +60,6 @@
                         <tr v-for="(prestador, index) in prestadores" :key="index">
                             <th scope="row">{{ index + 1 }}</th>
                             <td>{{ prestador.nombreDescriptivo }}</td>
-                            <td align="center">
-                                <template v-if="prestador.esConvenio">
-                                    Sí
-                                </template>
-                                <template else>
-                                    No
-                                </template>                                
-                            </td>
                             <td>
                                 <router-link :to="{ name: 'EditarPrestador', params: { prestador: prestador }}"><a href="#" class="btn btn-info" role="button">Editar</a></router-link>
                                 <router-link :to="{ name: 'EliminarPrestador', params: { prestador: prestador }}"><a href="#" class="btn btn-danger" role="button">Eliminar</a></router-link>

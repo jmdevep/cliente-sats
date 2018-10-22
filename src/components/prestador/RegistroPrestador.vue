@@ -8,22 +8,19 @@
             <div class="card-header greenBackground">Registro de prestador</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="registrarPrestador()">
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre descriptivo</label>
                         <input type="text" maxlength="45" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="prestador.nombreDescriptivo" id="nombre" placeholder="Nombre descriptivo">
                         <small id="nameHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="convenio" class="darkTextCustom">Tiene convenio</label>
-                        <input type="checkbox" class="form-control border-success" id="convenio" v-model="checked">
                     </div>
                     <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore btn-success">
                 </form>
@@ -53,15 +50,19 @@
             	prestador: {
                     id: 0,
                     nombreDescriptivo: '',
-                    esprestador: '',
+                    esprestador: false,
                 },
                 errorDisponibilidad: '',
+                alerta: false,
+                informacion: false,
             }
 
         },
         methods: {
             verificarDisponibilidad() {
+                
                 if(this.prestador && this.prestador.nombreDescriptivo != ''){
+                    this.loading = true;
                     console.log("nombre -" + this.prestador.nombreDescriptivo)
                     axios.get(`${process.env.BASE_URL}/api/cliente/existe-prestador`, {
                         params: {
@@ -69,7 +70,6 @@
                         }
                     })
                         .then((res)=>{
-                            console.log(res);
                             if(res.data.existe == true){
                                 this.disabled = true;
                                 this.errorDisponibilidad = "Ya existe un prestador registrado con ese nombre.";
@@ -77,11 +77,20 @@
                                 this.errorDisponibilidad = "Nombre disponible.";    
                                 this.disabled = false;                              
                             }
+                            this.loading = false;
+                    })
+                    .catch((error)=>{
+                        this.alerta = true;
+                        this.errorDisponibilidad = 'Ha surgido un error durante la verificación. Inténtelo nuevamente.';
+                        console.log(error);
+                        this.loading = false;
+                        this.disabled = true;
                     });
                 }
             },
             registrarPrestador(){
                 this.loading = true;
+                this.limpiarResultado();
                 if(this.checkForm()){
                     var params = this.prestador;
                     console.log(params);
@@ -89,15 +98,29 @@
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5422){
-                                this.$router.push({ name: 'ListadoPrestador', params: { resultadoOperacion: "Prestador creado satisfactoriamente." }});  
+                                this.resultadoOperacion = "Prestador creado satisfactoriamente.";
+                                this.informacion = true;
+                                this.$router.push({ name: 'PrincipalPrestador', params: { resultadoOperacion: "Prestador creado satisfactoriamente." }});  
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 5423 || res.data.resultado == 5420){
                                 this.resultadoOperacion = "Ya existe un prestador con ese nombre.";
+                                this.alerta = true;
                             }
                             else if(res.data.resultado == 4){
                                 this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
+                                this.alerta = true;
                             }
-                        });
+                            else {
+                                this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
+                                this.alerta = true;
+                            }
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                    });
                 }
                 this.loading = false;
             },
@@ -120,6 +143,11 @@
             limpiarMensajes(){
                 this.resultadoOperacion = "";
                 this.erroresForm = [];
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             },
             checkForm() {
                 this.limpiarMensajes();

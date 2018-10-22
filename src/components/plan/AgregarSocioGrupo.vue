@@ -12,7 +12,8 @@
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Cliente</label>
                         <input type="text"  class="form-control border-success" v-model="cliente.nombre" id="nombre" disabled="true" >
@@ -126,6 +127,8 @@
                 },
                 errorDisponibilidad: '',
                 planes:[],
+                alerta:false,
+                informacion: false,
             }
 
         },
@@ -156,21 +159,30 @@
                 }
                 this.loading = false;
             },
+            limpiarResultado(){
+                this.alerta = false;
+                this.informacion = false;
+                this.resultadoOperacion = '';
+            },
             registrarSocio(){
                 this.loading = true;
                 if(this.checkForm()){
+                    this.limpiarResultado;
                     var params = this.cliente;
                     console.log(params);
                     axios.post(`${process.env.BASE_URL}/api/cliente/agregar-sociedad`, params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5422){
+                            if(res.data.resultado == 5432 || res.data.resultado == 5431){
+                                this.informacion = true;
                                 this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Cliente asociado satisfactoriamente." }});  
                                 this.limpiarCajas();
-                            } else if (res.data.resultado == 5423 || res.data.resultado == 5420){
+                            } else if (res.data.resultado == 5423 || res.data.resultado == 5420 || res.data.resultado == 5430){
                                 this.resultadoOperacion = "El cliente ya se encuentra asociado.";
+                                this.alerta = true;
                             }
                             else if(res.data.resultado == 4){
+                                this.alerta = true;
                                 this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
                             }
                         });

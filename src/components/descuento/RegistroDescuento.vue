@@ -4,14 +4,15 @@
             <div class="card-header greenBackground">Registro de descuento</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="registrarDescuento()">
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                     <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <div class="form-group">
                         <label for="motivo" class="darkTextCustom">Motivo del descuento</label>
                         <input type="text" maxlength="45" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="descuento.motivo" id="motivo" placeholder="Motivo descriptivo del descuento">
@@ -53,6 +54,8 @@
                     porcentaje: '',
                 },
                 errorDisponibilidad: '',
+                alerta: false,
+                informacion: false,
             }
 
         },
@@ -79,6 +82,7 @@
             },
             registrarDescuento(){
                 this.loading = true;
+                this.limpiarResultado();
                 if(this.checkForm()){
                     var params = this.descuento;
                     console.log(params);
@@ -87,11 +91,14 @@
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5452){
                                 this.resultadoOperacion = "Descuento agregado satisfactoriamente.";
+                                this.informacion = true;
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 5453){
                                 this.resultadoOperacion = "Ya existe un descuento con ese motivo.";
+                                this.alerta = true;
                             }
-                            else if(res.data.resultado == 4){
+                            else{
+                                this.alerta = true;
                                 this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
                             }
                         });
@@ -106,6 +113,11 @@
                 },
                 this.erroresForm = [];
                 this.errorDisponibilidad = '';
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             },
             limpiarMensajes(){
                 this.resultadoOperacion = "";

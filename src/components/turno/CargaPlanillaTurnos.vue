@@ -7,7 +7,7 @@
             <div class="card-header greenBackground">Carga de planilla</div>
             <div class="large-12 medium-12 small-12 cell">
                 <label>Planilla: 
-                    <input type="file" id="archivo" ref="archivo" class="btn marginBefore" accept=".xls,.xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" v-on:change="cargarArchivo()"/>
+                    <input type="file" id="archivo" ref="archivo" required class="btn marginBefore" accept=".xls,.xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" v-on:change="cargarArchivo()"/>
                 </label>
                 <input type="submit" :disabled="disabled" value="Subir archivo" v-on:click="enviarArchivo()" class="btn marginBefore btn-success">
             </div>
@@ -27,10 +27,21 @@ import axios from 'axios';
           this.alerta = false;
           this.informacion = false;
       },
+      checkForm(){
+          if(!this.archivo || this.archivo == ''){
+              this.limpiarResultado();
+              this.resultadoOperacion = "Debe seleccionar un archivo";
+              this.alerta = true;
+              this.loading = false;
+              return false;
+          }
+          return true;
+      },
       enviarArchivo(){
           this.limpiarResultado();
           this.loading = true;
-          if(archivo){
+          console.log(this.archivo);
+          if(this.checkForm()){
                 let formData = new FormData();
                 formData.append('archivo', this.archivo);
 

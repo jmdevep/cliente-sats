@@ -4,14 +4,15 @@
             <div class="card-header greenBackground">Modificar de Empresa</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="modificarEmpresa()">
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Razón Social</label>
                         <input type="text" class="form-control border-success" v-model="empresa.nombre" id="nombre" placeholder="Nombre Empresa">
@@ -63,6 +64,8 @@
                     rut: '',
                 },
                 errorDisponibilidad: '',
+                alerta: false,
+                informacion: false,
             }
         },
         methods: {
@@ -82,10 +85,18 @@
                                 this.errorDisponibilidad = "Rut disponible.";    
                                 this.disabled = false;                              
                             }
+                    })
+                    .catch((error)=>{
+                        this.alerta = true;
+                        this.errorDisponibilidad = 'Ha surgido un error durante la verificación. Inténtelo nuevamente.';
+                        console.log(error);
+                        this.loading = false;
+                        this.disabled = true;
                     });
                 }
             },
             modificarEmpresa(){
+                this.limpiarResultado();
                 this.loading = true;
                 if(this.checkForm()){
                     var params = this.empresa;
@@ -95,15 +106,30 @@
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5204){
                                 this.resultadoOperacion = "Empresa agregada satisfactoriamente.";
+                                this.informacion = true;
                                 this.limpiarCajas();
                                 this.$router.push({ name: 'PrincipalCliente', params: { resultadoOperacion: "Empresa modificada satisfactoriamente." }});                                                                                            
                             } else if (res.data.resultado == 5205){
+                                this.alerta = true;
                                 this.resultadoOperacion = "Ya existe una empresa con ese rut.";
+                            }else{
+                                this.alerta = true;
+                                this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
                             }
-                        });
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                    });
                     this.loading = false;
                 }
-
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             },
             limpiarCajas(){
                 this.empresa.nombre = '',

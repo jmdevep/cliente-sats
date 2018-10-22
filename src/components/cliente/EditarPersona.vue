@@ -5,14 +5,15 @@
             <div class="card-header greenBackground">Editar Persona</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="modificarPersona()">
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre Completo</label>
                         <input type="text" maxlength="150" class="form-control border-success" v-model="persona.nombre" id="nombre" placeholder="Nombre">
@@ -126,6 +127,8 @@
                 },
                 errorDisponibilidad: '',
                 documentoOriginal: '',
+                informacion: false,
+                alerta: false,
             }
         },
         methods: {
@@ -145,11 +148,19 @@
                                 this.errorDisponibilidad = "Documento disponible.";    
                                 this.disabled = false;                              
                             }
+                    })
+                    .catch((error)=>{
+                        this.alerta = true;
+                        this.errorDisponibilidad = 'Ha surgido un error durante la verificación. Inténtelo nuevamente.';
+                        console.log(error);
+                        this.loading = false;
+                        this.disabled = true;
                     });
                 }
             },
             modificarPersona(){
                 this.loading = true;
+                this.limpiarResultado();
                 if(this.checkForm()){
                     var params = this.persona;
                     console.log(params);
@@ -160,11 +171,23 @@
                             this.$router.push({ name: 'PrincipalCliente', params: { resultadoOperacion: "Empresa modificada satisfactoriamente." }});                            
                                 this.limpiarCajas();
                             } else {
-                                this.resultadoOperacion = "Error";
+                               this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                               this.alerta = true;
                             }
-                        });
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                    });
                 }
                 this.loading = false;
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             },
             limpiarCajas(){
                 this.persona = {

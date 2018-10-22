@@ -8,22 +8,19 @@
             <div class="card-header greenBackground">Editar prestador</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="modificarPrestador()">
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                      <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre descriptivo</label>
                         <input type="text" maxlength="45" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="prestador.nombreDescriptivo" id="nombre" placeholder="Nombre descriptivo">
                         <small id="nameHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="convenio" class="darkTextCustom">Tiene convenio</label>
-                        <input type="checkbox" class="form-control border-success" id="convenio" v-model="checked">
                     </div>
                     <input type="submit" :disabled="disabled" value="Registrar" class="btn marginBefore btn-success">
                 </form>
@@ -56,10 +53,12 @@
                     id: 0,
                     nombreDescriptivo: '',
                     activo: '',
-                    esConvenio: '',
+                    esConvenio: false,
                 },
                 errorDisponibilidad: '',
                 nombreOriginal: '',
+                alerta: false,
+                informacion: false,
             }
 
         },
@@ -81,6 +80,12 @@
                                 this.errorDisponibilidad = "Nombre disponible.";    
                                 this.disabled = false;                              
                             }
+                    })
+                    .catch((error)=>{
+                            this.alerta = true;
+                            this.errorDisponibilidad = 'Ha surgido un error durante la verificación. Inténtelo nuevamente.';
+                            console.log(error);
+                            this.loading = false;
                     });
                 }
                 else if(this.prestador.nombreDescriptivo == this.nombreOriginal){
@@ -90,6 +95,7 @@
             },
             modificarPrestador(){
                 this.loading = true;
+                this.limpiarResultado();
                 if(this.checkForm()){
                     var params = this.prestador;
                     console.log(params);
@@ -97,15 +103,22 @@
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5420 || res.data.resultado == 5424){
-                                this.$router.push({ name: 'ListadoPrestador', params: { resultadoOperacion: "Prestador modificado satisfactoriamente." }});  
+                                this.$router.push({ name: 'PrincipalPrestador', params: { resultadoOperacion: "Prestador modificado satisfactoriamente." }});  
                             } else if (res.data.resultado == 5421 || res.data.resultado == 5425){
-                                
                                 this.resultadoOperacion = "Ya existe un prestador con ese nombre.";
+                                this.alerta = true;
                             }
                             else{
-                                this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
+                                this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                                this.alerta = true;
                             }
-                        });
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                    });
                 }
                 this.loading = false;
             },
@@ -121,6 +134,11 @@
             limpiarMensajes(){
                 this.resultadoOperacion = "";
                 this.erroresForm = [];
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             },
             checkForm() {
                 this.limpiarMensajes();
