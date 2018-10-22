@@ -4,14 +4,15 @@
             <div class="card-header greenBackground">Modificar descuento</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="modificarDescuento()">
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                     <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <div class="form-group">
                         <label for="motivo" class="darkTextCustom">Motivo del descuento</label>
                         <input type="text" maxlength="45" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="descuento.motivo" id="motivo" placeholder="Motivo descriptivo del descuento">
@@ -35,19 +36,7 @@
         mounted(){
             this.descuento = this.$route.params.descuento;
             this.nombreOriginal = this.$route.params.descuento.motivo;
-            //this.loading = true;    
             console.log(this.descuento);
-            /*axios.get(`${process.env.BASE_URL}/api/cliente/lista-descuentos')
-            .then((res)=>{
-                console.log(res);
-                if(res.data.resultado == 100){
-                    this.descuentos = res.data.descuentos;
-                    this.descuentos.forEach(function(obj) { obj.disabled = false; });
-                }
-                this.loading = false;
-        	});
-            console.log(this.$route.params.plan);
-            this.plan = this.$route.params.plan;*/
             },
         beforeCreate: function () {
             if (!this.$session.exists()) {
@@ -67,6 +56,8 @@
                 },
                 errorDisponibilidad: '',
                 nombreOriginal: '',
+                alerta: false,
+                informacion: false,
             }
         },
         methods: {
@@ -101,6 +92,7 @@
                 }
             },
             modificarDescuento(){
+                this.limpiarResultado();
                 if(this.checkForm()){
                     var params = this.descuento;
                     console.log(params);
@@ -108,13 +100,28 @@
                         .then((res)=>{
                             console.log(res);
                             if(res.data.resultado == 5450){
-                            this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Descuento modificado satisfactoriamente." }});
+                                this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Descuento modificado satisfactoriamente." }});
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 5451){
+                                this.alerta = true;
                                 this.resultadoOperacion = "El descuento seleccionado no existe.";
+                            }else{
+                                this.alerta = true;
+                                this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
                             }
-                        });
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                    });
                 } 
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             },
             limpiarCajas(){
                 this.descuento = {

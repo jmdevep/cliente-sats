@@ -4,14 +4,16 @@
             <div class="card-header greenBackground">Registro de Plan</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="registrarPlan()">
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
+
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre descriptivo</label>
                         <input type="text" maxlength="45" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="plan.nombre" id="nombre" placeholder="Nombre descriptivo">
@@ -108,6 +110,8 @@
                 errorDisponibilidad: '',
                 descuentos:[],
                 descuentoSeleccionado: null,
+                alerta: false,
+                informacion: false,
             }
 
         },
@@ -129,6 +133,13 @@
                                 this.errorDisponibilidad = "Nombre disponible.";    
                                 this.disabled = false;                              
                             }
+                    })
+                    .catch((error)=>{
+                        this.alerta = true;
+                        this.errorDisponibilidad = 'Ha surgido un error durante la verificación. Inténtelo nuevamente.';
+                        console.log(error);
+                        this.loading = false;
+                        this.disabled = true;
                     });
                 }
             },
@@ -147,6 +158,7 @@
             },
             registrarPlan(){
                 this.loading = true;
+                this.limpiarResultado();
                 if(this.checkForm()){
                     var params = this.plan;
                     console.log(params);
@@ -154,17 +166,29 @@
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5402){
+                                this.informacion = true;
                                 this.resultadoOperacion = "Plan agregado satisfactoriamente.";
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 5303){
+                                this.alerta = true;
                                 this.resultadoOperacion = "Ya existe un plan con ese nombre.";
                             }
                             else if(res.data.resultado == 4){
+                                this.alerta = true;
                                 this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
+                            }else {
+                               this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                               this.alerta = true;
                             }
-                        });
+                            this.loading = false;
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                    });
                 }
-                this.loading = false;
             },
             limpiarCajas(){
                 this.plan.id = 0;
@@ -193,6 +217,11 @@
             limpiarMensajes(){
                 this.resultadoOperacion = "";
                 this.erroresForm = [];
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             },
             checkForm() {
                 this.limpiarMensajes();

@@ -119,21 +119,21 @@
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 1102){
                                 this.informacion = true;
-                                this.resultadoOperacion = "Usuario agregado satisfactoriamente.";
+                                this.resultadoOperacion = 'Usuario agregado satisfactoriamente.';
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 1100){
                                 this.alerta = true;
-                                this.resultadoOperacion = "Ya existe un usuario con ese nombre.";
+                                this.resultadoOperacion = 'Ya existe un usuario con ese nombre.';
                             }
                             else{
                                 this.alerta = true;
-                                this.resultadoOperacion = "Ocurrió un error durante el proceso. Vuelva a intentarlo.";
+                                this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
                             }
                             this.loading = false;
                         })
                         .catch((error)=>{
                             this.alerta = true;
-                            this.resultadoOperacion = 'Ha surgido un error en el sistema. Inténtelo nuevamente.';
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
                             console.log(error);
                             this.loading = false;
                     });

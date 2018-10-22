@@ -1,15 +1,21 @@
 <template>
     <div>
-        {{ resultadoOperacion }}
+        <h1 class="mainTitle">
+        Informe de horas trabajadas
+        </h1>
+        <hr class="titleUnderline">
+        <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
         <div class="row">
             <div class="col-sm-12">
                 <div v-if="meses.length" class="form-group">
                     <label>Mes a consultar:</label>
-                    <select id="meses" class="form-control" v-model="mesSeleccionado" @change="cargarDatos()">
+                    <select :disabled="disabled" id="meses" class="form-control" v-model="mesSeleccionado" @change="cargarDatos()">
                         <option  v-for="(mes,index) in meses" :key="index" v-bind:value="mes">
                             {{ mes.textoMes }} - {{mes.anio}}
                         </option>
                     </select>
+                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                 </div>
             </div>
         </div>
@@ -18,7 +24,6 @@
                 <div class="table-responsive">
                     <table class="table" id="tablaInformeHoras">
                         <caption class="captionCustom"><h3>Informe de horas</h3></caption>
-                        <i v-show="loading" class="fa fa-spinner fa-spin"></i>
                         <thead class="greenBackground">
                             <tr>
                                 <th scope="col">#</th>
@@ -107,7 +112,7 @@
             axios.get(`${process.env.BASE_URL}/api/empleado/generar-informe-horas-trabajadas`, {
                 params: {
                     
-                    mes: 9,
+                    mes: this.mesSeleccionado.mes + 1,
                     
                 }
             })
@@ -115,17 +120,22 @@
                     console.log(res);
         			if(res.data.resultado == 100){
                         this.informes = res.data.informes;
-                        /*if(res.data.cantidadElementos <= this.tamanoPagina){
-                            this.cantidadPaginas = 1;
-                        } else {
-                            this.cantidadPaginas = Math.ceil( res.data.informes.length / this.tamanoPagina);                            
-                        }*/
                         this.cantidadPaginas = 1;
                         console.log(this.cantidadPaginas);
                         this.indexActual = 1;
+                    }else if(res.data.resultado == 101){
+                        this.resultadoOperacion = "No hay datos para el mes seleccionado";
+                        this.alerta = true;
+                        this.informes = [];
                     }
                     this.loading = false;
-        	});
+            })
+            .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                    });
 
         	},
         data(){
@@ -145,6 +155,9 @@
                     anio: 0
                 },
                 meses: [],
+                alerta: false,
+                informacion: false,
+                disabled: false,
                 json_fields: {
             'Nombre': 'empleado.nombre',
             'Apellido': 'empleado.apellido',
@@ -152,10 +165,10 @@
             'Diurnas': 'diurnas',
             'Nocturnas': 'nocturnas',
             'Extras': 'extra',
-            'Reten': 'reten',
-            'Viaticos + 400': 'viaticosMayores',
-            'Viaticos - 400': 'viaticosMenores',
-            'Viaticos por cantidad': 'cantidadKmViaticos',
+            'Retén': 'reten',
+            'Viáticos + 400': 'viaticosMayores',
+            'Viáticos - 400': 'viaticosMenores',
+            'Viáticos por cantidad': 'cantidadKmViaticos',
 
         },
         json_data: [],
@@ -172,12 +185,13 @@
         },
         methods: {
             cargarDatos(index){
+                this.limpiarResultado();
                 this.loading = true;
-                console.log(index);
+                this.disabled = true;
+                console.log(this.mesSeleccionado.mes);
                 axios.get(`${process.env.BASE_URL}/api/empleado/generar-informe-horas-trabajadas`, {
                 params: {
-                   
-                        mes: 9,
+                        mes: this.mesSeleccionado.mes + 1,
            
                 }
             })
@@ -187,8 +201,21 @@
                         this.informes = res.data.informes;
                         this.indexActual = index;
                     }
+                    else if(res.data.resultado == 101){
+                        this.resultadoOperacion = "No hay datos para el mes seleccionado";
+                        this.alerta = true;
+                        this.informes = [];
+                    }
                     this.loading = false;
-        	    });
+                    this.disabled = false;
+                })
+                .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error cargando los datos. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                            this.disabled = false;
+                    });
             },
             exportarExcel(){
                 $("tablaInformeHoras").tableExport({
@@ -211,6 +238,10 @@
                     case 11: return 'Diciembre';
                     default: return 'Mes no definido';
                 }
+            },
+            limpiarResultado(){
+                this.alerta = false;
+                this.resultadoOperacion = '';
             },
             cargarSiguiente(){
                 this.cargarDatos(this.indexActual + 1);

@@ -72,7 +72,7 @@
                             <td>{{ empleado.vencimientoCarnetSalud }}</td>
                             <td>{{ empleado.vencimientoCarnetChofer }}</td>
                             <template v-if="empleado.usuario.id != 0">
-                                <td>{{ empleado.usuario.id }}</td> 
+                                <td>{{ empleado.usuario.nombre }}</td> 
                             </template>   
                             <template v-else>
                                 <td>

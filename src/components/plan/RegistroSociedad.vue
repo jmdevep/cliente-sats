@@ -152,11 +152,18 @@
                                 this.errorDisponibilidad = "Nombre disponible.";    
                                 this.disabled = false;                              
                             }
+                    })
+                    .catch((error)=>{
+                        this.alerta = true;
+                        this.errorDisponibilidad = 'Ha surgido un error durante la verificación. Inténtelo nuevamente.';
+                        console.log(error);
+                        this.loading = false;
+                        this.disabled = true;
                     });
                 }
                 else{
                     this.errorDisponibilidad = "Debe completar este campo.";  
-                    disabled = true;
+                    this.disabled = true;
                 }
                 this.loading = false;
             },
@@ -177,7 +184,17 @@
                             else if(res.data.resultado == 4){
                                 this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
                             }
-                        });
+                            else{
+                                this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
+                                this.alerta = true;
+                            }
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                    });
                 }
                 this.loading = false;
             },

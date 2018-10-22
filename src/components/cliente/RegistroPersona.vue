@@ -13,7 +13,8 @@
                     </p>
 
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre Completo</label>
                         <input type="text" class="form-control border-success" v-model="persona.nombre" id="nombre" placeholder="Nombre">
@@ -100,6 +101,8 @@
                 },
                 errorDisponibilidad: '',
                 prestadores: [],
+                alerta: false,
+                informacion: false,
             }
 
         },
@@ -137,6 +140,7 @@
                 });
             },
             registrarPersona(){
+                this.limpiarResultado();
                 this.loading = true;
                 if(this.checkForm()){
                     var params = this.persona;
@@ -145,14 +149,30 @@
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 5302){
+                                this.informacion = true;
                                 this.resultadoOperacion = "Persona agregada satisfactoriamente.";
                                 this.limpiarCajas();
                             } else if (res.data.resultado == 1100){
+                                this.alerta = true;
                                 this.resultadoOperacion = "Ya existe una persona con ese documento.";
+                            }else{
+                                this.alerta = true;
+                                this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
                             }
-                        });
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                    });
                 }
                 this.loading = false;
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             },
             limpiarCajas(){
                 this.persona = {
