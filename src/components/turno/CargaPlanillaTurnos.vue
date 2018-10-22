@@ -42,6 +42,7 @@ import axios from 'axios';
           this.loading = true;
           console.log(this.archivo);
           if(this.checkForm()){
+              this.disabled = true;
                 let formData = new FormData();
                 formData.append('archivo', this.archivo);
 
@@ -56,12 +57,14 @@ import axios from 'axios';
                         this.informacion = true;
                         this.resultadoOperacion = 'Archivo cargado exitosamente.'
                         this.loading = false;
+                        this.disabled = false;
                     })
                     .catch((error)=>{
                         this.alerta = true;
                         this.resultadoOperacion = 'Ha surgido un error al cargar el archivo. Verifique el formato e inténtelo nuevamente. ';
                         console.log(error);
                         this.loading = false;
+                        this.disabled = false;
                     });
                 }
             }
@@ -78,6 +81,7 @@ import axios from 'axios';
             alerta: false,
             informacion: false,
             loading: false,
+            disabled: false,
         }
     },
 }

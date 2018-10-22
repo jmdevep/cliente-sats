@@ -4,7 +4,9 @@
                             <div class="card-header greenBackground">Registro de Localidades</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="enviarArchivo()">
-                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
+                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>   
    
             <p>Plan: </p>
             <multi-select v-model="planSeleccionado" placeholder="Seleccionar Plan"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="planes" :option-height="104" :custom-label="customLabelPlanes" :show-labels="false">    
@@ -19,10 +21,10 @@
 
             <div class="large-12 medium-12 small-12 cell">
                 <label>Planilla: 
-                    <input type="file" id="archivo" ref="archivo" class="btn marginBefore" v-on:change="cargarArchivo()"/>
+                    <input type="file" id="archivo" ref="archivo" accept=".xls,.xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" class="btn marginBefore" v-on:change="cargarArchivo()"/>
                 </label>
             </div>
-                    <input type="submit" value="Cargar" class="btn marginBefore tableHeadingBackground">
+                    <input type="submit" :disabled="disabled" value="Cargar" class="btn marginBefore tableHeadingBackground">
                 </form>
             </div>
         </div>
@@ -58,30 +60,47 @@ export default {
       cargarArchivo(){
           this.archivo = this.$refs.archivo.files[0];
       },
+      limpiarResultado(){
+          this.resultadoOperacion = '';
+          this.alerta = false;
+          this.informacion = false;
+      },
       enviarArchivo(){
-          var data = this.planSeleccionado;
-          const json = JSON.stringify(data);
-          const blob = new Blob([json], {
-            type: 'application/json'
-          });
-          let formData = new FormData();
-          formData.append('archivo', this.archivo);
-          formData.append('data', blob);
-
-          axios.post(`${process.env.BASE_URL}/api/cliente/cargar-planilla`,
-            formData,
-
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }       
-            }
-            ).then(function(){
-                console.log('SUCCESS!!');
-            })
-            .catch(function(){
-                console.log('FAILURE!!');
+          this.limpiarResultado();
+          if(!this.archivo || this.archivo == ''){
+              this.alerta = true;
+              this.resultadoOperacion = 'Debe seleccionar un archivo.';
+          }else{
+            this.disabled = true;
+            var data = this.planSeleccionado;
+            const json = JSON.stringify(data);
+            const blob = new Blob([json], {
+                type: 'application/json'
             });
+            let formData = new FormData();
+            formData.append('archivo', this.archivo);
+            formData.append('data', blob);
+
+            axios.post(`${process.env.BASE_URL}/api/cliente/cargar-planilla`,
+                formData,
+
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }       
+                }
+                ).then((res)=>{
+                    this.informacion = true;
+                    this.resultadoOperacion = 'Archivo cargado exitosamente.';
+                    this.disabled = false;
+                })
+                .catch((error)=>{
+                    console.log(error);
+                    this.alerta = true;
+                    this.disabled = false;
+                    this.resultadoOperacion = 'Error al cargar el archivo. Valide el formato e inténtelo nuevamente. Si el problema persiste, contacte al soporte.';
+                });
+          }
       }
     },
                 beforeCreate: function () {
@@ -95,6 +114,10 @@ export default {
             archivo: '',
             planes: [],
             planSeleccionado: null,
+            disabled: false,
+            alerta: false,
+            informacion: false,
+            resultadoOperacion:'',
         }
     },
   }

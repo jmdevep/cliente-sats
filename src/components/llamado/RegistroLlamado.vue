@@ -4,14 +4,15 @@
             <div class="card-header greenBackground">Registro de Llamado</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="registrarLlamado()">
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
-                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
+                    <i v-show="loading" class="fa fa-spinner fa-spin"></i> 
 
        
                 <!--    <multi-select v-model="llamado.paciente" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
@@ -150,6 +151,8 @@
                 horaLlegadaAsistencia: null,
                 fechaLlegadaDestino: null,
                 horaLlegadaDestino: null,
+                alerta: false,
+                informacion: false,
             }
         },
         methods: {
@@ -194,12 +197,17 @@
                     this.loading = false;
         	    });         
             },  
+            limpiarResultado(){
+                this.alerta = false;
+                this.informacion = false;
+                this.resultadoOperacion = '';
+            },
             registrarLlamado(){
                 this.llamado.fechaRecibido = moment(`${this.fechaRecibido} ${this.horaRecibido}`,'YYYY-MM-DD HH:mm:ss').format();
                 this.llamado.fechaLlegadaAsistencia = moment(`${this.fechaLlegadaAsistencia} ${this.horaLlegadaAsistencia}`,'YYYY-MM-DD HH:mm:ss').format();
                 this.llamado.fechaSalidaMovil = moment(`${this.fechaSalida} ${this.horaSalida}`,'YYYY-MM-DD HH:mm:ss').format();
                 this.llamado.fechaLlegadaDestinoPaciente = moment(`${this.fechaLlegadaDestino} ${this.horaLlegadaDestino}`,'YYYY-MM-DD HH:mm:ss').format();
-                
+                this.limpiarResultado();
                 var params = this.llamado;
 
                 this.loading = true;
@@ -212,12 +220,24 @@
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 6002){
-                                this.resultadoOperacion = "Evento agregado satisfactoriamente.";
-                                this.limpiarCajas();    
+                                this.resultadoOperacion = "Llamado agregado satisfactoriamente.";
+                                this.limpiarCajas(); 
+                                this.informacion = true;   
                             } else if (res.data.resultado == 6003){
                                 this.resultadoOperacion = "Error en el alta.";
+                                this.alerta = true;
+                            }else{
+                                this.alerta = true;
+                                this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
                             }
-                        }); 
+                            this.loading = false;
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                    });
                     this.loading = false;
                 } 
             },

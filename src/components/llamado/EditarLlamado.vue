@@ -4,14 +4,15 @@
             <div class="card-header greenBackground">Modificar Llamado</div>
             <div class="card-body darkTextCustom">
                 <form v-on:submit.prevent="modificarLlamado()">
-                    <p v-if="erroresForm.length">
+                    <p class="text-danger" v-if="erroresForm.length">
                         <b>Por favor corrija lo siguiente:</b>
                         <ul>
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
-                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
+                    <i v-show="loading" class="fa fa-spinner fa-spin"></i> 
 
                     
                     <multi-select v-model="llamado.paciente" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
@@ -175,6 +176,8 @@
                 horaLlegadaAsistencia: null,
                 fechaLlegadaDestino: null,
                 horaLlegadaDestino: null,
+                informacion: false,
+                alerta: false,
             }
         },
         methods: {
@@ -239,7 +242,7 @@
 
                 this.loading = true;
 
-                console.log(params);
+                this.limpiarResultado();
 
                 if(this.checkForm()){
 
@@ -247,14 +250,31 @@
                         .then((res)=>{
                             console.log(res.data.resultado);                            
                             if(res.data.resultado == 6000){
+                                this.informacion = true;
                                 this.resultadoOperacion = "Llamado modificado satisfactoriamente.";
                                 this.limpiarCajas();    
                             } else if (res.data.resultado == 6001){
+                                this.alerta = true;
                                 this.resultadoOperacion = "Error en la modificacion.";
+                            }else{
+                                this.alerta = true;
+                                this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
                             }
-                        }); 
+                            this.loading = false;
+                        })
+                        .catch((error)=>{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            console.log(error);
+                            this.loading = false;
+                    });
                     this.loading = false;
                 } 
+            },
+            limpiarResultado(){
+                this.resultadoOperacion = '';
+                this.alerta = false;
+                this.informacion = false;
             },
             limpiarCajas(){
                 errorDisponibilidad: '';

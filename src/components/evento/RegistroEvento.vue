@@ -9,8 +9,9 @@
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
-                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
+                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>   
 
                     <multi-select v-model="personaSeleccionada" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
                         
@@ -202,6 +203,8 @@ export default {
         prestador: null
       },
       personaDisabled: false,
+      alerta: false,
+      informacion: false,
     };
   },
   methods: {
@@ -314,11 +317,27 @@ export default {
               this.limpiarCajas();
             } else if (res.data.resultado == 5803) {
               this.resultadoOperacion = "Error en el alta.";
-            }
-          });
+            }else{
+              this.alerta = true;
+              this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+          }
+          this.loading = false;
+        })
+        .catch((error)=>{
+            this.alerta = true;
+            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+            console.log(error);
+            this.loading = false;
+        });
         this.loading = false;
       }
     },
+    limpiarResultado(){
+      this.alerta = false;
+      this.informacion = false;
+      this.resultadoOperacion = '';
+    }
+    ,
     limpiarCajas() {
       this.personaSeleccionada = null;
       this.servicioSeleccionado = null;

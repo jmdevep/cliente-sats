@@ -97,6 +97,8 @@
                     localidadDestino: null,
                     cantidadKm: null
                 },
+                alerta: false,
+                informacion: false,
             }
         },
         methods: {
@@ -138,15 +140,19 @@
                             else if(res.data.resultado == 200){
                                 this.resultadoOperacion = "Hubo un error de conexión. Inténtelo nuevamente.";
                                 this.alerta = tre;
+                            }else{
+                                this.alerta = true;
+                                this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                            
                             }
+                            this.loading = false;
                         })
                         .catch((error)=>{
                             this.alerta = true;
-                            this.resultadoOperacion = 'Ha surgido un error en el sistema. Inténtelo nuevamente.';
+                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
                             console.log(error);
                             this.loading = false;
-                        });
-                    this.loading = false;
+                    });
                 }
             },
             limpiarCajas(){

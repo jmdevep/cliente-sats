@@ -14,8 +14,9 @@
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
-                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                    <p>{{ resultadoOperacion }}</p>
+                    <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+                    <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
+                    <i v-show="loading" class="fa fa-spinner fa-spin"></i>   
                     
                     <multi-select :disabled="disabled" v-model="personaSeleccionada" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
                         <template slot="option" slot-scope="props">
@@ -138,7 +139,9 @@ export default {
       horaInicio: null,
       horaFin: null,
       fechaInicio: null,
-      fechaFin: null
+      fechaFin: null,
+      alerta: false,
+      informacion: false,
     };
   },
   methods: {
@@ -198,9 +201,13 @@ export default {
           this.loading = false;
         });
     },
+    limpiarResultado(){
+      this.resultadoOperacion = '';
+      this.alerta = false;
+      this.informacion = false;
+    },
     modificarEvento() {
-      console.log("modificar evento");
-      console.log(this.evento);
+      this.limpiarResultado();
       this.evento.inicioEvento = moment(
         `${this.fechaInicio} ${this.horaInicio}`,
         "YYYY-MM-DD HH:mm:ss"
@@ -226,12 +233,23 @@ export default {
           .then(res => {
             console.log(res.data.resultado);
             if (res.data.resultado == 5804) {
+              this.informacion = true;
               this.resultadoOperacion = "Evento modificado";
             } else if (res.data.resultado == 5805) {
-              this.resultadoOperacion = "Error en modificacion.";
+              this.alerta = true;
+              this.resultadoOperacion = "Error en modificación.";
+            }else{
+              this.alerta = true;
+              this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
             }
-          });
-        this.loading = false;
+            this.loading = false;
+          })
+          .catch((error)=>{
+            this.alerta = true;
+            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+            console.log(error);
+            this.loading = false;
+        });
       }
     },
     limpiarCajas() {
@@ -257,19 +275,19 @@ export default {
         this.erroresForm.push("Fecha inicio requerida.");
       }
       if (!this.horaInicio) {
-        this.erroresForm.push("Hora Inicio requerida");
+        this.erroresForm.push("Hora Inicio requerida.");
       }
       if (this.direccion == "") {
-        this.erroresForm.push("Direccion requerida");
+        this.erroresForm.push("Dirección requerida.");
       }
       if (!this.personaSeleccionada) {
-        this.erroresForm.push("Paciente requerido");
+        this.erroresForm.push("Paciente requerido.");
       }
       if (!this.servicioSeleccionado) {
-        this.erroresForm.push("Servicio requerido");
+        this.erroresForm.push("Servicio requerido.");
       }
       if (!this.tipoEventoSeleccionado) {
-        this.erroresForm.push("Tipo de Evento requerido");
+        this.erroresForm.push("Tipo de Evento requerido.");
       }
 
       this.disabled = false;
