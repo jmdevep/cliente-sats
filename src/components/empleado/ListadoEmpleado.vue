@@ -87,14 +87,14 @@
                         </tr>
                     </tbody>
                 </table>
-                <ul class="pagination">
-                    <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==1) }">
+                 <ul class="pagination">
+                    <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==0) }">
                     <a @click="cargarAnterior()" class="page-link" href="#" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                         <span class="sr-only">Anterior</span>
                     </a>
                     </li> 
-                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="cargarDatos(index)" class="page-link" href="#">{{ index }}</a></li>
+                    <li class="page-item" v-bind:class="{ 'disabled' : (index - 1 == indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="indexActual = index -1; cargarDatos()" class="page-link" href="#">{{ index }}</a></li>
                     <li class="page-item"  v-bind:class="{ 'disabled' : (indexActual==cantidadPaginas) }">
                     <a @click="cargarSiguiente()" class="page-link" href="#" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
@@ -108,44 +108,19 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'ListadoEmpleado',
-        mounted(){
-            this.resultadoOperacion = this.$route.params.resultadoOperacion || '';        
+import axios from "axios";
+export default {
+  name: "ListadoEmpleado",
+  mounted() {
+    this.resultadoOperacion = this.$route.params.resultadoOperacion || "";
 
-            this.loading = true;
-            axios.get(`${process.env.BASE_URL}/api/empleado/lista-empleados`, {
-                params: {
-                    condiciones: {
-                        orden: 'DESC',
-                        tamanoPagina: this.tamanoPagina,
-                        indicePagina: this.indicePagina,
-                        campo: 'nombre',
-                    },
-                }
-            })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.empleados = res.data.listaEmpleados;
-                        if(res.data.cantidadElementos <= this.tamanoPagina){
-                            this.cantidadPaginas = 1;
-                        } else {
-                            this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
-                        }
-                        console.log(this.cantidadPaginas);
-                        this.indexActual = 1;
-                    }
-                    this.loading = false;
-        	});
-
-        	},
-        data(){
-            return{
-                resultadoOperacion: '',
-                empleados: [],
- //inicio propiedades tabla
+   this.cargarDatos();
+  },
+  data() {
+    return {
+      resultadoOperacion: "",
+      empleados: [],
+      //inicio propiedades tabla
       tamanoPagina: 5,
       indicePagina: 0,
       cantidadPaginas: 0,
@@ -153,43 +128,53 @@
       filtrado: "",
       campoFiltrado: "",
       opcionesFiltrado: [
-          { value: 'nombre_usuario', text: 'Nombre de Usuario' },
+        { value: "nombre_empleado", text: "Nombre de Empleado" },
+        { value: "apelledo_empleado", text: "Apellido de Empleado" }
       ],
       ordenFiltradoAsc: null,
       paginasFiltrado: [5, 10, 15]
       //fin propiedades tabla
+    };
+  },
+  methods: {
+    cargarDatos(index) {
+      this.loading = true;
+      console.log(index);
+      axios
+        .get(`${process.env.BASE_URL}/api/empleado/lista-empleados`, {
+          params: {
+            condiciones: {
+              orden: this.ordenFiltradoAsc ? "ASC" : "DESC",
+              tamanoPagina: this.tamanoPagina,
+              indicePagina: this.indexActual,
+              campo: this.campoFiltrado || "nombre_empleado",
+              valor: "%" + this.filtrado + "%"|| "%%"
             }
-
-        },
-        methods: {
-            cargarDatos(index){
-                this.loading = true;
-                console.log(index);
-                axios.get(`${process.env.BASE_URL}/api/empleado/lista-empleados`, {
-                params: {
-                    condiciones: {
-                        orden: 'DESC',
-                        tamanoPagina: this.tamanoPagina,
-                        indicePagina: index -1,
-                        campo: 'nombre',
-                    },
-                }
-                })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.empleados = res.data.listaEmpleados;
-                        this.indexActual = index;
-                    }
-                    this.loading = false;
-        	    });
-            },
-            cargarSiguiente(){
-                this.cargarDatos(this.indexActual + 1);
-            },
-            cargarAnterior(){
-                this.cargarDatos(this.indexActual - 1);
-            }   
-        },    
+          }
+        })
+       .then(res => {
+          console.log(res);
+          if (res.data.resultado == 100) {
+            this.empleados = res.data.listaEmpleados;
+            this.cantidadPaginas =
+              res.data.cantidadElementos <= this.tamanoPagina
+                ? 1
+                : Math.ceil(res.data.cantidadElementos / this.tamanoPagina);
+          } else {
+            this.empleados = [];
+            this.indexActual = 0;
+          }
+          this.loading = false;
+        });
+    },
+    cargarSiguiente() {
+      this.indexActual += 1;
+      this.cargarDatos();
+    },
+    cargarAnterior() {
+      this.indexActual -= 1;
+      this.cargarDatos();
     }
+  }
+};
 </script>

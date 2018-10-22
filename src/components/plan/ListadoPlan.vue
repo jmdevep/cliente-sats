@@ -77,119 +77,98 @@
                         </tr>
                     </tbody>
                 </table>
-                <ul class="pagination">
-                    <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==1) }">
-                    <a @click="cargarAnterior()" class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                        <span class="sr-only">Anterior</span>
-                    </a>
-                    </li> 
-                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="cargarDatos(index)" class="page-link" href="#">{{ index }}</a></li>
-                    <li class="page-item"  v-bind:class="{ 'disabled' : (indexActual==cantidadPaginas) }">
-                    <a @click="cargarSiguiente()" class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                        <span class="sr-only">Siguiente</span>
-                    </a>
-                    </li>
-                </ul>
+                    <ul class="pagination">
+                        <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==0) }">
+                        <a @click="cargarAnterior()" class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Anterior</span>
+                        </a>
+                        </li> 
+                        <li class="page-item" v-bind:class="{ 'disabled' : (index - 1 == indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="indexActual = index -1; cargarDatos()" class="page-link" href="#">{{ index }}</a></li>
+                        <li class="page-item"  v-bind:class="{ 'disabled' : (indexActual==cantidadPaginas) }">
+                        <a @click="cargarSiguiente()" class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Siguiente</span>
+                        </a>
+                        </li>
+                    </ul>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'ListadoPlan',
-        mounted(){
-            this.resultadoOperacion = this.$route.params.resultadoOperacion;
+import axios from "axios";
+export default {
+  name: "ListadoPlan",
+  mounted() {
+    this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
-            this.loading = true;
-            axios.get(`${process.env.BASE_URL}/api/cliente/lista-planes`, {
-                params: {
-                    condiciones: {
-                        orden: 'DESC',
-                        tamanoPagina: this.tamanoPagina,
-                        indicePagina: this.indicePagina,
-                        campo: 'nombre_plan',
-                    },
-                }
-            })
-        		.then((res)=>{
-                    console.log(res);
-                    
-        			if(res.data.resultado == 100){
-                        this.planes = res.data.planes;
-                        if(res.data.cantidadElementos <= this.tamanoPagina){
-                            this.cantidadPaginas = 1;
-                        } else {
-                            this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
-                        }
-                        console.log(this.cantidadPaginas);
-                        this.indexActual = 1;
-                    }
-                    this.loading = false;
-        	});
-        },
-            beforeCreate: function () {
-                var usuario = this.$session.get('usuario');
-                if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
-                this.$router.push('/usuario/login')
-                } 
-        },
-        data(){
-            return{
-                resultadoOperacion: '',
-                loading: false,
-                planes: [],
-                //inicio propiedades tabla
-                    tamanoPagina: 5,
-                    indicePagina: 0,
-                    cantidadPaginas: 0,
-                    indexActual: 0,
-                    filtrado: "",
-                    campoFiltrado: "",
-                    opcionesFiltrado: [
-                        { value: 'nombre_usuario', text: 'Nombre de Usuario' },
-                    ],
-                    ordenFiltradoAsc: null,
-                    paginasFiltrado: [5, 10, 15]
-                    //fin propiedades tabla
-            }
-        },
-        methods: {
-            cargarDatos(index){
-                this.loading = true;
-                console.log(index);
-                axios.get(`${process.env.BASE_URL}/api/cliente/lista-planes`, {
-                params: {
-                    condiciones: {
-                        orden: 'DESC',
-                        tamanoPagina: this.tamanoPagina,
-                        indicePagina: index -1,
-                        campo: 'nombre_plan',
-                    },
-                }
-                })
-        		.then((res)=>{
-                    console.log("SI ANDA ESTO");
-                    console.log(res);
-                    console.log(res.data.resultado);
-        			if(res.data.resultado == 100){
-                        this.planes = res.data.planes;
-                        console.log(this.planes);
-                        console.log(res.data.planes);
-                        this.indexActual = index;
-                    }
-                    this.loading = false;
-        	    });
-            },
-            cargarSiguiente(){
-                this.cargarDatos(this.indexActual + 1);
-            },
-            cargarAnterior(){
-                this.cargarDatos(this.indexActual - 1);
-            }   
-        },    
+    this.cargarDatos();
+  },
+  beforeCreate: function() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+      this.$router.push("/usuario/login");
     }
+  },
+  data() {
+    return {
+      resultadoOperacion: "",
+      loading: false,
+      planes: [],
+      //inicio propiedades tabla
+      tamanoPagina: 5,
+      indicePagina: 0,
+      cantidadPaginas: 0,
+      indexActual: 0,
+      filtrado: "",
+      campoFiltrado: "",
+      opcionesFiltrado: [{ value: "nombre_plan", text: "Nombre de Plan" }],
+      ordenFiltradoAsc: null,
+      paginasFiltrado: [5, 10, 15]
+      //fin propiedades tabla
+    };
+  },
+  methods: {
+    cargarDatos(index) {
+      this.loading = true;
+      console.log(index);
+      axios
+        .get(`${process.env.BASE_URL}/api/cliente/lista-planes`, {
+          params: {
+            condiciones: {
+ orden: this.ordenFiltradoAsc ? "ASC" : "DESC",
+              tamanoPagina: this.tamanoPagina,
+              indicePagina: this.indexActual,
+              campo: this.campoFiltrado || "nombre_plan",
+              valor: "%" + this.filtrado + "%"|| "%%"
+            }
+          }
+        })
+    .then(res => {
+          console.log(res);
+          if (res.data.resultado == 100) {
+            this.planes = res.data.planes;
+            this.cantidadPaginas =
+              res.data.cantidadElementos <= this.tamanoPagina
+                ? 1
+                : Math.ceil(res.data.cantidadElementos / this.tamanoPagina);
+          } else {
+            this.planes = [];
+            this.indexActual = 0;
+          }
+          this.loading = false;
+        });
+    },
+    cargarSiguiente() {
+      this.indexActual += 1;
+      this.cargarDatos();
+    },
+    cargarAnterior() {
+      this.indexActual -= 1;
+      this.cargarDatos();
+    }
+  }
+};
 </script>

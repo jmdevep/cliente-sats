@@ -80,117 +80,102 @@
                         </tr>
                     </tbody>
                 </table>
-                <ul class="pagination">
-                    <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==1) }">
-                    <a @click="cargarAnterior()" class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                        <span class="sr-only">Anterior</span>
-                    </a>
-                    </li> 
-                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="cargarDatos(index)" class="page-link" href="#">{{ index }}</a></li>
-                    <li class="page-item"  v-bind:class="{ 'disabled' : (indexActual==cantidadPaginas) }">
-                    <a @click="cargarSiguiente()" class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                        <span class="sr-only">Siguiente</span>
-                    </a>
-                    </li>
-                </ul>
+                                 <ul class="pagination">
+                        <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==0) }">
+                        <a @click="cargarAnterior()" class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Anterior</span>
+                        </a>
+                        </li> 
+                        <li class="page-item" v-bind:class="{ 'disabled' : (index - 1 == indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="indexActual = index -1; cargarDatos()" class="page-link" href="#">{{ index }}</a></li>
+                        <li class="page-item"  v-bind:class="{ 'disabled' : (indexActual==cantidadPaginas) }">
+                        <a @click="cargarSiguiente()" class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Siguiente</span>
+                        </a>
+                        </li>
+                    </ul>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'ListadoLlamado',
-        mounted(){
-            this.resultadoOperacion = this.$route.params.resultadoOperacion;
+import axios from "axios";
+export default {
+  name: "ListadoLlamado",
+  mounted() {
+    this.resultadoOperacion = this.$route.params.resultadoOperacion;
 
-            this.loading = true;
-            axios.get(`${process.env.BASE_URL}/api/llamado/lista-llamados`, {
-                params: {
-                    condiciones: {
-                        orden: 'DESC',
-                        tamanoPagina: this.tamanoPagina,
-                        indicePagina: this.indicePagina,
-                        campo: 'nombre',
-                    },
-                }
-            })
-        		.then((res)=>{
-                    console.log(res);
-                    
-        			if(res.data.resultado == 100){
-                        this.llamados = res.data.listaLlamados;
-                        if(res.data.cantidadElementos <= this.tamanoPagina){
-                            this.cantidadPaginas = 1;
-                        } else {
-                            this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
-                        }
-                        console.log(this.cantidadPaginas);
-                        this.indexActual = 1;
-                    }
-                    this.loading = false;
-        	});
-
-        },
-            beforeCreate: function () {
-                var usuario = this.$session.get('usuario');
-                if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
-                this.$router.push('/usuario/login')
-                } 
-        },
-        data(){
-            return{
-                resultadoOperacion: '',
-                loading: false,
-                llamados: [],
-                //inicio propiedades tabla
-                    tamanoPagina: 5,
-                    indicePagina: 0,
-                    cantidadPaginas: 0,
-                    indexActual: 0,
-                    filtrado: "",
-                    campoFiltrado: "",
-                    opcionesFiltrado: [
-                        { value: 'nombre_usuario', text: 'Nombre de Usuario' },
-                    ],
-                    ordenFiltradoAsc: null,
-                    paginasFiltrado: [5, 10, 15]
-                    //fin propiedades tabla
-            }
-
-        },
-        methods: {
-            cargarDatos(index){
-                this.loading = true;
-                console.log(index);
-                axios.get(`${process.env.BASE_URL}/api/llamado/lista-llamados`, {
-                params: {
-                    condiciones: {
-                        orden: 'DESC',
-                        tamanoPagina: this.tamanoPagina,
-                        indicePagina: index -1,
-                        campo: 'nombre',
-                    },
-                }
-                })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.llamados = res.data.listaLlamados;
-                        this.indexActual = index;
-                    }
-                    this.loading = false;
-        	    });
-            },
-            cargarSiguiente(){
-                this.cargarDatos(this.indexActual + 1);
-            },
-            cargarAnterior(){
-                this.cargarDatos(this.indexActual - 1);
-            }   
-        },    
+    this.cargarDatos();
+  },
+  beforeCreate: function() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+      this.$router.push("/usuario/login");
     }
+  },
+  data() {
+    return {
+      resultadoOperacion: "",
+      loading: false,
+      llamados: [],
+      //inicio propiedades tabla
+      tamanoPagina: 5,
+      indicePagina: 0,
+      cantidadPaginas: 0,
+      indexActual: 0,
+      filtrado: "",
+      campoFiltrado: "",
+      opcionesFiltrado: [
+        { value: "motivo_llamado", text: "Motivo de Llamado" },
+        { value: "clasificacion_llamado", text: "Clasificacion de Llamado" },
+        { value: "fecha_recibido_llamado", text: "Fecha de Recibido" }
+      ],
+      ordenFiltradoAsc: null,
+      paginasFiltrado: [5, 10, 15]
+      //fin propiedades tabla
+    };
+  },
+  methods: {
+    cargarDatos(index) {
+      this.loading = true;
+      console.log(index);
+      axios
+        .get(`${process.env.BASE_URL}/api/llamado/lista-llamados`, {
+          params: {
+            condiciones: {
+         orden: this.ordenFiltradoAsc ? "ASC" : "DESC",
+              tamanoPagina: this.tamanoPagina,
+              indicePagina: this.indexActual,
+              campo: this.campoFiltrado || "fecha_recibido_llamado",
+              valor: "%" + this.filtrado + "%"|| "%%"
+            }
+          }
+        })
+  .then(res => {
+          console.log(res);
+          if (res.data.resultado == 100) {
+            this.llamados = res.data.listaLlamados;
+            this.cantidadPaginas =
+              res.data.cantidadElementos <= this.tamanoPagina
+                ? 1
+                : Math.ceil(res.data.cantidadElementos / this.tamanoPagina);
+          } else {
+            this.llamados = [];
+            this.indexActual = 0;
+          }
+          this.loading = false;
+        });
+    },
+    cargarSiguiente() {
+      this.indexActual += 1;
+      this.cargarDatos();
+    },
+    cargarAnterior() {
+      this.indexActual -= 1;
+      this.cargarDatos();
+    }
+  }
+};
 </script>
