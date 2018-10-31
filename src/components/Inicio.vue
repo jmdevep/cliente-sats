@@ -14,6 +14,9 @@ export default {
     if (!this.$session.exists() || usuario == null) {
       this.$router.push("/usuario/login");
     } 
+    else{
+      this.$router.push("/turno/principal-turno");
+    }
   }
 };
 </script>

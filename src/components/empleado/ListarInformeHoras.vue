@@ -40,6 +40,7 @@
                                 <th scope="col" title="Viáticos mayores a 400km">V +</th>
                                 <th scope="col" title="Viáticos menores a 400km">V -</th>
                                 <th scope="col" title="Viáticos por cantidad de KM">V KM</th>
+                                <th scope="col" title="Viáticos por cantidad de KM"></th>
                             </tr>
                         </thead>
                         <tbody class="tableBodyBackground">
@@ -59,6 +60,8 @@
                                     <td>{{ informe.viaticosMayores}}</td>
                                     <td>{{ informe.viaticosMenores }}</td>
                                     <td>{{ informe.cantidadKmViaticos }}</td>
+                                    <td>{{ informe.cantidadKmViaticos }}</td>
+                                    <td><b-btn class="btn btn-success"><i class="fas fa-door-open whiteText"></i>x</b-btn></td>
                                 </template>
                             </tr>
                         </tbody>
@@ -81,6 +84,20 @@
                 </div>
             </div>
         </div>
+        <!--<b-modal id="marcarIngresoModal" v-model="mostrarModalIngreso" ref="marcarIngresoModal" title="Marcar entrada al turno">
+              <i v-show="loading" class="fa fa-spinner fa-spin"></i>
+              <p class="my-4">Turno seleccionado: {{puestoSeleccionado.inicio}} a {{puestoSeleccionado.fin}}</p>
+              <div class="form-group">
+                <label for="horaI" class="darkTextCustom">Hora de ingreso a marcar</label>
+                <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  class="form-control border-success" v-model="marcarFechaIngreso"></datetime>
+              </div>
+              <div slot="modal-footer" class="w-100">
+                  <p class="float-left"></p>
+                  <b-btn size="sm" id="btnMarcarIngreso" :disabled="habilitarBotonIngreso" class="float-right" variant="primary" @click="controlarEventoMarcarTurnoEntrada(); mostrar=false">
+                      Marcar ingreso
+                  </b-btn>
+              </div>
+        </b-modal>-->
         <div class="row">
             <div class="col-sm-12">
 <download-excel

@@ -1,5 +1,11 @@
 <template>
   <div class="container">
+        <p class="text-danger" v-if="errores.length">
+            <b>Por favor corrija lo siguiente:</b>
+            <ul>
+                <li v-for="(error, index) in errores" :key="index">{{ error }}</li>
+            </ul>
+        </p>
         <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
         <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
         <i v-show="loading" class="fa fa-spinner fa-spin"></i>    
@@ -54,10 +60,32 @@ import axios from 'axios';
                         }
                     }
                     ).then((res)=>{
-                        this.informacion = true;
-                        this.resultadoOperacion = 'Archivo cargado exitosamente.'
-                        this.loading = false;
-                        this.disabled = false;
+                        console.log(res);
+                        if(res.data.resultado == 3002){
+                            this.informacion = true;
+                            this.resultadoOperacion = 'Archivo cargado exitosamente.';
+                            this.errores = res.data.errores;
+                            this.loading = false;
+                            this.disabled = false;
+                        }else if(res.data.resultado == 3012){
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Se han cargado algunos turnos.';
+                            this.errores = res.data.errores;
+                            this.loading = false;
+                            this.disabled = false;
+                        }else if(res.data.resultado == 3013){
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error al cargar el archivo. Verifique el formato e inténtelo nuevamente. ';
+                            this.errores = res.data.errores;
+                            this.loading = false;
+                            this.disabled = false;
+                        }else{
+                            this.alerta = true;
+                            this.resultadoOperacion = 'Ha surgido un error al cargar el archivo. Verifique el formato e inténtelo nuevamente. ';
+                            this.loading = false;
+                            this.disabled = false;
+                        }
+                        
                     })
                     .catch((error)=>{
                         this.alerta = true;
@@ -82,6 +110,7 @@ import axios from 'axios';
             informacion: false,
             loading: false,
             disabled: false,
+            errores: [],
         }
     },
 }

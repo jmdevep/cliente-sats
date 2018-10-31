@@ -155,36 +155,36 @@
             </div>
         </div>
         <b-modal id="marcarIngresoModal" v-model="mostrarModalIngreso" ref="marcarIngresoModal" title="Marcar entrada al turno">
-                                            <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                                            <p class="my-4">Turno seleccionado: {{puestoSeleccionado.inicio}} a {{puestoSeleccionado.fin}}</p>
-                                            <div class="form-group">
-                                              <label for="horaI" class="darkTextCustom">Hora de ingreso a marcar</label>
-                                              <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  class="form-control border-success" v-model="marcarFechaIngreso"></datetime>
-                                            </div>
-                                            <div slot="modal-footer" class="w-100">
-                                                <p class="float-left"></p>
-                                                <b-btn size="sm" id="btnMarcarIngreso" :disabled="habilitarBotonIngreso" class="float-right" variant="primary" @click="controlarEventoMarcarTurnoEntrada(); mostrar=false">
-                                                    Marcar ingreso
-                                                </b-btn>
-                                            </div>
-                                        </b-modal>
-                                        <b-modal id="marcarSalidaModal" v-model="mostrarModalSalida" ref="marcarSalidaModal"  title="Marcar salida del turno">
-                                            <form @submit.stop.prevent="handleSubmit">
-                                                <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                                                <p class="my-4">Turno seleccionado: {{puestoSeleccionado.inicio}} a {{puestoSeleccionado.fin}}</p>
-                                              <div class="form-group">
-                                                      <label for="horaS" class="darkTextCustom">Hora de salida a marcar</label>
-                                                      <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  class="form-control border-success" v-model="marcarFechaSalida"></datetime>
-                                                      <p> {{ resultadoOperacionMarcar }} </p>
-                                              </div>
-                                            </form>
-                                            <div slot="modal-footer" class="w-100">
-                                                <p class="float-left"></p>
-                                                <b-btn size="sm" id="btnMarcarSalida" :disabled="habilitarBotonSalida" class="float-right" variant="primary" @click="controlarEventoMarcarTurnoSalida(); mostrar=false">
-                                                    Marcar salida
-                                                </b-btn>
-                                            </div>
-                                        </b-modal>
+              <i v-show="loading" class="fa fa-spinner fa-spin"></i>
+              <p class="my-4">Turno seleccionado: {{puestoSeleccionado.inicio}} a {{puestoSeleccionado.fin}}</p>
+              <div class="form-group">
+                <label for="horaI" class="darkTextCustom">Hora de ingreso a marcar</label>
+                <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  class="form-control border-success" v-model="marcarFechaIngreso"></datetime>
+              </div>
+              <div slot="modal-footer" class="w-100">
+                  <p class="float-left"></p>
+                  <b-btn size="sm" id="btnMarcarIngreso" :disabled="habilitarBotonIngreso" class="float-right" variant="primary" @click="controlarEventoMarcarTurnoEntrada(); mostrar=false">
+                      Marcar ingreso
+                  </b-btn>
+              </div>
+          </b-modal>
+          <b-modal id="marcarSalidaModal" v-model="mostrarModalSalida" ref="marcarSalidaModal"  title="Marcar salida del turno">
+              <form @submit.stop.prevent="handleSubmit">
+                  <i v-show="loading" class="fa fa-spinner fa-spin"></i>
+                  <p class="my-4">Turno seleccionado: {{puestoSeleccionado.inicio}} a {{puestoSeleccionado.fin}}</p>
+                <div class="form-group">
+                        <label for="horaS" class="darkTextCustom">Hora de salida a marcar</label>
+                        <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  class="form-control border-success" v-model="marcarFechaSalida"></datetime>
+                        <p> {{ resultadoOperacionMarcar }} </p>
+                </div>
+              </form>
+              <div slot="modal-footer" class="w-100">
+                  <p class="float-left"></p>
+                  <b-btn size="sm" id="btnMarcarSalida" :disabled="habilitarBotonSalida" class="float-right" variant="primary" @click="controlarEventoMarcarTurnoSalida(); mostrar=false">
+                      Marcar salida
+                  </b-btn>
+              </div>
+          </b-modal>
         </template>
         <div class="row">
             <div class="col-sm-12">
@@ -390,7 +390,7 @@ export default {
         this.cargarDatos(0);
       } else if (this.usuarioLogueado.tipo.id == 2) {
         this.verModificar = true;
-        this.verMarcar = true;
+        this.verMarcar = false;
         this.idEmpleado = 0;
         this.cargarTurnos(0);
       } else if (this.usuarioLogueado.tipo.id == 3) {

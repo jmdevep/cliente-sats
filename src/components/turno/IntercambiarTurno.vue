@@ -26,7 +26,7 @@
                             <td>{{ empleado.apellido }}</td>
                             <td>{{ empleado.documento }}</td>
                             <td>
-                                <b-btn class="btn btn-success" @click="guardarDatosParaMarcarHora(true, true, turno, puesto); mostrarModalHora=true;">Elegir</b-btn>                              
+                                <b-btn class="btn btn-success" @click="gestionarIntercambio(empleado);">Elegir</b-btn>                              
                             </td>
  
                         </tr>
@@ -49,6 +49,16 @@
                 </ul>
             </div>
         </div>
+        <b-modal id="intercambioModal" v-model="mostrarModal" ref="intercambioModal" title="Intercambiar turno">
+                                            <i v-show="loading" class="fa fa-spinner fa-spin"></i>
+                                            <p class="my-4">Presione el botón "Aceptar" si desea intercambiar su turno con {{intercambio.empleadoIntercambio.nombre}} {{intercambio.empleadoIntercambio.apellido}}. Si no, cierre este mensaje.</p>
+                                            <div slot="modal-footer" class="w-100">
+                                                <p class="float-left"></p>
+                                                <b-btn size="sm" id="btnIntercambiarConfirmar"  class="float-right" variant="primary" @click="intercambiarTurno(); mostrar=false">
+                                                    Aceptar
+                                                </b-btn>
+                                            </div>
+                                        </b-modal>
     </div>
 </template>
 
@@ -63,7 +73,7 @@
             var params = {
                     condiciones: {
                         orden: 'DESC',
-                        tamanoPagina: this.tamanoPagina,
+                        tamanoPagina: 1000,
                         indicePagina: this.indicePagina,
                         campo: 'nombre',
                         valor: this.puesto.rol.id,
@@ -153,6 +163,7 @@
                 },
                 alerta: false,
                 informacion: false,
+                mostrarModal: false,
             }
 
         },
@@ -164,7 +175,7 @@
                 params: {
                     condiciones: {
                         orden: 'DESC',
-                        tamanoPagina: this.tamanoPagina,
+                        tamanoPagina: 1000,
                         indicePagina: index -1,
                         campo: 'nombre',
                     },
@@ -179,28 +190,33 @@
                     this.loading = false;
         	    });
             },
+            gestionarIntercambio(empleado){
+                this.intercambio.empleadoIntercambio = empleado;
+                this.intercambio.puestoViejo = this.puesto;
+                this.mostrarModal = true;
+            },
             intercambiarTurno(empleado){
                 this.loading = true;
 
                 if(this.checkForm()){
-                    var params = this.puesto;
+                    var params = this.intercambio;
                     console.log(params);
                     
-                    axios.post(`${process.env.BASE_URL}/api/turno/modificar-puesto`, params) 
+                    axios.post(`${process.env.BASE_URL}/api/turno/crear-intercambio`, params) 
                         .then((res)=>{
                             console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5804){
-                                this.$router.push({ name: 'PrincipalTurno', params: { resultadoOperacion: "Turno modificado satisfactoriamente." }});                            
+                            if(res.data.resultado == 3121){
+                                this.$router.push({ name: 'PrincipalTurno', params: { resultadoOperacion: "Intercambio creado satisfactoriamente." }});                            
                                 this.limpiarCajas();    
-                            } else if (res.data.resultado == 5805){
-                                this.resultadoOperacion = "Error en modificación.";
+                            } else if (res.data.resultado == 3120){
+                                this.resultadoOperacion = "Error creando intercambio.";
                             }
                         }); 
                     this.loading = false;
                 }
             },
             checkForm() {
-                if (this.puesto != null && this.puesto.empleado != null) {
+                if (this.puesto != null && this.puesto.empleado != null && this.intercambio.empleadoIntercambio) {
                     return true;
                 }
 
@@ -211,6 +227,9 @@
                 } 
                 if(!this.puesto.empleado){
                     this.erroresForm.push('Debe seleccionar un empleado asignado.');
+                }
+                if(!this.intercambio.empleadoIntercambio){
+                    this.erroresForm.push('Debe seleccionar un empleado al cual intercambiar.');
                 }
                 this.disabled = false;
                 return false;
