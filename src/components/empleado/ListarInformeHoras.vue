@@ -40,7 +40,7 @@
                                 <th scope="col" title="Viáticos mayores a 400km">V +</th>
                                 <th scope="col" title="Viáticos menores a 400km">V -</th>
                                 <th scope="col" title="Viáticos por cantidad de KM">V KM</th>
-                                <th scope="col" title="Viáticos por cantidad de KM"></th>
+                                <th scope="col" title=""></th>
                             </tr>
                         </thead>
                         <tbody class="tableBodyBackground">
@@ -60,8 +60,7 @@
                                     <td>{{ informe.viaticosMayores}}</td>
                                     <td>{{ informe.viaticosMenores }}</td>
                                     <td>{{ informe.cantidadKmViaticos }}</td>
-                                    <td>{{ informe.cantidadKmViaticos }}</td>
-                                    <td><b-btn class="btn btn-success"><i class="fas fa-door-open whiteText"></i>x</b-btn></td>
+                                    <td><b-btn class="btn btn-success" @click="cargarDetalle(informe.empleado.id)"><i class="fas fa-door-open whiteText"></i>x</b-btn></td>
                                 </template>
                             </tr>
                         </tbody>
@@ -84,31 +83,30 @@
                 </div>
             </div>
         </div>
-        <!--<b-modal id="marcarIngresoModal" v-model="mostrarModalIngreso" ref="marcarIngresoModal" title="Marcar entrada al turno">
+        <b-modal id="detalleInformeModal" v-model="detalleInformeModal" ref="detalleInformeModal" title="Detalle informe">
               <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-              <p class="my-4">Turno seleccionado: {{puestoSeleccionado.inicio}} a {{puestoSeleccionado.fin}}</p>
-              <div class="form-group">
-                <label for="horaI" class="darkTextCustom">Hora de ingreso a marcar</label>
-                <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  class="form-control border-success" v-model="marcarFechaIngreso"></datetime>
-              </div>
+              <p class="my-4">Ingreso planificado: {{detalleInformeSeleccionado.inicioTurno}}</p>
+              <p class="my-4">Fin planificado: {{detalleInformeSeleccionado.finTurno}} </p>
+              <p class="my-4">Ingreso marcado: {{detalleInformeSeleccionado.inicioPuesto}}</p>
+              <p class="my-4">Fin marcado: {{detalleInformeSeleccionado.finPuesto}} </p>
               <div slot="modal-footer" class="w-100">
                   <p class="float-left"></p>
                   <b-btn size="sm" id="btnMarcarIngreso" :disabled="habilitarBotonIngreso" class="float-right" variant="primary" @click="controlarEventoMarcarTurnoEntrada(); mostrar=false">
                       Marcar ingreso
                   </b-btn>
               </div>
-        </b-modal>-->
+        </b-modal>
         <div class="row">
             <div class="col-sm-12">
-<download-excel
-	class   = "btn btn-default"
-	:data   = "informes"
-	:fields = "json_fields"
-	name    = "filename.xls">
+                <download-excel
+                class   = "btn btn-default"
+                :data   = "informes"
+                :fields = "json_fields"
+                name    = "filename.xls">
 
                     <input type="submit" value="Exportar como planilla" class="btn marginBefore tableHeadingBackground">
 
-</download-excel>
+                </download-excel>
             </div>
         </div>
     </div>
@@ -126,37 +124,12 @@
             this.resultadoOperacion = this.$route.params.resultadoOperacion || '';        
             this.cargarSelectMeses();
             this.loading = true;
-            axios.get(`${process.env.BASE_URL}/api/empleado/generar-informe-horas-trabajadas`, {
-                params: {
-                    
-                    mes: this.mesSeleccionado.mes + 1,
-                    
-                }
-            })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.informes = res.data.informes;
-                        this.cantidadPaginas = 1;
-                        console.log(this.cantidadPaginas);
-                        this.indexActual = 1;
-                    }else if(res.data.resultado == 101){
-                        this.resultadoOperacion = "No hay datos para el mes seleccionado";
-                        this.alerta = true;
-                        this.informes = [];
-                    }
-                    this.loading = false;
-            })
-            .catch((error)=>{
-                            this.alerta = true;
-                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
-                            console.log(error);
-                            this.loading = false;
-                    });
+            this.cargarDatos(0);
 
         	},
         data(){
             return{
+                detalleInformeModal: false,
                 resultadoOperacion: '',
                 informes: [],
                 tamanoPagina: 2,
@@ -175,31 +148,49 @@
                 alerta: false,
                 informacion: false,
                 disabled: false,
+                detalleInformeSeleccionado: {
+                    informe: {
+                        empleado: {},
+                        fecha: '',
+                        diurnas: 0,
+                        nocturnas: 0,
+                        reten: 0,
+                        extra: 0,
+                        feriadoDiurno: 0,
+                        feriadoNocturno: 0,
+                        viaticosMayores: 0,
+                        viaticosMenores: 0,
+                        cantidadKmViaticos: 0,
+                    },
+                    inicioTurno: '',
+                    finTurno: '',
+                    inicioPuesto: '',
+                    finPuesto: '',
+                },
                 json_fields: {
-            'Nombre': 'empleado.nombre',
-            'Apellido': 'empleado.apellido',
-            'Documento': 'empleado.documento',
-            'Diurnas': 'diurnas',
-            'Nocturnas': 'nocturnas',
-            'Extras': 'extra',
-            'Retén': 'reten',
-            'Viáticos + 400': 'viaticosMayores',
-            'Viáticos - 400': 'viaticosMenores',
-            'Viáticos por cantidad': 'cantidadKmViaticos',
+                    'Nombre': 'empleado.nombre',
+                    'Apellido': 'empleado.apellido',
+                    'Documento': 'empleado.documento',
+                    'Diurnas': 'diurnas',
+                    'Nocturnas': 'nocturnas',
+                    'Extras': 'extra',
+                    'Retén': 'reten',
+                    'Viáticos + 400': 'viaticosMayores',
+                    'Viáticos - 400': 'viaticosMenores',
+                    'Viáticos por cantidad': 'cantidadKmViaticos',
+                },
+                json_data: [],
+                json_meta: [
+                    [
+                        {
+                            'key': 'charset',
+                            'value': 'utf-8'
+                        }
+                    ]
+                ],
+                    }
 
-        },
-        json_data: [],
-        json_meta: [
-            [
-                {
-                    'key': 'charset',
-                    'value': 'utf-8'
-                }
-            ]
-        ],
-            }
-
-        },
+                },
         methods: {
             cargarDatos(index){
                 this.limpiarResultado();
@@ -209,7 +200,6 @@
                 axios.get(`${process.env.BASE_URL}/api/empleado/generar-informe-horas-trabajadas`, {
                 params: {
                         mes: this.mesSeleccionado.mes + 1,
-           
                 }
             })
         		.then((res)=>{
@@ -297,6 +287,40 @@
                     this.meses.push(elMes);
                 }
             },   
+            cargarDetalle(empleado){
+                this.limpiarResultado();
+                this.detalleInformeModal = true;
+                this.loading = true;
+                this.disabled = true;
+                console.log(this.mesSeleccionado.mes);
+                axios.get(`${process.env.BASE_URL}/api/empleado/detalle-horas-trabajadas`, {
+                params: {
+                    mes: this.mesSeleccionado.mes + 1,
+                    empleado: empleado,
+                }
+            })
+            .then((res)=>{
+                console.log(res);
+                if(res.data.resultado == 100){
+                    this.detalleInformeSeleccionado = res.data.detallesInforme[0];
+                    this.indexActual = 0;
+                }
+                else if(res.data.resultado == 101){
+                    this.resultadoOperacion = "No hay datos para el empleado seleccionado";
+                    this.alerta = true;
+                    this.informes = [];
+                }
+                this.loading = false;
+                this.disabled = false;
+            })
+            .catch((error)=>{
+                this.alerta = true;
+                this.resultadoOperacion = 'Ha surgido un error cargando los datos. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+                console.log(error);
+                this.loading = false;
+                this.disabled = false;
+            });
+            }
         },    
     }
 </script>
