@@ -2,7 +2,7 @@
     <div>
         {{ resultadoOperacion }}
         <br> 
-        <template v-if="verMarcar">
+
             <b-row>
             <b-col md="6" class="my-1">
         <b-form-group horizontal label="Fecha Inicio" class="mb-0">
@@ -12,8 +12,9 @@
 
               
       <b-col md="6" class="my-1">
-        <b-form-group horizontal label="Fecha Inicio" class="mb-0">
-<datetime type="datetime"   value-zone="America/Montevideo"
+        <b-form-group horizontal label="Fecha Fin" class="mb-0">
+<datetime type="datetime"   
+            value-zone="America/Montevideo"
                   zone="America/Montevideo"
                   format="yyyy-MM-dd HH:mm:ss"
                   :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  v-model="fechaFinSeleccionada"></datetime>
@@ -55,6 +56,7 @@
         </b-form-group>
       </b-col>
     </b-row>
+            <template v-if="verMarcar">
         <div class="row">
             <div class="col-sm-12">
 
@@ -377,7 +379,20 @@ export default {
         id: 0,
         inicio: "",
         fin: ""
-      }
+      },
+      //inicio propiedades tabla
+      tamanoPagina: 5,
+      indicePagina: 0,
+      cantidadPaginas: 0,
+      indexActual: 0,
+      filtrado: "",
+      campoFiltrado: "",
+      opcionesFiltrado: [
+        { value: "id_empleado", text: "Id empleado" }
+      ],
+      ordenFiltradoAsc: null,
+      paginasFiltrado: [5, 10, 15]
+      //fin propiedades tabla
     };
   },
   methods: {
@@ -462,7 +477,7 @@ export default {
     },
     cargarTurnos(index) {
       console.log("Index: ", index);
-      console.log("Fecha Inicio: ", this.fechaInicioSeleccionada);
+      console.log("Fecha Inicio antes de formatear: ", this.fechaInicioSeleccionada);
       var fechaInicio = this.obtenerFechaFormateada(
         this.fechaInicioSeleccionada
       );
@@ -474,11 +489,11 @@ export default {
         .get(`${process.env.BASE_URL}/api/turno/lista-turnos`, {
           params: {
             condiciones: {
-              orden: "DESC",
+              orden: this.ordenFiltradoAsc ? "ASC" : "DESC",
               tamanoPagina: this.tamanoPagina,
-              indicePagina: index,
-              campo: "id_empleado",
-              valor: String(this.idEmpleado),
+              indicePagina: this.indexActual,
+              campo: this.campoFiltrado || "id_empleado",
+              valor: "%" + this.filtrado + "%" || "%%",
               fechaInicio: fechaInicio,
               fechaFin: fechaFin
             }
