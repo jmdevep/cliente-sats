@@ -126,7 +126,12 @@ export default {
   name: "ListadoEvento",
   mounted() {
     this.resultadoOperacion = this.$route.params.resultadoOperacion || "";
-
+    this.fechaInicioSeleccionada = moment()
+      .startOf("day")
+      .format("YYYY-MM-DD HH:mm:ss");
+    this.fechaFinSeleccionada = moment()
+      .endOf("day")
+      .format("YYYY-MM-DD HH:mm:ss");
     this.cargarDatos();
   },
   data() {
@@ -142,9 +147,11 @@ export default {
       indexActual: 0,
       filtrado: "",
       campoFiltrado: "",
-      opcionesFiltrado: [{ value: "inicio_evento", text: "Inicio de Evento" }],
+      opcionesFiltrado: [{ value: "id_evento", text: "Id de Evento" }],
       ordenFiltradoAsc: null,
-      paginasFiltrado: [5, 10, 15]
+      paginasFiltrado: [5, 10, 15],
+      fechaInicioSeleccionada: null,
+      fechaFinSeleccionada: null
       //fin propiedades tabla
     };
   },
@@ -156,6 +163,8 @@ export default {
     cargarDatos(index) {
       this.loading = true;
       console.log(index);
+      var fechaInicio = this.obtenerFechaFormateada(this.fechaInicioSeleccionada);
+      var fechaFin = this.obtenerFechaFormateada(this.fechaFinSeleccionada);
       axios
         .get(`${process.env.BASE_URL}/api/evento/lista-eventos`, {
           params: {
@@ -163,8 +172,10 @@ export default {
               orden: this.ordenFiltradoAsc ? "ASC" : "DESC",
               tamanoPagina: this.tamanoPagina,
               indicePagina: this.indexActual,
-              campo: this.campoFiltrado || "inicio_evento",
-              valor: "%" + this.filtrado + "%" || "%%"
+              campo: this.campoFiltrado || "id_evento",
+              valor: "%" + this.filtrado + "%" || "%%",
+              fechaInicio: fechaInicio,
+              fechaFin: fechaFin
             }
           }
         })
@@ -190,6 +201,16 @@ export default {
     cargarAnterior() {
       this.indexActual -= 1;
       this.cargarDatos();
+    },
+    obtenerFechaFormateada(fecha) {
+      console.log("Fecha sin formato: ", fecha);
+      var fechaFormateada = moment(fecha, "YYYY-MM-DD HH:mm:ss");
+      console.log("Fecha despues de formato: ", fechaFormateada);
+      console.log(
+        "Retorno: ",
+        moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss")
+      );
+      return moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
     }
   }
 };
