@@ -29,7 +29,7 @@
                         <label for="costo" class="darkTextCustom">Costo</label>
                         <input type="text" :disabled="disabled" class="form-control border-success" v-model="servicio.costo" id="costo" placeholder="Costo">            
                     </div>
-                    <template v-if="disabled">
+                    <template v-if="!disabled">
                        <input type="submit" value="Modificar" @click="modificarServicio()" class="btn marginBefore tableHeadingBackground">
                     </template>
                 </form>
@@ -43,7 +43,7 @@
 	 export default {
         name: 'RegistroServicio',
         mounted(){
-            this.servicio = this.$parent.servicio;
+            this.servicio = this.$route.params.servicio;
         	},
         data(){
             return{
@@ -94,7 +94,7 @@
             },
             verificarDisponibilidad() {
                 this.errorDisponibilidad = "Verificando...";
-                this.disabled = true;
+                //this.disabled = true;
                 if(this.localidad.nombre != ''){
                     axios.get(`${process.env.BASE_URL}/api/servicio/existe-servicio`, {
                         params: {
@@ -104,18 +104,18 @@
                         .then((res)=>{
                             console.log(res);
                             if(res.data.existe == true || res.data.resultado == '5500'){
-                                this.disabled = true;
+                                //this.disabled = true;
                                 this.errorDisponibilidad = "Servicio ya registrado.";
                             } else {
                                 this.errorDisponibilidad = "";    
-                                this.disabled = false;                              
+                                //this.disabled = false;                              
                             }
                     })
                     .catch((error)=>{
                         this.errorDisponibilidad = 'Ha surgido un error durante la verificación. Inténtelo nuevamente.';
                         console.log(error);
                         this.loading = false;
-                        this.disabled = true;
+                        //this.disabled = true;
                     });
                 }
             },

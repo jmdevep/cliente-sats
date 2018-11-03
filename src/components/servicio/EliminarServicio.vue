@@ -25,7 +25,7 @@
 	 export default {
         name: 'EliminarServicio',
         mounted(){
-            this.servicio = this.$parent.servicio;
+            this.servicio = this.$route.params.servicio;
             },
             beforeCreate: function () {
                 var usuario = this.$session.get('usuario');

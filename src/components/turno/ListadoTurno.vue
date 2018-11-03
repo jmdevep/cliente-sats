@@ -260,21 +260,21 @@
                         </b-btn>
                     </div>
                 </b-modal>
-                <ul class="pagination">
-                    <li class="page-item" v-bind:class="{ 'disabled' : (indexActualListadoGeneral==1) }">
-                        <a @click="cargarAnteriorListadoGeneral()" class="page-link"  aria-label="Previous">
+                 <ul class="pagination">
+                        <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==0) }">
+                        <a @click="cargarAnteriorListadoGeneral()" class="page-link" href="#" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                             <span class="sr-only">Anterior</span>
                         </a>
-                    </li> 
-                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActualListadoGeneral) }" v-for="index in cantidadPaginasListadoGeneral" :key="index"><a @click="cargarTurnos(index - 1)" class="page-link" >{{ index }}</a></li>
-                    <li class="page-item"  v-bind:class="{ 'disabled' : (indexActualListadoGeneral==cantidadPaginas) }">
-                        <a @click="cargarSiguienteListadoGeneral()" class="page-link"  aria-label="Next">
+                        </li> 
+                        <li class="page-item" v-bind:class="{ 'disabled' : (index - 1 == indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="indexActual = index -1; cargarDatos()" class="page-link" href="#">{{ index }}</a></li>
+                        <li class="page-item"  v-bind:class="{ 'disabled' : (indexActual==cantidadPaginas) }">
+                        <a @click="cargarSiguienteListadoGeneral()" class="page-link" href="#" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                             <span class="sr-only">Siguiente</span>
                         </a>
-                    </li>
-                </ul>
+                        </li>
+                    </ul>
             </div>
         </div>
         <p class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> Estados de turno: 
@@ -407,12 +407,12 @@ export default {
         this.verModificar = true;
         this.verMarcar = false;
         this.idEmpleado = 0;
-        this.cargarTurnos(0);
+        this.cargarTurnos();
       } else if (this.usuarioLogueado.tipo.id == 3) {
         this.verModificar = true;
         this.verMarcar = false;
         this.idEmpleado = 0;
-        this.cargarTurnos(0);
+        this.cargarTurnos();
       }
       console.log(this.usuarioLogueado);
     },
@@ -475,8 +475,7 @@ export default {
           this.loading = false;
         });
     },
-    cargarTurnos(index) {
-      console.log("Index: ", index);
+    cargarTurnos() {
       console.log("Fecha Inicio antes de formatear: ", this.fechaInicioSeleccionada);
       var fechaInicio = this.obtenerFechaFormateada(
         this.fechaInicioSeleccionada
@@ -499,37 +498,30 @@ export default {
             }
           }
         })
-        .then(res => {
+   .then(res => {
           console.log(res);
-
           if (res.data.resultado == 100) {
-            this.servicios = res.data.listaServicios;
             this.turnos = res.data.listaTurnos;
-            this.indexActualListadoGeneral = index;
-            if (res.data.cantidadElementos <= this.tamanoPagina) {
-              this.cantidadPaginasListadoGeneral = 1;
-            } else {
-              this.cantidadPaginasListadoGeneral = Math.ceil(
-                res.data.cantidadElementos / this.tamanoPagina
-              );
-            }
-            console.log(this.cantidadPaginasListadoGeneral);
-            this.indexActualListadoGeneral = 1;
-          } else if (res.data.resultado == 101) {
-            this.turnos = [];
+            this.cantidadPaginas =
+              res.data.cantidadElementos <= this.tamanoPagina
+                ? 1
+                : Math.ceil(res.data.cantidadElementos / this.tamanoPagina);
+          } else {
+            this.servicios = [];
+            this.indexActual = 0;
           }
+          this.loading = false;
         });
       this.loading = false;
     },
     filtroActualizado() {
-      this.cargarTurnos(0);
+      this.cargarTurnos();
     },
-    cargarDatos(index) {
+    cargarDatos() {
       this.loading = true;
-      console.log(index);
       this.cargarTurnosActivos();
       this.cargarTurnosActivables();
-      this.cargarTurnos(index);
+      this.cargarTurnos();
       this.loading = false;
     },
     limpiarCajas() {
@@ -735,10 +727,12 @@ export default {
       return true;
     },
     cargarSiguienteListadoGeneral() {
-      this.cargarTurnos(this.indexActualListadoGeneral + 1);
+      this.indexActual += 1;
+      this.cargarTurnos();
     },
     cargarAnteriorListadoGeneral() {
-      this.cargarTurnos(this.indexActualListadoGeneral - 1);
+      this.indexActual -= 1;
+      this.cargarTurnos();
     }
   }
 };
