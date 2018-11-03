@@ -206,7 +206,7 @@
                         </tr>
                     </thead>
                     <tbody v-for="(turno, index) in turnos" :key="index" class="tableBodyBackground">
-                        <tr v-for="(puesto, index) in turno.puestos" :key="index">
+                        <tr v-for="(puesto, indexPuestos) in turno.puestos" :key="indexPuestos">
                             <th scope="row">{{ index + 1 }}</th>
                             <td>{{ turno.inicio }}</td>
                             <td>{{ turno.fin }}</td>
