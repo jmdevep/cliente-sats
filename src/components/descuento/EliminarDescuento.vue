@@ -18,42 +18,54 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EliminarDescuento',
-        mounted(){
-            this.descuento = this.$route.params.descuento;
-            },
-            beforeCreate: function () {
-                var usuario = this.$session.get('usuario');
-                if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
-                this.$router.push('/usuario/login')
-                } 
-        },
-        data(){
-            return{
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: true,
-            	descuento:{
-                    id: 0,
-                    motivo: '',
-                    porcentaje: 0,
-                },
-            }
-        },
-        methods: {
-            eliminarDescuento(){
-                axios.delete(`${process.env.BASE_URL}/api/cliente/eliminar-descuento`, {data: { id: this.descuento.id }}) 
-                    .then((res)=>{
-                        console.log(res);
-                        if(res.data.resultado == 5450){
-                            this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Descuento eliminado satisfactoriamente." }});
-                        } else if (res.data.resultado == 5451){
-                            this.resultadoOperacion = "El descuento seleccionado no existe.";
-                        }
-                    });
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "EliminarDescuento",
+  mounted() {
+    if (this.$route.params.descuento != null) {
+      this.descuento = this.$route.params.descuento;
+    } else {
+      this.$router.push("/cliente/principal-cliente");
     }
+  },
+  beforeCreate: function() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+      this.$router.push("/usuario/login");
+    }
+  },
+  data() {
+    return {
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: true,
+      descuento: {
+        id: 0,
+        motivo: "",
+        porcentaje: 0
+      }
+    };
+  },
+  methods: {
+    eliminarDescuento() {
+      axios
+        .delete(`${process.env.BASE_URL}/api/cliente/eliminar-descuento`, {
+          data: { id: this.descuento.id }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 5450) {
+            this.$router.push({
+              name: "PrincipalPlan",
+              params: {
+                resultadoOperacion: "Descuento eliminado satisfactoriamente."
+              }
+            });
+          } else if (res.data.resultado == 5451) {
+            this.resultadoOperacion = "El descuento seleccionado no existe.";
+          }
+        });
+    }
+  }
+};
 </script>

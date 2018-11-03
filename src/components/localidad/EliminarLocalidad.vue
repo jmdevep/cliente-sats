@@ -22,41 +22,53 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EliminarLocalidad',
-        mounted(){
-            this.localidad = this.$route.params.localidad;
-            },
-            beforeCreate: function () {
-                var usuario = this.$session.get('usuario');
-                if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
-                this.$router.push('/usuario/login')
-                } 
-        },
-        data(){
-            return{
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: true,
-            	localidad: {
-                    id: 0,
-                    nombre: '',
-                },
-            }
-        },
-        methods: {
-            eliminarLocalidad(){
-                axios.delete(`${process.env.BASE_URL}/api/localidad/eliminar-localidad`, {data: { id: this.localidad.id }}) 
-                    .then((res)=>{
-                        console.log(res);
-                        if(res.data.resultado == 5600){
-                            this.$router.push({ name: 'PrincipalTramo', params: { resultadoOperacion: "Localidad eliminada satisfactoriamente." }});
-                        } else if (res.data.resultado == 5601){
-                            this.resultadoOperacion = "La localidad seleccionada ya no existe.";
-                        }
-                    });
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "EliminarLocalidad",
+  mounted() {
+    if (this.$route.params.localidad != null) {
+      this.localidad = this.$route.params.localidad;
+    } else {
+      this.$router.push("/tramo/principal-tramo");
     }
+  },
+  beforeCreate: function() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+      this.$router.push("/usuario/login");
+    }
+  },
+  data() {
+    return {
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: true,
+      localidad: {
+        id: 0,
+        nombre: ""
+      }
+    };
+  },
+  methods: {
+    eliminarLocalidad() {
+      axios
+        .delete(`${process.env.BASE_URL}/api/localidad/eliminar-localidad`, {
+          data: { id: this.localidad.id }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 5600) {
+            this.$router.push({
+              name: "PrincipalTramo",
+              params: {
+                resultadoOperacion: "Localidad eliminada satisfactoriamente."
+              }
+            });
+          } else if (res.data.resultado == 5601) {
+            this.resultadoOperacion = "La localidad seleccionada ya no existe.";
+          }
+        });
+    }
+  }
+};
 </script>

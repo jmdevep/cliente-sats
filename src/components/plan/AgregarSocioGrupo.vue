@@ -41,179 +41,205 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'RegistroSociedad',
-        mounted(){ 
-            this.loading = true;
-            this.cliente = this.$route.params.cliente;
-            this.cliente.sociedad = {
-                id: 0,
-                nombre: '',
-                fechaInicio: '',
-                fechaFin: '',
-                plan:{
-                    id: 0,
-                    nombre: '',
-                    cuota: 0,
-                    convenio: {
-                        id: 0,
-                        nombreDescriptivo: '',
-                        fechaInicio: '',
-                        fechaFin: '',
-                        empresa: {
-                            id: 0,
-                            nombre: '',
-                            direccion: '',
-                            telefono: '',
-                            rut: '',
-                        },
-                    }
-                }
-            };
-            console.log(this.cliente);
-            axios.get(`${process.env.BASE_URL}/api/cliente/lista-planes`)
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.planes = res.data.planes;
-                        console.log(this.planes);
-                    }
-                    this.loading = false;
-            });
-            this.loading = false;
-            },
-        beforeCreate: function () {
-            var usuario = this.$session.get('usuario');
-            if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
-            this.$router.push('/usuario/login')
-            } 
-        },
-        data(){
-            return{
-                loading: false,
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: false,
-            	cliente: {
-                    id: 0,
-                    nombre: '',
-                    direccion: '',
-                    telefono: '',
-                    fechaIngreso: '',
-                    sociedad:{
-                        id: 0,
-                        nombre: '',
-                        fechaInicio: '',
-                        fechaFin: '',
-                        plan:{
-                            id: 0,
-                            nombre: '',
-                            cuota: 0,
-                            convenio: {
-                                id: 0,
-                                nombreDescriptivo: '',
-                                fechaInicio: '',
-                                fechaFin: '',
-                                empresa: {
-                                    nombre: '',
-                                    direccion: '',
-                                    telefono: '',
-                                    rut: '',
-                                },
-                            }
-                        }
-                    }
-                },
-                errorDisponibilidad: '',
-                planes:[],
-                alerta:false,
-                informacion: false,
-            }
-
-        },
-        methods: {
-            verificarDisponibilidad() {
-                if(this.cliente && this.cliente.sociedad && this.cliente.sociedad.nombre){
-                    this.loading = true;
-                    console.log("nombre -" + this.cliente.sociedad.nombre)
-                    axios.get(`${process.env.BASE_URL}/api/cliente/existe-sociedad`, {
-                        params: {
-                            nombre: this.cliente.sociedad.nombre,
-                        }
-                    })
-                        .then((res)=>{
-                            console.log(res);
-                            if(res.data.existe == true){
-                                this.disabled = true;
-                                this.errorDisponibilidad = "Ya existe una sociedad registrada con ese nombre.";
-                            } else {
-                                this.errorDisponibilidad = "Nombre disponible.";    
-                                this.disabled = false;                              
-                            }
-                    });
-                }
-                else{
-                    this.errorDisponibilidad = "Debe completar este campo.";  
-                    disabled = true;
-                }
-                this.loading = false;
-            },
-            limpiarResultado(){
-                this.alerta = false;
-                this.informacion = false;
-                this.resultadoOperacion = '';
-            },
-            registrarSocio(){
-                this.loading = true;
-                if(this.checkForm()){
-                    this.limpiarResultado;
-                    var params = this.cliente;
-                    console.log(params);
-                    axios.post(`${process.env.BASE_URL}/api/cliente/agregar-sociedad`, params) 
-                        .then((res)=>{
-                            console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5432 || res.data.resultado == 5431){
-                                this.informacion = true;
-                                this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Cliente asociado satisfactoriamente." }});  
-                                this.limpiarCajas();
-                            } else if (res.data.resultado == 5423 || res.data.resultado == 5420 || res.data.resultado == 5430){
-                                this.resultadoOperacion = "El cliente ya se encuentra asociado.";
-                                this.alerta = true;
-                            }
-                            else if(res.data.resultado == 4){
-                                this.alerta = true;
-                                this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
-                            }
-                        });
-                }
-                this.loading = false;
-            },
-            limpiarMensajes(){
-                this.resultadoOperacion = "";
-                this.erroresForm = [];
-            },
-            checkForm() {
-                this.limpiarMensajes();
-                
-                if (this.cliente && this.cliente.id && this.cliente.id != 0 && this.cliente.sociedad.nombre && this.cliente.sociedad.plan && this.cliente.sociedad.plan.id != 0) {
-                    this.cliente.sociedad.fechaInicio = new Date();
-                    return true;
-                }
-
-                if (!this.cliente || this.cliente.id == 0) {
-                    this.erroresForm.push('Debe seleccionarse un cliente');
-                }
-                if (!this.cliente.sociedad.nombre) {
-                    this.erroresForm.push('Debe asignar al plan un nombre que permita identificarlo.');
-                }
-                if(!this.cliente.sociedad.plan || this.cliente.sociedad.plan.id == 0){
-                    this.erroresForm.push('Debe seleccionar un plan.');
-                }
-                
-                this.disabled = false;
-                return false;
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "RegistroSociedad",
+  mounted() {
+    this.loading = true;
+    if (this.$route.params.cliente != null) {
+      this.cliente = this.$route.params.cliente;
+    } else {
+      this.$router.push("/plan/principal-plan");
     }
+    this.cliente.sociedad = {
+      id: 0,
+      nombre: "",
+      fechaInicio: "",
+      fechaFin: "",
+      plan: {
+        id: 0,
+        nombre: "",
+        cuota: 0,
+        convenio: {
+          id: 0,
+          nombreDescriptivo: "",
+          fechaInicio: "",
+          fechaFin: "",
+          empresa: {
+            id: 0,
+            nombre: "",
+            direccion: "",
+            telefono: "",
+            rut: ""
+          }
+        }
+      }
+    };
+    console.log(this.cliente);
+    axios.get(`${process.env.BASE_URL}/api/cliente/lista-planes`).then(res => {
+      console.log(res);
+      if (res.data.resultado == 100) {
+        this.planes = res.data.planes;
+        console.log(this.planes);
+      }
+      this.loading = false;
+    });
+    this.loading = false;
+  },
+  beforeCreate: function() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+      this.$router.push("/usuario/login");
+    }
+  },
+  data() {
+    return {
+      loading: false,
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: false,
+      cliente: {
+        id: 0,
+        nombre: "",
+        direccion: "",
+        telefono: "",
+        fechaIngreso: "",
+        sociedad: {
+          id: 0,
+          nombre: "",
+          fechaInicio: "",
+          fechaFin: "",
+          plan: {
+            id: 0,
+            nombre: "",
+            cuota: 0,
+            convenio: {
+              id: 0,
+              nombreDescriptivo: "",
+              fechaInicio: "",
+              fechaFin: "",
+              empresa: {
+                nombre: "",
+                direccion: "",
+                telefono: "",
+                rut: ""
+              }
+            }
+          }
+        }
+      },
+      errorDisponibilidad: "",
+      planes: [],
+      alerta: false,
+      informacion: false
+    };
+  },
+  methods: {
+    verificarDisponibilidad() {
+      if (
+        this.cliente &&
+        this.cliente.sociedad &&
+        this.cliente.sociedad.nombre
+      ) {
+        this.loading = true;
+        console.log("nombre -" + this.cliente.sociedad.nombre);
+        axios
+          .get(`${process.env.BASE_URL}/api/cliente/existe-sociedad`, {
+            params: {
+              nombre: this.cliente.sociedad.nombre
+            }
+          })
+          .then(res => {
+            console.log(res);
+            if (res.data.existe == true) {
+              this.disabled = true;
+              this.errorDisponibilidad =
+                "Ya existe una sociedad registrada con ese nombre.";
+            } else {
+              this.errorDisponibilidad = "Nombre disponible.";
+              this.disabled = false;
+            }
+          });
+      } else {
+        this.errorDisponibilidad = "Debe completar este campo.";
+        disabled = true;
+      }
+      this.loading = false;
+    },
+    limpiarResultado() {
+      this.alerta = false;
+      this.informacion = false;
+      this.resultadoOperacion = "";
+    },
+    registrarSocio() {
+      this.loading = true;
+      if (this.checkForm()) {
+        this.limpiarResultado;
+        var params = this.cliente;
+        console.log(params);
+        axios
+          .post(`${process.env.BASE_URL}/api/cliente/agregar-sociedad`, params)
+          .then(res => {
+            console.log(res.data.resultado);
+            if (res.data.resultado == 5432 || res.data.resultado == 5431) {
+              this.informacion = true;
+              this.$router.push({
+                name: "PrincipalPlan",
+                params: {
+                  resultadoOperacion: "Cliente asociado satisfactoriamente."
+                }
+              });
+              this.limpiarCajas();
+            } else if (
+              res.data.resultado == 5423 ||
+              res.data.resultado == 5420 ||
+              res.data.resultado == 5430
+            ) {
+              this.resultadoOperacion = "El cliente ya se encuentra asociado.";
+              this.alerta = true;
+            } else if (res.data.resultado == 4) {
+              this.alerta = true;
+              this.resultadoOperacion =
+                "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
+            }
+          });
+      }
+      this.loading = false;
+    },
+    limpiarMensajes() {
+      this.resultadoOperacion = "";
+      this.erroresForm = [];
+    },
+    checkForm() {
+      this.limpiarMensajes();
+
+      if (
+        this.cliente &&
+        this.cliente.id &&
+        this.cliente.id != 0 &&
+        this.cliente.sociedad.nombre &&
+        this.cliente.sociedad.plan &&
+        this.cliente.sociedad.plan.id != 0
+      ) {
+        this.cliente.sociedad.fechaInicio = new Date();
+        return true;
+      }
+
+      if (!this.cliente || this.cliente.id == 0) {
+        this.erroresForm.push("Debe seleccionarse un cliente");
+      }
+      if (!this.cliente.sociedad.nombre) {
+        this.erroresForm.push(
+          "Debe asignar al plan un nombre que permita identificarlo."
+        );
+      }
+      if (!this.cliente.sociedad.plan || this.cliente.sociedad.plan.id == 0) {
+        this.erroresForm.push("Debe seleccionar un plan.");
+      }
+
+      this.disabled = false;
+      return false;
+    }
+  }
+};
 </script>

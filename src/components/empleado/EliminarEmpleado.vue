@@ -16,37 +16,47 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EliminarEmpleado',
-        mounted(){
-            this.empleado = this.$route.params.empleado;
-            console.log(this.$route.params.empleado);
-            console.log(this.empleado);
-        	},
-        data(){
-            return{
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: true,
-            	empleado: {
-                    id: 0,
-                    nombre: '',
-                },
-            }
-        },
-        methods: {
-            eliminarEmpleado(){
-                axios.delete(`${process.env.BASE_URL}/api/empleado/eliminar-empleado`, {data: { id: this.empleado.id }}) 
-                    .then((res)=>{
-                        console.log(res);
-                        if(res.data.resultado == 1300){
-                            this.$router.push({ name: 'PrincipalEmpleado', params: { resultadoOperacion: "Empleado eliminado satisfactoriamente." }});                            
-                        } else if (res.data.resultado == 1301){
-                            this.resultadoOperacion = "El empleado seleccionado no existe.";
-                        }
-                    });
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "EliminarEmpleado",
+  mounted() {
+    if (this.$route.params.empleado != null) {
+      this.empleado = this.$route.params.empleado;
+    } else {
+      this.$router.push("/empleado/principal-empleado");
     }
+  },
+  data() {
+    return {
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: true,
+      empleado: {
+        id: 0,
+        nombre: ""
+      }
+    };
+  },
+  methods: {
+    eliminarEmpleado() {
+      axios
+        .delete(`${process.env.BASE_URL}/api/empleado/eliminar-empleado`, {
+          data: { id: this.empleado.id }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 1300) {
+            this.$router.push({
+              name: "PrincipalEmpleado",
+              params: {
+                resultadoOperacion: "Empleado eliminado satisfactoriamente."
+              }
+            });
+          } else if (res.data.resultado == 1301) {
+            this.resultadoOperacion = "El empleado seleccionado no existe.";
+          }
+        });
+    }
+  }
+};
 </script>

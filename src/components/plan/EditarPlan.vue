@@ -41,194 +41,219 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EditarPlan',
-        mounted(){
-            this.plan = this.$route.params.plan;
-            this.nombreOriginal = this.$route.params.plan.nombre;
-            this.loading = true;    
-            console.log(this.plan);
-            axios.get(`${process.env.BASE_URL}/api/cliente/lista-descuentos`)
-            .then((res)=>{
-                console.log(res);
-                if(res.data.resultado == 100){
-                    this.descuentos = res.data.descuentos;
-                    this.descuentos.forEach(function(obj) { obj.disabled = false; });
-                }
-                this.loading = false;
-        	});
-            //this.usuario = this.$router.params.usuario;
-            //console.log(this.usuario);
-            console.log(this.$route.params.plan);
-            this.plan = this.$route.params.plan;
-            },
-        beforeCreate: function () {
-            if (!this.$session.exists()) {
-            this.$router.push('/usuario/login')
-            }
-        },
-        data(){
-            return{
-                loading: false,
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: false,
-            	plan: {
-                    id: 0,
-                    nombre: '',
-                    cuota: 0,
-                    convenio:{ 
-                        id: 0,
-                        nombre: '',
-                        fechaInicio: null,
-                        fechaFin: null,
-                        empresa:{
-                            id: 0,
-                            nombre: '',
-                            direccion: '',
-                            telefono: '',
-                            rut: '',
-                        }
-                    },
-                    descuento:{
-                        id: 0,
-                        motivo: '',
-                        porcentaje: 0,
-                    }
-                },
-                errorDisponibilidad: '',
-                descuentos:[],
-                nombreOriginal: '',
-                informacion: false,
-                alerta: false,
-            }
-        },
-        methods: {
-            cambioSelect () {
-
-            },
-             verificarDisponibilidad() {
-                 console.log(this.nombreOriginal);
-                 console.log(this.plan.nombre);
-                if(this.plan != null && this.plan.nombre != '' && this.nombreOriginal != this.plan.nombre){
-                    this.loading = true;
-                    axios.get(`${process.env.BASE_URL}/api/cliente/existe-plan`, {
-                        params: {
-                        nombre: this.plan.nombre,
-                        }
-                    })
-                        .then((res)=>{
-                            console.log(res);
-                            if(res.data.existe == true){
-                                this.disabled = true;
-                                this.errorDisponibilidad = "Ya existe un plan registrado con ese nombre.";
-                            } else {
-                                this.errorDisponibilidad = "Nombre disponible.";    
-                                this.disabled = false;                              
-                            }
-                    })
-                    .catch((error)=>{
-                        this.alerta = true;
-                        this.errorDisponibilidad = 'Ha surgido un error durante la verificación. Inténtelo nuevamente.';
-                        console.log(error);
-                        this.loading = false;
-                        this.disabled = true;
-                    });
-                    this.loading = false;
-                }
-                else if(this.nombreOriginal == this.plan.nombre){
-                    this.errorDisponibilidad = "Sin cambios.";
-                    this.disabled = false;
-                }
-            },
-            modificarPlan(){
-                if(this.checkForm()){
-                    var params = this.plan;
-                    console.log(params);
-                    axios.post(`${process.env.BASE_URL}/api/cliente/modificar-plan`, params) 
-                        .then((res)=>{
-                            console.log(res);
-                            if(res.data.resultado == 5400){
-                            this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Plan modificado satisfactoriamente." }});
-                                this.limpiarCajas();
-                            } else if (res.data.resultado == 5401){
-                                this.alerta = true;
-                                this.resultadoOperacion = "El plan seleccionado no existe.";
-                            }else {
-                               this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
-                               this.alerta = true;
-                            }
-                            this.loading = false;
-                        })
-                        .catch((error)=>{
-                            this.alerta = true;
-                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
-                            console.log(error);
-                            this.loading = false;
-                    });
-                }
-
-            },
-            limpiarResultado(){
-                this.resultadoOperacion = '';
-                this.alerta = false;
-                this.informacion = false;
-            },
-            limpiarCajas(){
-                this.plan.id = 0;
-                this.plan.nombre = '',
-                this.plan.cuota = 0,
-                this.plan.convenio = { 
-                        id: 0,
-                        nombre: '',
-                        fechaInicio: null,
-                        fechaFin: null,
-                        empresa:{
-                            id: 0,
-                            nombre: '',
-                            direccion: '',
-                            telefono: '',
-                            rut: '',
-                        },
-                        descuento:{
-                            id: 0,
-                            motivo: '',
-                            porcentaje: 0,
-                        }
-                    }
-                this.errorDisponibilidad = '';
-            },
-            limpiarMensajes(){
-                this.resultadoOperacion = "";
-                this.erroresForm = [];
-            },
-            checkForm() {
-                this.limpiarMensajes();
-
-                if (this.plan.nombre && this.plan.cuota && this.plan.cuota >= 0 && this.plan.cuota <= 2140000000 && this.plan.descuento && this.plan.descuento.id != 0) {
-                    return true;
-                }
-
-                if (!this.plan.nombre) {
-                    this.erroresForm.push('Nombre descriptivo requerido.');
-                }
-                if (!this.plan.cuota) {
-                    this.erroresForm.push('Valor de la cuota requerida.');
-                }
-                else if(this.plan.cuota < 0){
-                    this.erroresForm.push('Valor de la cuota debe ser un número positivo.');
-                }
-                if(!this.plan.descuento || this.plan.descuento.id == 0){
-                    this.erroresForm.push('Debe seleccionar un descuento.');
-                }
-                else if(this.plan.cuota > 2140000000){
-                    this.erroresForm.push('El valor de la cuota no puede ser mayor a 2.140.000.000.');
-                }
-                
-                this.disabled = false;
-                return false;
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "EditarPlan",
+  mounted() {
+    if (this.$route.params.plan != null) {
+      this.plan = this.$route.params.plan;
+    } else {
+      this.$router.push("/plan/principal-plan");
     }
+    this.nombreOriginal = this.$route.params.plan.nombre;
+    this.loading = true;
+    console.log(this.plan);
+    axios
+      .get(`${process.env.BASE_URL}/api/cliente/lista-descuentos`)
+      .then(res => {
+        console.log(res);
+        if (res.data.resultado == 100) {
+          this.descuentos = res.data.descuentos;
+          this.descuentos.forEach(function(obj) {
+            obj.disabled = false;
+          });
+        }
+        this.loading = false;
+      });
+    //this.usuario = this.$router.params.usuario;
+    //console.log(this.usuario);
+    console.log(this.$route.params.plan);
+    this.plan = this.$route.params.plan;
+  },
+  beforeCreate: function() {
+    if (!this.$session.exists()) {
+      this.$router.push("/usuario/login");
+    }
+  },
+  data() {
+    return {
+      loading: false,
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: false,
+      plan: {
+        id: 0,
+        nombre: "",
+        cuota: 0,
+        convenio: {
+          id: 0,
+          nombre: "",
+          fechaInicio: null,
+          fechaFin: null,
+          empresa: {
+            id: 0,
+            nombre: "",
+            direccion: "",
+            telefono: "",
+            rut: ""
+          }
+        },
+        descuento: {
+          id: 0,
+          motivo: "",
+          porcentaje: 0
+        }
+      },
+      errorDisponibilidad: "",
+      descuentos: [],
+      nombreOriginal: "",
+      informacion: false,
+      alerta: false
+    };
+  },
+  methods: {
+    cambioSelect() {},
+    verificarDisponibilidad() {
+      console.log(this.nombreOriginal);
+      console.log(this.plan.nombre);
+      if (
+        this.plan != null &&
+        this.plan.nombre != "" &&
+        this.nombreOriginal != this.plan.nombre
+      ) {
+        this.loading = true;
+        axios
+          .get(`${process.env.BASE_URL}/api/cliente/existe-plan`, {
+            params: {
+              nombre: this.plan.nombre
+            }
+          })
+          .then(res => {
+            console.log(res);
+            if (res.data.existe == true) {
+              this.disabled = true;
+              this.errorDisponibilidad =
+                "Ya existe un plan registrado con ese nombre.";
+            } else {
+              this.errorDisponibilidad = "Nombre disponible.";
+              this.disabled = false;
+            }
+          })
+          .catch(error => {
+            this.alerta = true;
+            this.errorDisponibilidad =
+              "Ha surgido un error durante la verificación. Inténtelo nuevamente.";
+            console.log(error);
+            this.loading = false;
+            this.disabled = true;
+          });
+        this.loading = false;
+      } else if (this.nombreOriginal == this.plan.nombre) {
+        this.errorDisponibilidad = "Sin cambios.";
+        this.disabled = false;
+      }
+    },
+    modificarPlan() {
+      if (this.checkForm()) {
+        var params = this.plan;
+        console.log(params);
+        axios
+          .post(`${process.env.BASE_URL}/api/cliente/modificar-plan`, params)
+          .then(res => {
+            console.log(res);
+            if (res.data.resultado == 5400) {
+              this.$router.push({
+                name: "PrincipalPlan",
+                params: {
+                  resultadoOperacion: "Plan modificado satisfactoriamente."
+                }
+              });
+              this.limpiarCajas();
+            } else if (res.data.resultado == 5401) {
+              this.alerta = true;
+              this.resultadoOperacion = "El plan seleccionado no existe.";
+            } else {
+              this.resultadoOperacion =
+                "Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.";
+              this.alerta = true;
+            }
+            this.loading = false;
+          })
+          .catch(error => {
+            this.alerta = true;
+            this.resultadoOperacion =
+              "Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.";
+            console.log(error);
+            this.loading = false;
+          });
+      }
+    },
+    limpiarResultado() {
+      this.resultadoOperacion = "";
+      this.alerta = false;
+      this.informacion = false;
+    },
+    limpiarCajas() {
+      this.plan.id = 0;
+      (this.plan.nombre = ""),
+        (this.plan.cuota = 0),
+        (this.plan.convenio = {
+          id: 0,
+          nombre: "",
+          fechaInicio: null,
+          fechaFin: null,
+          empresa: {
+            id: 0,
+            nombre: "",
+            direccion: "",
+            telefono: "",
+            rut: ""
+          },
+          descuento: {
+            id: 0,
+            motivo: "",
+            porcentaje: 0
+          }
+        });
+      this.errorDisponibilidad = "";
+    },
+    limpiarMensajes() {
+      this.resultadoOperacion = "";
+      this.erroresForm = [];
+    },
+    checkForm() {
+      this.limpiarMensajes();
+
+      if (
+        this.plan.nombre &&
+        this.plan.cuota &&
+        this.plan.cuota >= 0 &&
+        this.plan.cuota <= 2140000000 &&
+        this.plan.descuento &&
+        this.plan.descuento.id != 0
+      ) {
+        return true;
+      }
+
+      if (!this.plan.nombre) {
+        this.erroresForm.push("Nombre descriptivo requerido.");
+      }
+      if (!this.plan.cuota) {
+        this.erroresForm.push("Valor de la cuota requerida.");
+      } else if (this.plan.cuota < 0) {
+        this.erroresForm.push("Valor de la cuota debe ser un número positivo.");
+      }
+      if (!this.plan.descuento || this.plan.descuento.id == 0) {
+        this.erroresForm.push("Debe seleccionar un descuento.");
+      } else if (this.plan.cuota > 2140000000) {
+        this.erroresForm.push(
+          "El valor de la cuota no puede ser mayor a 2.140.000.000."
+        );
+      }
+
+      this.disabled = false;
+      return false;
+    }
+  }
+};
 </script>

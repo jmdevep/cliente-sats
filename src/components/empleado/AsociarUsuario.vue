@@ -51,98 +51,110 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'AsociarUsuario',
-        mounted(){
-            this.empleado = this.$route.params.empleado;
-            this.loading = true;
-            axios.get(`${process.env.BASE_URL}/api/usuario/lista-usuarios-asociar`, {
-                params: {
-                    condiciones: {
-                        orden: 'DESC',
-                        tamanoPagina: this.tamanoPagina,
-                        indicePagina: this.indicePagina,
-                        campo: 'nombre',
-                    },
-                }
-            })
-        		.then((res)=>{
-                    console.log(res);
-                    
-        			if(res.data.resultado == 100){
-                        this.usuarios = res.data.listaUsuarios;
-                        if(res.data.cantidadElementos <= this.tamanoPagina){
-                            this.cantidadPaginas = 1;
-                        } else {
-                            this.cantidadPaginas = Math.ceil( res.data.cantidadElementos / this.tamanoPagina);                            
-                        }
-                        console.log(this.cantidadPaginas);
-                        this.indexActual = 1;
-                    }
-                    this.loading = false;
-        	});
-
-        	},
-        data(){
-            return{
-                loading: false,
-                usuarios: [],
-                tamanoPagina: 2,
-                indicePagina: 0,
-                cantidadPaginas: 0,
-                indexActual: 0,
-                empleado: null,
-            }
-
-        },
-        methods: {
-            asociarUsuario(idUsuario){
-                var params = {
-                    id: this.empleado.id,
-                    usuario: {
-                        id: idUsuario
-                    }
-                };
-                console.log(params); 
-                axios.post(`${process.env.BASE_URL}/api/empleado/asociar-usuario`, params) 
-                    .then((res)=>{
-                        console.log(res);
-                        if(res.data.resultado == 1){
-                            this.$router.push({ name: 'PrincipalEmpleado', params: { resultadoOperacion: "Usuario asociado satisfactoriamente." }});
-                        } else if (res.data.resultado == 1101){
-                            this.resultadoOperacion = "El usuario seleccionado no existe.";
-                        }
-                    });
-            },
-            cargarDatos(index){
-                this.loading = true;
-                console.log(index);
-                axios.get(`${process.env.BASE_URL}/api/usuario/lista-usuarios-asociar`, {
-                params: {
-                    condiciones: {
-                        orden: 'DESC',
-                        tamanoPagina: this.tamanoPagina,
-                        indicePagina: index -1,
-                        campo: 'nombre',
-                    },
-                }
-                })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.usuarios = res.data.listaUsuarios;
-                        this.indexActual = index;
-                    }
-                    this.loading = false;
-        	    });
-            },
-            cargarSiguiente(){
-                this.cargarDatos(this.indexActual + 1);
-            },
-            cargarAnterior(){
-                this.cargarDatos(this.indexActual - 1);
-            }   
-        },    
+import axios from "axios";
+export default {
+  name: "AsociarUsuario",
+  mounted() {
+    if (this.$route.params.empleado != null) {
+      this.empleado = this.$route.params.empleado;
+    } else {
+      this.$router.push("/empleado/principal-empleado");
     }
+    this.loading = true;
+    axios
+      .get(`${process.env.BASE_URL}/api/usuario/lista-usuarios-asociar`, {
+        params: {
+          condiciones: {
+            orden: "DESC",
+            tamanoPagina: this.tamanoPagina,
+            indicePagina: this.indicePagina,
+            campo: "nombre"
+          }
+        }
+      })
+      .then(res => {
+        console.log(res);
+
+        if (res.data.resultado == 100) {
+          this.usuarios = res.data.listaUsuarios;
+          if (res.data.cantidadElementos <= this.tamanoPagina) {
+            this.cantidadPaginas = 1;
+          } else {
+            this.cantidadPaginas = Math.ceil(
+              res.data.cantidadElementos / this.tamanoPagina
+            );
+          }
+          console.log(this.cantidadPaginas);
+          this.indexActual = 1;
+        }
+        this.loading = false;
+      });
+  },
+  data() {
+    return {
+      loading: false,
+      usuarios: [],
+      tamanoPagina: 2,
+      indicePagina: 0,
+      cantidadPaginas: 0,
+      indexActual: 0,
+      empleado: null
+    };
+  },
+  methods: {
+    asociarUsuario(idUsuario) {
+      var params = {
+        id: this.empleado.id,
+        usuario: {
+          id: idUsuario
+        }
+      };
+      console.log(params);
+      axios
+        .post(`${process.env.BASE_URL}/api/empleado/asociar-usuario`, params)
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 1) {
+            this.$router.push({
+              name: "PrincipalEmpleado",
+              params: {
+                resultadoOperacion: "Usuario asociado satisfactoriamente."
+              }
+            });
+          } else if (res.data.resultado == 1101) {
+            this.resultadoOperacion = "El usuario seleccionado no existe.";
+          }
+        });
+    },
+    cargarDatos(index) {
+      this.loading = true;
+      console.log(index);
+      axios
+        .get(`${process.env.BASE_URL}/api/usuario/lista-usuarios-asociar`, {
+          params: {
+            condiciones: {
+              orden: "DESC",
+              tamanoPagina: this.tamanoPagina,
+              indicePagina: index - 1,
+              campo: "nombre"
+            }
+          }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 100) {
+            this.usuarios = res.data.listaUsuarios;
+            this.indexActual = index;
+          }
+          this.loading = false;
+        });
+    },
+    cargarSiguiente() {
+      this.cargarDatos(this.indexActual + 1);
+    },
+    cargarAnterior() {
+      this.cargarDatos(this.indexActual - 1);
+    }
+  }
+};
 </script>

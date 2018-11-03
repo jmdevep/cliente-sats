@@ -72,183 +72,217 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EditarEmpleado',
-        mounted(){
-            this.empleado = this.$route.params.empleado;
-            if(this.empleado.fechaNacimiento){
-                this.empleado.fechaNacimiento = moment(this.empleado.fechaNacimiento).format('YYYY-MM-DD');
-            }
-            if(this.empleado.vencimientoCarnetSalud){
-                this.empleado.vencimientoCarnetSalud = moment(this.empleado.vencimientoCarnetSalud).format('YYYY-MM-DD');
-            }
-            if(this.empleado.vencimientoCarnetChofer){
-                this.empleado.vencimientoCarnetChofer = moment(this.empleado.vencimientoCarnetChofer).format('YYYY-MM-DD');
-            }
-            this.documentoOriginal = this.$route.params.empleado.documento;
-            console.log(this.empleado);
-            this.cargarListaRoles();
-        	},
-        data(){
-            return{
-                loading: false,
-                resultadoOperacion: null,
-                erroresForm: [],
-                disabled: true,
-            	empleado: {
-                    nombre: '',
-                    apellido: '',
-                    documento: '',
-                    fechaNacimiento: '',
-                    domicilio: '',
-                    telefono: '',
-                    vencimientoCarnetSalud: '',
-                    vencimientoCarnetChofer: '',
-                },
-                documentoOriginal: '',
-                roles: [],
-                rolesSeleccionados: [],
-                rolSeleccionado: [],
-                alerta: false,
-                informacion: false,
-            }
-        },
-        methods: {
-            cargarRolesActuales(){
-                if(this.empleado.listaRoles.length){
-                    console.log(this.empleado.listaRoles);
-                    this.empleado.listaRoles.forEach(rol => {
-                        this.rolesSeleccionados.push(rol);
-                        var indexRol = this.roles.findIndex((r => r.id == rol.id));
-                        console.log(indexRol);
-                        this.roles[indexRol].disabled = true;
-                    })
-                }
-            },
-            cambioSelect(){
-                this.rolesSeleccionados.push(this.rolSeleccionado);
-                var indexRol = this.roles.findIndex((rol => rol.id == this.rolSeleccionado.id));
-                this.roles[indexRol].disabled = true;
-            },
-            removerRol(pRol){
-                this.rolesSeleccionados = this.rolesSeleccionados.filter(rol => rol.id != pRol.id);
-                var indexRol = this.roles.findIndex((rol => rol.id == pRol.id));
-                console.log(indexRol);
-                this.roles[indexRol].disabled = false;
-
-            },
-            cargarListaRoles(){
-                this.loading = true;    
-                axios.get(`${process.env.BASE_URL}/api/turno/lista-roles`)
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.roles = res.data.roles;
-                        this.roles.forEach(function(obj) { obj.disabled = false; });
-                        this.cargarRolesActuales();
-                    }
-                    this.loading = false;
-        	    });
-            },
-            verificarDisponibilidad() {
-                
-                if(this.empleado.documento != '' && this.documentoOriginal != this.empleado.documento){
-                    this.errorDisponibilidad = "Verificando..";
-                    axios.get(`${process.env.BASE_URL}/api/empleado/existe-empleado`, {
-                        params: {
-                        documento: this.empleado.documento,
-                        }
-                    })
-                        .then((res)=>{
-                            console.log(res);
-                            if(res.data.existe == true || res.data.resultado == 1300){
-                                this.disabled = true;
-                                this.errorDisponibilidad = "Documento ya registrado.";
-                            } else {
-                                this.errorDisponibilidad = "";    
-                                this.disabled = false;                              
-                            }
-                    });
-                } else {
-                    this.disabled = false;
-                }
-            },
-            limpiarResultado(){
-                this.alerta = false;
-                this.informacion = false;
-                this.resultadoOperacion = '';
-            },
-            modificarEmpleado(){
-                this.limpiarResultado();
-                this.loading = true;
-                if(this.checkForm()){
-                    this.empleado.listaRoles = this.rolesSeleccionados;
-                    var params = this.empleado;
-                    console.log(params);
-                    axios.post(`${process.env.BASE_URL}/api/empleado/modificar-empleado`, params) 
-                        .then((res)=>{
-                            console.log(res);
-                            if(res.data.resultado == 1304){
-                                this.$router.push({ name: 'PrincipalEmpleado', params: { resultadoOperacion: "Empleado modificado satisfactoriamente." }});                                                            
-                            } else if(res.data.resultado == 200){
-                                this.alerta = true;
-                                this.resultadoOperacion = 'Error de conexión, inténtelo nuevamente.';
-                            }else{
-                                this.alerta = true;
-                                this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
-                            }
-                            this.loading = false;
-                        })
-                        .catch((error)=>{
-                            this.alerta = true;
-                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
-                            console.log(error);
-                            this.loading = false;
-                    });
-                }
-            },
-            limpiarCajas(){
-                this.empleado.nombre = '';
-                this.empleado.apellido = '';
-                this.empleado.documento = '';
-                this.empleado.fechaNacimiento = '';
-                this.empleado.domicilio = '';
-                this.empleado.telefono = '';
-                this.empleado.vencimientoCarnetSalud = '';
-                this.empleado.vencimientoCarnetChofer = '';
-            },
-            checkForm() {
-                if (this.empleado.nombre && this.empleado.apellido && this.empleado.documento && this.empleado.fechaNacimiento && this.empleado.domicilio
-                    && this.empleado.telefono ) {
-                    return true;
-                }
-
-                this.erroresForm = [];
-
-                if (!this.empleado.nombre) {
-                    this.erroresForm.push('Nombre requerido.');
-                }                
-                if (!this.empleado.apellido) {
-                    this.erroresForm.push('Apellido requerido.');
-                }                
-                if (!this.empleado.documento) {
-                    this.erroresForm.push('Documento requerido.');
-                }      
-                if (!this.empleado.fechaNacimiento) {
-                    this.erroresForm.push('Fecha de nacimiento requerida.');
-                }                
-                if (!this.empleado.domicilio) {
-                    this.erroresForm.push('Domicilio requerido.');
-                }
-                if (!this.empleado.telefono) {
-                    this.erroresForm.push('Teléfono requerido.');
-                }
-
-                this.disabled = false;
-                return false;
-            }
-    
-        },    
+import axios from "axios";
+export default {
+  name: "EditarEmpleado",
+  mounted() {
+    if (this.$route.params.empleado != null) {
+      this.empleado = this.$route.params.empleado;
+    } else {
+      this.$router.push("/empleado/principal-empleado");
     }
+    if (this.empleado.fechaNacimiento) {
+      this.empleado.fechaNacimiento = moment(
+        this.empleado.fechaNacimiento
+      ).format("YYYY-MM-DD");
+    }
+    if (this.empleado.vencimientoCarnetSalud) {
+      this.empleado.vencimientoCarnetSalud = moment(
+        this.empleado.vencimientoCarnetSalud
+      ).format("YYYY-MM-DD");
+    }
+    if (this.empleado.vencimientoCarnetChofer) {
+      this.empleado.vencimientoCarnetChofer = moment(
+        this.empleado.vencimientoCarnetChofer
+      ).format("YYYY-MM-DD");
+    }
+    this.documentoOriginal = this.$route.params.empleado.documento;
+    console.log(this.empleado);
+    this.cargarListaRoles();
+  },
+  data() {
+    return {
+      loading: false,
+      resultadoOperacion: null,
+      erroresForm: [],
+      disabled: true,
+      empleado: {
+        nombre: "",
+        apellido: "",
+        documento: "",
+        fechaNacimiento: "",
+        domicilio: "",
+        telefono: "",
+        vencimientoCarnetSalud: "",
+        vencimientoCarnetChofer: ""
+      },
+      documentoOriginal: "",
+      roles: [],
+      rolesSeleccionados: [],
+      rolSeleccionado: [],
+      alerta: false,
+      informacion: false
+    };
+  },
+  methods: {
+    cargarRolesActuales() {
+      if (this.empleado.listaRoles.length) {
+        console.log(this.empleado.listaRoles);
+        this.empleado.listaRoles.forEach(rol => {
+          this.rolesSeleccionados.push(rol);
+          var indexRol = this.roles.findIndex(r => r.id == rol.id);
+          console.log(indexRol);
+          this.roles[indexRol].disabled = true;
+        });
+      }
+    },
+    cambioSelect() {
+      this.rolesSeleccionados.push(this.rolSeleccionado);
+      var indexRol = this.roles.findIndex(
+        rol => rol.id == this.rolSeleccionado.id
+      );
+      this.roles[indexRol].disabled = true;
+    },
+    removerRol(pRol) {
+      this.rolesSeleccionados = this.rolesSeleccionados.filter(
+        rol => rol.id != pRol.id
+      );
+      var indexRol = this.roles.findIndex(rol => rol.id == pRol.id);
+      console.log(indexRol);
+      this.roles[indexRol].disabled = false;
+    },
+    cargarListaRoles() {
+      this.loading = true;
+      axios.get(`${process.env.BASE_URL}/api/turno/lista-roles`).then(res => {
+        console.log(res);
+        if (res.data.resultado == 100) {
+          this.roles = res.data.roles;
+          this.roles.forEach(function(obj) {
+            obj.disabled = false;
+          });
+          this.cargarRolesActuales();
+        }
+        this.loading = false;
+      });
+    },
+    verificarDisponibilidad() {
+      if (
+        this.empleado.documento != "" &&
+        this.documentoOriginal != this.empleado.documento
+      ) {
+        this.errorDisponibilidad = "Verificando..";
+        axios
+          .get(`${process.env.BASE_URL}/api/empleado/existe-empleado`, {
+            params: {
+              documento: this.empleado.documento
+            }
+          })
+          .then(res => {
+            console.log(res);
+            if (res.data.existe == true || res.data.resultado == 1300) {
+              this.disabled = true;
+              this.errorDisponibilidad = "Documento ya registrado.";
+            } else {
+              this.errorDisponibilidad = "";
+              this.disabled = false;
+            }
+          });
+      } else {
+        this.disabled = false;
+      }
+    },
+    limpiarResultado() {
+      this.alerta = false;
+      this.informacion = false;
+      this.resultadoOperacion = "";
+    },
+    modificarEmpleado() {
+      this.limpiarResultado();
+      this.loading = true;
+      if (this.checkForm()) {
+        this.empleado.listaRoles = this.rolesSeleccionados;
+        var params = this.empleado;
+        console.log(params);
+        axios
+          .post(
+            `${process.env.BASE_URL}/api/empleado/modificar-empleado`,
+            params
+          )
+          .then(res => {
+            console.log(res);
+            if (res.data.resultado == 1304) {
+              this.$router.push({
+                name: "PrincipalEmpleado",
+                params: {
+                  resultadoOperacion: "Empleado modificado satisfactoriamente."
+                }
+              });
+            } else if (res.data.resultado == 200) {
+              this.alerta = true;
+              this.resultadoOperacion =
+                "Error de conexión, inténtelo nuevamente.";
+            } else {
+              this.alerta = true;
+              this.resultadoOperacion =
+                "Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.";
+            }
+            this.loading = false;
+          })
+          .catch(error => {
+            this.alerta = true;
+            this.resultadoOperacion =
+              "Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.";
+            console.log(error);
+            this.loading = false;
+          });
+      }
+    },
+    limpiarCajas() {
+      this.empleado.nombre = "";
+      this.empleado.apellido = "";
+      this.empleado.documento = "";
+      this.empleado.fechaNacimiento = "";
+      this.empleado.domicilio = "";
+      this.empleado.telefono = "";
+      this.empleado.vencimientoCarnetSalud = "";
+      this.empleado.vencimientoCarnetChofer = "";
+    },
+    checkForm() {
+      if (
+        this.empleado.nombre &&
+        this.empleado.apellido &&
+        this.empleado.documento &&
+        this.empleado.fechaNacimiento &&
+        this.empleado.domicilio &&
+        this.empleado.telefono
+      ) {
+        return true;
+      }
+
+      this.erroresForm = [];
+
+      if (!this.empleado.nombre) {
+        this.erroresForm.push("Nombre requerido.");
+      }
+      if (!this.empleado.apellido) {
+        this.erroresForm.push("Apellido requerido.");
+      }
+      if (!this.empleado.documento) {
+        this.erroresForm.push("Documento requerido.");
+      }
+      if (!this.empleado.fechaNacimiento) {
+        this.erroresForm.push("Fecha de nacimiento requerida.");
+      }
+      if (!this.empleado.domicilio) {
+        this.erroresForm.push("Domicilio requerido.");
+      }
+      if (!this.empleado.telefono) {
+        this.erroresForm.push("Teléfono requerido.");
+      }
+
+      this.disabled = false;
+      return false;
+    }
+  }
+};
 </script>
