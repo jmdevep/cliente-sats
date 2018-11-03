@@ -22,41 +22,47 @@
 </template>
 
 <script>
-    import axios from 'axios';
+import axios from "axios";
 
-    import ListadoTurno from './ListadoTurno.vue'
-    import DescargaPlanillaTurnos from './DescargaPlanillaTurnos.vue' 
-    import CargaPlanillaTurnos from './CargaPlanillaTurnos.vue'
-    //import MarcarTurno from './MarcarTurno.vue'
+import ListadoTurno from "./ListadoTurno.vue";
+import DescargaPlanillaTurnos from "./DescargaPlanillaTurnos.vue";
+import CargaPlanillaTurnos from "./CargaPlanillaTurnos.vue";
+//import MarcarTurno from './MarcarTurno.vue'
 
-	export default {
-        name: 'PrincipalTurno',
-        mounted(){
-
-        },
-         components: {
-             ListadoTurno,
-             DescargaPlanillaTurnos,
-             CargaPlanillaTurnos,
-             //MarcarTurno
-        },
-        data(){
-            return {
-            currentTab: ListadoTurno,
-            tabs: [
-                { component: ListadoTurno, title: 'Lista Turnos' },
-                { component: DescargaPlanillaTurnos, title: 'Descargar Planilla'},
-                { component: CargaPlanillaTurnos, title: 'Cargar Planilla'},
-                //{ component: MarcarTurno, title: 'Marcar Turno'},
-            ],
-            }
-        },
-       computed: {
-         currentTabComponent: function () {
-            return this.currentTab
-        }
-     }
-    }   
+export default {
+  name: "PrincipalTurno",
+  mounted() {
+          var usuario = this.$session.get("usuario");
+    console.log(usuario);
+    this.usuarioLoggeado = usuario;
+    if (usuario.tipo.id != 3) {
+      this.tabs = [
+        { component: ListadoTurno, title: "Lista Turnos" },
+      ]
+    }
+  },
+  components: {
+    ListadoTurno,
+    DescargaPlanillaTurnos,
+    CargaPlanillaTurnos
+    //MarcarTurno
+  },
+  data() {
+    return {
+      currentTab: ListadoTurno,
+      tabs: [
+        { component: ListadoTurno, title: "Lista Turnos" },
+        { component: DescargaPlanillaTurnos, title: "Descargar Planilla" },
+        { component: CargaPlanillaTurnos, title: "Cargar Planilla" }
+      ]
+    };
+  },
+  computed: {
+    currentTabComponent: function() {
+      return this.currentTab;
+    }
+  }
+};
 </script>
 
 

@@ -5,6 +5,9 @@
     </template>
     <template v-else-if="empleado">
         <nav-empleado/>
+    </template>    
+    <template v-else-if="coordinador">
+        <nav-coordinador/>
     </template>
     <div id="contenido" class="container">
         <router-view/>
@@ -13,20 +16,23 @@
 </template>
 
 <script>
-import navadmin from './components/parciales/navadmin';
+import NavAdmin from './components/parciales/NavAdmin';
 import NavEmpleado from './components/parciales/NavEmpleado';
+import NavCoordinador from './components/parciales/NavCoordinador';
 
 export default {
   name: 'App',
   components: {
-      'nav-admin': navadmin,
-      'nav-empleado': NavEmpleado
+      'nav-admin': NavAdmin,
+      'nav-empleado': NavEmpleado,
+      'nav-coordinador': NavCoordinador
   },
   data() {
     return {
         admin: false,
         empleado: true,
         logueado: false,
+        coordinador: false,
     };
   },
   mounted() {
@@ -39,6 +45,11 @@ export default {
     } else if (usuario.tipo.id == 2){
         this.admin = true;
         this.logueado = true;        
+    } else if (usuario.tipo.id == 3){
+        this.admin = false;
+        this.empleado = false;
+        this.coordinador = true;
+        this.logueado = true;
     }
   },
 }
