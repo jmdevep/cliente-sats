@@ -13,13 +13,13 @@
                     <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>   
 
-                    <multi-select v-model="personaSeleccionada" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
+                    <multi-select v-model="llamadoSeleccionado" placeholder="Llamados"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="llamados" :option-height="104" :custom-label="customLabelLlamados" :show-labels="false">
                         
                         <template slot="option" slot-scope="props">
                             <div class="option__desc">
-                                <span class="option__title">{{ props.option.nombre }}</span>
+                                <span class="option__title">{{ props.option.motivoLLamado }}</span>
                                 <br>
-                                <span class="option__small">{{ props.option.documento }}</span>
+                                <span class="option__small">{{ props.option.fechaRecibido }}</span>
                             </div>
                         </template>
                     </multi-select>
@@ -220,6 +220,9 @@ export default {
     customLabelTiposEventos({ nombre }) {
       return `${nombre}`;
     },
+    customLabelLlamados({ motivoLlamado, fechaRecibido }) {
+      return `${motivoLlamado - fechaRecibido} `;
+    },
     cargarPrestadores() {
       axios
         .get(`${process.env.BASE_URL}/api/cliente/lista-prestadores`)
@@ -231,7 +234,6 @@ export default {
           this.loading = false;
         });
     },
-
     customLabelPrestadores({ nombreDescriptivo }) {
       return `${nombreDescriptivo} `;
     },
@@ -267,6 +269,7 @@ export default {
           params: {}
         })
         .then(res => {
+          console.log("Llamados");
           console.log(res);
           if (res.data.resultado == 100) {
             this.llamados = res.data.listaLlamados;

@@ -139,7 +139,6 @@ export default {
       resultadoOperacion: "",
       empleados: [],
       eventos: [],
-
       //inicio propiedades tabla
       tamanoPagina: 5,
       indicePagina: 0,
