@@ -13,7 +13,7 @@
 
               
       <b-col md="6" class="my-1">
-        <b-form-group horizontal label="Fecha Inicio" class="mb-0">
+        <b-form-group horizontal label="Fecha Fin" class="mb-0">
 <datetime type="datetime"   value-zone="America/Montevideo"
                   zone="America/Montevideo"
                   format="yyyy-MM-dd HH:mm:ss"
