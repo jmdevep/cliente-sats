@@ -60,7 +60,7 @@
                                     <td>{{ informe.viaticosMayores}}</td>
                                     <td>{{ informe.viaticosMenores }}</td>
                                     <td>{{ informe.cantidadKmViaticos }}</td>
-                                    <td><b-btn class="btn btn-success" @click="cargarDetalle(informe.empleado.id)"><i class="fas fa-door-open whiteText"></i>x</b-btn></td>
+                                    <td><b-btn class="btn btn-success" @click="empleadoElegido = (informe.empleado.nombre + ' ' + informe.empleado.apellido); cargarDetalle(informe.empleado.id)"><i class="fas fa-door-open whiteText"></i>x</b-btn></td>
                                 </template>
                             </tr>
                         </tbody>
@@ -85,10 +85,52 @@
         </div>
         <b-modal id="detalleInformeModal" v-model="detalleInformeModal" ref="detalleInformeModal" title="Detalle informe">
               <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-              <p class="my-4">Ingreso planificado: {{detalleInformeSeleccionado.inicioTurno}}</p>
-              <p class="my-4">Fin planificado: {{detalleInformeSeleccionado.finTurno}} </p>
-              <p class="my-4">Ingreso marcado: {{detalleInformeSeleccionado.inicioPuesto}}</p>
-              <p class="my-4">Fin marcado: {{detalleInformeSeleccionado.finPuesto}} </p>
+              <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3>{{empleadoElegido}}</h3>
+                    </div>
+                </div>
+              </div>
+              <div class="container" v-for="(detalle, index) in detalleInformeSeleccionado" :key="index">
+                <div class="row">
+                    <div class="col-sm-6 border border-secondary"> 
+                        <ul>
+                            <p title="Ingreso planeado">I. planeado: {{detalle.inicioTurno}}</p>
+                            <p title="Salida planeada">S. planeada: {{detalle.finTurno}}</p>
+                        </ul>
+                    </div>
+                    <div class="col-sm-6 border border-secondary"> 
+                        <ul>
+                            <p title="Ingreso marcado">I. marcado: {{detalle.finPuesto}}</p>
+                            <p title="Salida marcada">S. marcada: {{detalle.finPuesto}}</p>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2 border border-secondary">
+                        D: {{detalle.informe.diurnas}}
+                        N: {{detalle.informe.nocturnas}}
+                    </div>
+                    <div class="col-sm-2 border border-secondary"> 
+                        E: {{detalle.informe.extra}}
+                    </div>
+                    <div class="col-sm-2 border border-secondary"> 
+                        R: {{detalle.informe.reten}}
+                    </div>
+                    <div class="col-sm-2 border border-secondary"> 
+                        FD: {{detalle.informe.feriadoDiurno}}
+                        FN: {{detalle.informe.feriadoNocturno}}
+                    </div>
+                    <div class="col-sm-2 border border-secondary">
+                        V+: {{detalle.informe.viaticosMayores}}
+                        V-: {{detalle.informe.viaticosMenores}}
+                    </div>
+                    <div class="col-sm-2 border border-secondary">
+                        Vkm: {{detalle.informe.cantidadKmViaticos}}
+                    </div>
+                </div>
+              </div>
               <div slot="modal-footer" class="w-100">
                   <p class="float-left"></p>
                   <b-btn size="sm" id="btnMarcarIngreso" :disabled="habilitarBotonIngreso" class="float-right" variant="primary" @click="controlarEventoMarcarTurnoEntrada(); mostrar=false">
@@ -148,25 +190,8 @@
                 alerta: false,
                 informacion: false,
                 disabled: false,
-                detalleInformeSeleccionado: {
-                    informe: {
-                        empleado: {},
-                        fecha: '',
-                        diurnas: 0,
-                        nocturnas: 0,
-                        reten: 0,
-                        extra: 0,
-                        feriadoDiurno: 0,
-                        feriadoNocturno: 0,
-                        viaticosMayores: 0,
-                        viaticosMenores: 0,
-                        cantidadKmViaticos: 0,
-                    },
-                    inicioTurno: '',
-                    finTurno: '',
-                    inicioPuesto: '',
-                    finPuesto: '',
-                },
+                detalleInformeSeleccionado: [],
+                empleadoElegido: '',
                 json_fields: {
                     'Nombre': 'empleado.nombre',
                     'Apellido': 'empleado.apellido',
@@ -302,7 +327,7 @@
             .then((res)=>{
                 console.log(res);
                 if(res.data.resultado == 100){
-                    this.detalleInformeSeleccionado = res.data.detallesInforme[0];
+                    this.detalleInformeSeleccionado = res.data.detallesInforme;
                     this.indexActual = 0;
                 }
                 else if(res.data.resultado == 101){
