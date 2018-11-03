@@ -79,8 +79,8 @@
                         <tbody v-for="(turno, index) in turnosActivos" :key="index" class="tableBodyBackground">
                             <tr v-for="(puesto, index) in turno.puestos" :key="index">
                                 <th scope="row">{{ index + 1 }}</th>
-                                <td>{{ puesto.inicio }}</td>
-                                <td>{{ puesto.fin }}</td>
+                                <td>{{ puesto.inicio }} - {{ turno.inicio }}</td>
+                                <td>{{ puesto.fin }} - {{ turno.fin }}</td>
                                 <template v-if="puesto.tipo == 1">
                                     <td>Guardia</td>
                                 </template>
