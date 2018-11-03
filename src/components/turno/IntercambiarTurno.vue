@@ -50,15 +50,15 @@
             </div>
         </div>
         <b-modal id="intercambioModal" v-model="mostrarModal" ref="intercambioModal" title="Intercambiar turno">
-                                            <i v-show="loading" class="fa fa-spinner fa-spin"></i>
-                                            <p class="my-4">Presione el botón "Aceptar" si desea intercambiar su turno con {{intercambio.empleadoIntercambio.nombre}} {{intercambio.empleadoIntercambio.apellido}}. Si no, cierre este mensaje.</p>
-                                            <div slot="modal-footer" class="w-100">
-                                                <p class="float-left"></p>
-                                                <b-btn size="sm" id="btnIntercambiarConfirmar"  class="float-right" variant="primary" @click="intercambiarTurno(); mostrar=false">
-                                                    Aceptar
-                                                </b-btn>
-                                            </div>
-                                        </b-modal>
+            <i v-show="loading" class="fa fa-spinner fa-spin"></i>
+            <p class="my-4">Presione el botón "Aceptar" si desea intercambiar su turno con {{intercambio.empleadoIntercambio.nombre}} {{intercambio.empleadoIntercambio.apellido}}. Si no, cierre este mensaje.</p>
+            <div slot="modal-footer" class="w-100">
+                <p class="float-left"></p>
+                <b-btn size="sm" id="btnIntercambiarConfirmar"  class="float-right" variant="primary" @click="intercambiarTurno(); mostrar=false">
+                    Aceptar
+                </b-btn>
+            </div>
+        </b-modal>
     </div>
 </template>
 
