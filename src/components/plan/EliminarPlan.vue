@@ -19,60 +19,72 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EliminarPlan',
-        mounted(){
-            this.plan = this.$route.params.plan;
-            },
-            beforeCreate: function () {
-                var usuario = this.$session.get('usuario');
-                if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
-                this.$router.push('/usuario/login')
-                } 
-        },
-        data(){
-            return{
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: true,
-            	plan: {
-                    id: 0,
-                    nombre: '',
-                    cuota: 0,
-                    convenio:{ 
-                        id: 0,
-                        nombre: '',
-                        fechaInicio: null,
-                        fechaFin: null,
-                        empresa:{
-                            id: 0,
-                            nombre: '',
-                            direccion: '',
-                            telefono: '',
-                            rut: '',
-                        }
-                    },
-                    descuento:{
-                        id: 0,
-                        motivo: '',
-                        porcentaje: 0,
-                    }
-                },
-            }
-        },
-        methods: {
-            eliminarPlan(){
-                axios.delete(`${process.env.BASE_URL}/api/cliente/eliminar-plan`, {data: { id: this.plan.id }}) 
-                    .then((res)=>{
-                        console.log(res);
-                        if(res.data.resultado == 5400){
-                            this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Plan eliminado satisfactoriamente." }});
-                        } else if (res.data.resultado == 5401){
-                            this.resultadoOperacion = "El plan seleccionado no existe.";
-                        }
-                    });
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "EliminarPlan",
+  mounted() {
+    if (this.$route.params.plan != null) {
+      this.plan = this.$route.params.plan;
+    } else {
+      this.$router.push("/plan/principal-plan");
     }
+  },
+  beforeCreate: function() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+      this.$router.push("/usuario/login");
+    }
+  },
+  data() {
+    return {
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: true,
+      plan: {
+        id: 0,
+        nombre: "",
+        cuota: 0,
+        convenio: {
+          id: 0,
+          nombre: "",
+          fechaInicio: null,
+          fechaFin: null,
+          empresa: {
+            id: 0,
+            nombre: "",
+            direccion: "",
+            telefono: "",
+            rut: ""
+          }
+        },
+        descuento: {
+          id: 0,
+          motivo: "",
+          porcentaje: 0
+        }
+      }
+    };
+  },
+  methods: {
+    eliminarPlan() {
+      axios
+        .delete(`${process.env.BASE_URL}/api/cliente/eliminar-plan`, {
+          data: { id: this.plan.id }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 5400) {
+            this.$router.push({
+              name: "PrincipalPlan",
+              params: {
+                resultadoOperacion: "Plan eliminado satisfactoriamente."
+              }
+            });
+          } else if (res.data.resultado == 5401) {
+            this.resultadoOperacion = "El plan seleccionado no existe.";
+          }
+        });
+    }
+  }
+};
 </script>

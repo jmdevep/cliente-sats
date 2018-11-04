@@ -20,63 +20,74 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EliminarSociedad',
-        mounted(){
-            this.cliente = this.$route.params.cliente;
-            console.log(this.$route.params.cliente);
-            console.log(this.cliente);
-        	},
-        data(){
-            return{
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: true,
-            	cliente: {
-                    id: 0,
-                    nombre: '',
-                    direccion: '',
-                    telefono: '',
-                    fechaIngreso: '',
-                    sociedad:{
-                        id: 0,
-                        nombre: '',
-                        fechaInicio: '',
-                        fechaFin: '',
-                        plan:{
-                            id: 0,
-                            nombre: '',
-                            cuota: 0,
-                            convenio: {
-                                id: 0,
-                                nombreDescriptivo: '',
-                                fechaInicio: '',
-                                fechaFin: '',
-                                empresa: {
-                                    nombre: '',
-                                    direccion: '',
-                                    telefono: '',
-                                    rut: '',
-                                },
-                            }
-                        }
-                    }
-                },
-            }
-        },
-        methods: {
-            eliminarSocio(){
-                axios.delete(`${process.env.BASE_URL}/api/cliente/eliminar-sociedad`, {data: { cliente: this.cliente }}) 
-                    .then((res)=>{
-                        console.log(res);
-                        if(res.data.resultado == 5420){
-                            this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Cliente desasociado satisfactoriamente." }});                            
-                        } else if (res.data.resultado == 5421){
-                            this.resultadoOperacion = "El cliente no se encuentra asociado a ese plan.";
-                        }
-                    });
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "EliminarSociedad",
+  mounted() {
+    if (this.$route.params.cliente != null) {
+      this.cliente = this.$route.params.cliente;
+    } else {
+      this.$router.push("/plan/principal-plan");
     }
+  },
+  data() {
+    return {
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: true,
+      cliente: {
+        id: 0,
+        nombre: "",
+        direccion: "",
+        telefono: "",
+        fechaIngreso: "",
+        sociedad: {
+          id: 0,
+          nombre: "",
+          fechaInicio: "",
+          fechaFin: "",
+          plan: {
+            id: 0,
+            nombre: "",
+            cuota: 0,
+            convenio: {
+              id: 0,
+              nombreDescriptivo: "",
+              fechaInicio: "",
+              fechaFin: "",
+              empresa: {
+                nombre: "",
+                direccion: "",
+                telefono: "",
+                rut: ""
+              }
+            }
+          }
+        }
+      }
+    };
+  },
+  methods: {
+    eliminarSocio() {
+      axios
+        .delete(`${process.env.BASE_URL}/api/cliente/eliminar-sociedad`, {
+          data: { cliente: this.cliente }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 5420) {
+            this.$router.push({
+              name: "PrincipalPlan",
+              params: {
+                resultadoOperacion: "Cliente desasociado satisfactoriamente."
+              }
+            });
+          } else if (res.data.resultado == 5421) {
+            this.resultadoOperacion =
+              "El cliente no se encuentra asociado a ese plan.";
+          }
+        });
+    }
+  }
+};
 </script>

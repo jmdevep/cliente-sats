@@ -52,140 +52,163 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EditarTramo',
-        mounted(){
-            this.tramo = this.$route.params.tramo;
-            this.tramo.localidadOrigen.disabled = true;
-            this.tramo.localidadDestino.disabled = true;
-            this.limpiarResultado();
-
-            this.loading = true;
-            axios.get(`${process.env.BASE_URL}/api/localidad/lista-localidades`, {
-                params: {
-
-                }
-            })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.localidades = res.data.listaLocalidades;
-                        this.localidades.forEach(function(obj) { obj.disabled = false; });
-                    }
-                    this.loading = false;
-        	});
-            this.cambioSelectOrigen();
-            this.cambioSelectDestino();
-            },
-        beforeCreate: function () {
-            var usuario = this.$session.get('usuario');
-            if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
-            this.$router.push('/usuario/login')
-            } 
-        },
-        data(){
-            return{
-                loading: false,
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: false,
-            	localidades: [],
-                errorDisponibilidad: '',
-                tramo: {
-                    localidadOrigen: null,
-                    localidadDestino: null,
-                    cantidadKm: null
-                },
-                alerta: false,
-                informacion: false,
-            }
-        },
-        methods: {
-            cambioSelectOrigen() {
-                var indexRol = this.localidades.findIndex((x => x.id == this.tramo.localidadOrigen.id));
-                this.localidades[indexRol].disabled = true;
-            },
-            cambioSelectDestino() {
-                var indexRol = this.localidades.findIndex((x => x.id == this.tramo.localidadDestino.id));
-                this.localidades[indexRol].disabled = true;
-            },
-            removerLocalidadOrigen(){
-                var index = this.localidades.findIndex((x => x.id == this.tramo.localidadOrigen.id));
-                this.localidades[index].disabled = false;
-                this.tramo.localidadOrigen = null;
-            },
-            removerLocalidadDestino(){
-                var index = this.localidades.findIndex((x => x.id == this.tramo.localidadDestino.id));
-                this.localidades[index].disabled = false;
-                this.tramo.localidadDestino = null;
-            },
-            modificarTramo(){
-                this.loading = true;
-                if(this.checkForm()){
-                    this.tramo.localidadOrigen.disabled = undefined;
-                    this.tramo.localidadDestino.disabled = undefined;
-                    var params = this.tramo;
-                    console.log(params);
-                    axios.post(`${process.env.BASE_URL}/api/tramo/modificar-tramo`, params) 
-                        .then((res)=>{
-                            console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5704){
-                                this.$router.push({ name: 'PrincipalTramo', params: { resultadoOperacion: "Tramo modificado satisfactoriamente." }});                            
-
-                            } else if (res.data.resultado == 5705){
-                                this.resultadoOperacion = "Error, ya existe un tramo con el mismo origen y destino.";
-                                this.alerta = true;
-                            }
-                            else if(res.data.resultado == 200){
-                                this.resultadoOperacion = "Hubo un error de conexión. Inténtelo nuevamente.";
-                                this.alerta = tre;
-                            }else{
-                                this.alerta = true;
-                                this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
-                            
-                            }
-                            this.loading = false;
-                        })
-                        .catch((error)=>{
-                            this.alerta = true;
-                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
-                            console.log(error);
-                            this.loading = false;
-                    });
-                }
-            },
-            limpiarCajas(){
-                this.tramo.localidadOrigen = '';
-                this.tramo.localidadDestino = '';
-                this.tramo.cantidadKm = 0;
-                errorDisponibilidad: '';
-            },
-            limpiarResultado(){
-                this.resultadoOperacion = '';
-                this.alerta = false;
-                this.informacion = false;
-            },
-            checkForm() {
-                if (this.tramo.localidadOrigen && this.tramo.localidadDestino && this.tramo.cantidadKm != 0) {
-                    return true;
-                }
-
-                this.erroresForm = [];
-
-                if (!this.tramo.localidadOrigen) {
-                    this.erroresForm.push('Origen requerido.');
-                }
-                if (!this.tramo.localidadDestino) {
-                    this.erroresForm.push('Destino requerido.');
-                }
-                if (!this.tramo.cantidadKm == 0) {
-                    this.erroresForm.push('Cantidad de Kilómetros requerida.');
-                }
-                this.disabled = false;
-                return false;
-            }
-    
-        },    
+import axios from "axios";
+export default {
+  name: "EditarTramo",
+  mounted() {
+    if (this.$route.params.tramo != null) {
+      this.tramo = this.$route.params.tramo;
+    } else {
+      this.$router.push("/tramo/principal-tramo");
     }
+    this.tramo.localidadOrigen.disabled = true;
+    this.tramo.localidadDestino.disabled = true;
+    this.limpiarResultado();
+
+    this.loading = true;
+    axios
+      .get(`${process.env.BASE_URL}/api/localidad/lista-localidades`, {
+        params: {}
+      })
+      .then(res => {
+        console.log(res);
+        if (res.data.resultado == 100) {
+          this.localidades = res.data.listaLocalidades;
+          this.localidades.forEach(function(obj) {
+            obj.disabled = false;
+          });
+        }
+        this.loading = false;
+      });
+    this.cambioSelectOrigen();
+    this.cambioSelectDestino();
+  },
+  beforeCreate: function() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+      this.$router.push("/usuario/login");
+    }
+  },
+  data() {
+    return {
+      loading: false,
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: false,
+      localidades: [],
+      errorDisponibilidad: "",
+      tramo: {
+        localidadOrigen: null,
+        localidadDestino: null,
+        cantidadKm: null
+      },
+      alerta: false,
+      informacion: false
+    };
+  },
+  methods: {
+    cambioSelectOrigen() {
+      var indexRol = this.localidades.findIndex(
+        x => x.id == this.tramo.localidadOrigen.id
+      );
+      this.localidades[indexRol].disabled = true;
+    },
+    cambioSelectDestino() {
+      var indexRol = this.localidades.findIndex(
+        x => x.id == this.tramo.localidadDestino.id
+      );
+      this.localidades[indexRol].disabled = true;
+    },
+    removerLocalidadOrigen() {
+      var index = this.localidades.findIndex(
+        x => x.id == this.tramo.localidadOrigen.id
+      );
+      this.localidades[index].disabled = false;
+      this.tramo.localidadOrigen = null;
+    },
+    removerLocalidadDestino() {
+      var index = this.localidades.findIndex(
+        x => x.id == this.tramo.localidadDestino.id
+      );
+      this.localidades[index].disabled = false;
+      this.tramo.localidadDestino = null;
+    },
+    modificarTramo() {
+      this.loading = true;
+      if (this.checkForm()) {
+        this.tramo.localidadOrigen.disabled = undefined;
+        this.tramo.localidadDestino.disabled = undefined;
+        var params = this.tramo;
+        console.log(params);
+        axios
+          .post(`${process.env.BASE_URL}/api/tramo/modificar-tramo`, params)
+          .then(res => {
+            console.log(res.data.resultado);
+            if (res.data.resultado == 5704) {
+              this.$router.push({
+                name: "PrincipalTramo",
+                params: {
+                  resultadoOperacion: "Tramo modificado satisfactoriamente."
+                }
+              });
+            } else if (res.data.resultado == 5705) {
+              this.resultadoOperacion =
+                "Error, ya existe un tramo con el mismo origen y destino.";
+              this.alerta = true;
+            } else if (res.data.resultado == 200) {
+              this.resultadoOperacion =
+                "Hubo un error de conexión. Inténtelo nuevamente.";
+              this.alerta = tre;
+            } else {
+              this.alerta = true;
+              this.resultadoOperacion =
+                "Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.";
+            }
+            this.loading = false;
+          })
+          .catch(error => {
+            this.alerta = true;
+            this.resultadoOperacion =
+              "Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.";
+            console.log(error);
+            this.loading = false;
+          });
+      }
+    },
+    limpiarCajas() {
+      this.tramo.localidadOrigen = "";
+      this.tramo.localidadDestino = "";
+      this.tramo.cantidadKm = 0;
+      errorDisponibilidad: "";
+    },
+    limpiarResultado() {
+      this.resultadoOperacion = "";
+      this.alerta = false;
+      this.informacion = false;
+    },
+    checkForm() {
+      if (
+        this.tramo.localidadOrigen &&
+        this.tramo.localidadDestino &&
+        this.tramo.cantidadKm != 0
+      ) {
+        return true;
+      }
+
+      this.erroresForm = [];
+
+      if (!this.tramo.localidadOrigen) {
+        this.erroresForm.push("Origen requerido.");
+      }
+      if (!this.tramo.localidadDestino) {
+        this.erroresForm.push("Destino requerido.");
+      }
+      if (!this.tramo.cantidadKm == 0) {
+        this.erroresForm.push("Cantidad de Kilómetros requerida.");
+      }
+      this.disabled = false;
+      return false;
+    }
+  }
+};
 </script>

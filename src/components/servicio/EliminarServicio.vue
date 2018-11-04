@@ -21,41 +21,53 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EliminarServicio',
-        mounted(){
-            this.servicio = this.$parent.servicio;
-            },
-            beforeCreate: function () {
-                var usuario = this.$session.get('usuario');
-                if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
-                this.$router.push('/usuario/login')
-                } 
-        },
-        data(){
-            return{
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: true,
-            	servicio: {
-                    id: 0,
-                    nombre: '',
-                },
-            }
-        },
-        methods: {
-            eliminarServicio(){
-                axios.delete(`${process.env.BASE_URL}/api/servicio/eliminar-servicio`, {data: { id: this.servicio.id }}) 
-                    .then((res)=>{
-                        console.log(res);
-                        if(res.data.resultado == 5500){
-                            this.$router.push({ name: 'PrincipalEvento', params: { resultadoOperacion: "Servicio eliminado satisfactoriamente." }});
-                        } else if (res.data.resultado == 5501){
-                            this.resultadoOperacion = "El Servicio seleccionado ya no existe.";
-                        }
-                    });
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "EliminarServicio",
+  mounted() {
+    if (this.$route.params.servicio != null) {
+      this.servicio = this.$route.params.servicio;
+    } else {
+      this.$router.push("/servicio/principal-servicio");
     }
+  },
+  beforeCreate: function() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+      this.$router.push("/usuario/login");
+    }
+  },
+  data() {
+    return {
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: true,
+      servicio: {
+        id: 0,
+        nombre: ""
+      }
+    };
+  },
+  methods: {
+    eliminarServicio() {
+      axios
+        .delete(`${process.env.BASE_URL}/api/servicio/eliminar-servicio`, {
+          data: { id: this.servicio.id }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 5500) {
+            this.$router.push({
+              name: "PrincipalEvento",
+              params: {
+                resultadoOperacion: "Servicio eliminado satisfactoriamente."
+              }
+            });
+          } else if (res.data.resultado == 5501) {
+            this.resultadoOperacion = "El Servicio seleccionado ya no existe.";
+          }
+        });
+    }
+  }
+};
 </script>

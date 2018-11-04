@@ -42,7 +42,13 @@
 	 export default {
         name: 'EditarEmpresa',
         mounted(){
+            if(this.$route.params.empresa != null){
             this.empresa = this.$route.params.empresa;
+            console.log(this.empresa);
+            }else{
+                alert("Parametro nulo");
+this.$router.push('/cliente/principal-cliente')
+            }
             this.rutOriginal = this.$route.params.empresa.rut;
             },
         beforeCreate: function () {

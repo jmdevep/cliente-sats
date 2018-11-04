@@ -20,9 +20,11 @@
 	 export default {
         name: 'EliminarEmpresa',
         mounted(){
+            if(this.$route.params.empresa != null){
             this.empresa = this.$route.params.empresa;
-            console.log(this.$route.params.empresa);
-            console.log(this.empresa);
+            }else{
+                this.$router.push('/cliente/principal-cliente')
+            }
         	},
         data(){
             return{

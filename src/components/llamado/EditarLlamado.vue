@@ -106,26 +106,31 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    import Multiselect from 'vue-multiselect'
-    const moment = require('moment-timezone');
+import axios from "axios";
+import Multiselect from "vue-multiselect";
+const moment = require("moment-timezone");
 
-	 export default {
-        name: 'EditarLlamado',
-        components: { 'multi-select': Multiselect,                      
-        },
-        mounted(){
-            this.loading = true;
-            this.cargarPersonas();
-            this.cargarPrestadores();
+export default {
+  name: "EditarLlamado",
+  components: {
+    "multi-select": Multiselect
+  },
+  mounted() {
+    this.loading = true;
+    this.cargarPersonas();
+    this.cargarPrestadores();
 
-            this.llamado = this.$route.params.llamado;
+    if (this.$route.params.llamado != null) {
+      this.llamado = this.$route.params.llamado;
+    } else {
+      this.$router.push("/evento/principal-evento");
+    }
 
-            console.log(this.llamado.fechaRecibido);
-            this.fechaRecibido = this.obtenerFecha(this.llamado.fechaRecibido);            
-            this.horaRecibido = this.obtenerHora(this.llamado.fechaRecibido);
-            console.log("Recibido");
-            /*
+    console.log(this.llamado.fechaRecibido);
+    this.fechaRecibido = this.obtenerFecha(this.llamado.fechaRecibido);
+    this.horaRecibido = this.obtenerHora(this.llamado.fechaRecibido);
+    console.log("Recibido");
+    /*
             this.fechaLlegadaAsistencia = this.obtenerFecha(this.llamado.fechaLlegadaAsistencia);
             this.fechaSalidaMovil = this.obtenerFecha(this.llamado.fechaSalidaMovil);
             this.fechaLlegadaDestinoPaciente = this.obtenerFecha(this.llamado.fechaLlegadaDestinoPaciente);
@@ -135,156 +140,171 @@
             this.horaLlegadaAsistencia = this.obtenerHora(this.llamado.horaLlegadaAsistencia);
             this.horaSalidaMovil = this.obtenerHora(this.llamado.horaSalidaMovil);
             this.horaLlegadaDestinoPaciente = this.obtenerHora(this.llamado.horaLlegadaDestinoPaciente);*/
-
-            },
-        beforeCreate: function () {
-            var usuario = this.$session.get('usuario');
-            if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
-            this.$router.push('/usuario/login')
-            } 
-        },
-        data(){
-            return{
-                loading: false,
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: false,
-                prestadores: [],
-                personas: [],
-                clasificaciones: [
-                    {nombre: "CLAVE 1", id:  1},
-                    {nombre: "CLAVE 2", id: 2},
-                    {nombre: "CLAVE 3", id: 3},
-                ],
-                errorDisponibilidad: '',
-                llamado: {
-                    paciente: null,
-                    ubicacionPaciente: '',
-                    destinoPaciente: '',
-                    motivoLlamado: '',
-                    prestadorCobertura: null,
-                    fechaRecibido: null,
-                    fechaLlegadaAsistencia: null,
-                    fechaSalidaMovil: null,
-                    fechaLlegadaDestinoPaciente: null
-                },
-                fechaRecibido: null,
-                horaRecibido: null,
-                fechaSalida: null,
-                horaSalida: null,
-                fechaLlegadaAsistencia: null,
-                horaLlegadaAsistencia: null,
-                fechaLlegadaDestino: null,
-                horaLlegadaDestino: null,
-                informacion: false,
-                alerta: false,
-            }
-        },
-        methods: {
-            obtenerFecha(fecha){
-                var arraySplit = fecha.split("T");
-                console.log(arraySplit[0]);
-                return arraySplit[0];
-            },
-            obtenerHora(fecha){
-                var arraySplit = fecha.split("T");
-                console.log(arraySplit[1]);                
-                return arraySplit[1];
-            },
-            obtenerFechaActual(){
-                var fechaActual = moment(new Date(), 'YYYY-MM-DD HH:mm:ss');
-                fechaActual.tz("America/Argentina/Buenos_Aires").format('YYYY-MM-DD HH:mm:ss');
-                console.log(fechaActual);
-                return moment.parseZone(fechaActual).format('YYYY-MM-DD');
-            },
-            obtenerHoraActual(){
-                var horaActual = moment(new Date(), 'HH:mm:ss');
-                horaActual.tz("America/Argentina/Buenos_Aires").format('HH:mm:ss');
-                console.log(horaActual);
-                return moment.parseZone(horaActual).format('HH:mm');
-            },
-             cargarPrestadores(){
-                axios.get(`${process.env.BASE_URL}/api/cliente/lista-prestadores`)
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.prestadores = res.data.prestadores;
-                    }
-                    this.loading = false;
-                });
-            },
-            customLabelPersonas ({ nombre, documento }) {
-                return `${nombre} – ${documento}`
-            },
-            customLabelPrestadores ({ nombreDescriptivo }) {
-                return `${ nombreDescriptivo } `
-            },
-            cargarPersonas(){
-                axios.get(`${process.env.BASE_URL}/api/cliente/lista-personas`, {
-                params: {
-                    }
-                })
-        		.then((res)=>{
-                    console.log(res);
-        			if(res.data.resultado == 100){
-                        this.personas = res.data.listaPersonas;
-                    }
-                    this.loading = false;
-        	    });         
-            },  
-            modificarLlamado(){
-                this.llamado.fechaRecibido = moment(`${this.fechaRecibido} ${this.horaRecibido}`,'YYYY-MM-DD HH:mm:ss').format();
-                this.llamado.fechaLlegadaAsistencia = moment(`${this.fechaLlegadaAsistencia} ${this.horaLlegadaAsistencia}`,'YYYY-MM-DD HH:mm:ss').format();
-                this.llamado.fechaSalidaMovil = moment(`${this.fechaSalida} ${this.horaSalida}`,'YYYY-MM-DD HH:mm:ss').format();
-                this.llamado.fechaLlegadaDestinoPaciente = moment(`${this.fechaLlegadaDestino} ${this.horaLlegadaDestino}`,'YYYY-MM-DD HH:mm:ss').format();
-                
-                var params = this.llamado;
-
-                this.loading = true;
-
-                this.limpiarResultado();
-
-                if(this.checkForm()){
-
-                    axios.post(`${process.env.BASE_URL}/api/llamado/modificar-llamado`, params) 
-                        .then((res)=>{
-                            console.log(res.data.resultado);                            
-                            if(res.data.resultado == 6000){
-                                this.informacion = true;
-                                this.resultadoOperacion = "Llamado modificado satisfactoriamente.";
-                                this.limpiarCajas();    
-                            } else if (res.data.resultado == 6001){
-                                this.alerta = true;
-                                this.resultadoOperacion = "Error en la modificacion.";
-                            }else{
-                                this.alerta = true;
-                                this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
-                            }
-                            this.loading = false;
-                        })
-                        .catch((error)=>{
-                            this.alerta = true;
-                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
-                            console.log(error);
-                            this.loading = false;
-                    });
-                    this.loading = false;
-                } 
-            },
-            limpiarResultado(){
-                this.resultadoOperacion = '';
-                this.alerta = false;
-                this.informacion = false;
-            },
-            limpiarCajas(){
-                errorDisponibilidad: '';
-            },
-            checkForm() {
-                return true;
-            }
-    
-        },    
+  },
+  beforeCreate: function() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+      this.$router.push("/usuario/login");
     }
+  },
+  data() {
+    return {
+      loading: false,
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: false,
+      prestadores: [],
+      personas: [],
+      clasificaciones: [
+        { nombre: "CLAVE 1", id: 1 },
+        { nombre: "CLAVE 2", id: 2 },
+        { nombre: "CLAVE 3", id: 3 }
+      ],
+      errorDisponibilidad: "",
+      llamado: {
+        paciente: null,
+        ubicacionPaciente: "",
+        destinoPaciente: "",
+        motivoLlamado: "",
+        prestadorCobertura: null,
+        fechaRecibido: null,
+        fechaLlegadaAsistencia: null,
+        fechaSalidaMovil: null,
+        fechaLlegadaDestinoPaciente: null
+      },
+      fechaRecibido: null,
+      horaRecibido: null,
+      fechaSalida: null,
+      horaSalida: null,
+      fechaLlegadaAsistencia: null,
+      horaLlegadaAsistencia: null,
+      fechaLlegadaDestino: null,
+      horaLlegadaDestino: null,
+      informacion: false,
+      alerta: false
+    };
+  },
+  methods: {
+    obtenerFecha(fecha) {
+      var arraySplit = fecha.split("T");
+      console.log(arraySplit[0]);
+      return arraySplit[0];
+    },
+    obtenerHora(fecha) {
+      var arraySplit = fecha.split("T");
+      console.log(arraySplit[1]);
+      return arraySplit[1];
+    },
+    obtenerFechaActual() {
+      var fechaActual = moment(new Date(), "YYYY-MM-DD HH:mm:ss");
+      fechaActual
+        .tz("America/Argentina/Buenos_Aires")
+        .format("YYYY-MM-DD HH:mm:ss");
+      console.log(fechaActual);
+      return moment.parseZone(fechaActual).format("YYYY-MM-DD");
+    },
+    obtenerHoraActual() {
+      var horaActual = moment(new Date(), "HH:mm:ss");
+      horaActual.tz("America/Argentina/Buenos_Aires").format("HH:mm:ss");
+      console.log(horaActual);
+      return moment.parseZone(horaActual).format("HH:mm");
+    },
+    cargarPrestadores() {
+      axios
+        .get(`${process.env.BASE_URL}/api/cliente/lista-prestadores`)
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 100) {
+            this.prestadores = res.data.prestadores;
+          }
+          this.loading = false;
+        });
+    },
+    customLabelPersonas({ nombre, documento }) {
+      return `${nombre} – ${documento}`;
+    },
+    customLabelPrestadores({ nombreDescriptivo }) {
+      return `${nombreDescriptivo} `;
+    },
+    cargarPersonas() {
+      axios
+        .get(`${process.env.BASE_URL}/api/cliente/lista-personas`, {
+          params: {}
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 100) {
+            this.personas = res.data.listaPersonas;
+          }
+          this.loading = false;
+        });
+    },
+    modificarLlamado() {
+      this.llamado.fechaRecibido = moment(
+        `${this.fechaRecibido} ${this.horaRecibido}`,
+        "YYYY-MM-DD HH:mm:ss"
+      ).format();
+      this.llamado.fechaLlegadaAsistencia = moment(
+        `${this.fechaLlegadaAsistencia} ${this.horaLlegadaAsistencia}`,
+        "YYYY-MM-DD HH:mm:ss"
+      ).format();
+      this.llamado.fechaSalidaMovil = moment(
+        `${this.fechaSalida} ${this.horaSalida}`,
+        "YYYY-MM-DD HH:mm:ss"
+      ).format();
+      this.llamado.fechaLlegadaDestinoPaciente = moment(
+        `${this.fechaLlegadaDestino} ${this.horaLlegadaDestino}`,
+        "YYYY-MM-DD HH:mm:ss"
+      ).format();
 
+      var params = this.llamado;
+
+      this.loading = true;
+
+      this.limpiarResultado();
+
+      if (this.checkForm()) {
+        axios
+          .post(`${process.env.BASE_URL}/api/llamado/modificar-llamado`, params)
+          .then(res => {
+            console.log(res.data.resultado);
+            if (res.data.resultado == 6000) {
+              this.informacion = true;
+              this.resultadoOperacion =
+                "Llamado modificado satisfactoriamente.";
+              this.limpiarCajas();
+            } else if (res.data.resultado == 6001) {
+              this.alerta = true;
+              this.resultadoOperacion = "Error en la modificacion.";
+            } else {
+              this.alerta = true;
+              this.resultadoOperacion =
+                "Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.";
+            }
+            this.loading = false;
+          })
+          .catch(error => {
+            this.alerta = true;
+            this.resultadoOperacion =
+              "Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.";
+            console.log(error);
+            this.loading = false;
+          });
+        this.loading = false;
+      }
+    },
+    limpiarResultado() {
+      this.resultadoOperacion = "";
+      this.alerta = false;
+      this.informacion = false;
+    },
+    limpiarCajas() {
+      errorDisponibilidad: "";
+    },
+    checkForm() {
+      return true;
+    }
+  }
+};
 </script>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

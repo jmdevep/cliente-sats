@@ -20,55 +20,67 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EliminarUsuario',
-        mounted(){
-            this.usuario = this.$route.params.usuario;
-            },
-            beforeCreate: function () {
-                var usuario = this.$session.get('usuario');
-                if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
-                this.$router.push('/usuario/login')
-                } 
-        },
-        data(){
-            return{
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: true,
-            	usuario: {
-                    id: 0,
-                    nombre: '',
-                    contrasena: '',
-                    tipo: {
-                        id: 0,
-                    },
-                    idEmpleado: 0,
-                },
-                loading: false,
-                alerta: false,
-                informacion: false
-            }
-        },
-        methods: {
-            eliminarUsuario(){
-                axios.delete(`${process.env.BASE_URL}/api/usuario/eliminar-usuario`, {data: { id: this.usuario.id }}) 
-                    .then((res)=>{
-                        console.log(res);
-                        if(res.data.resultado == 1100){
-                            this.$router.push({ name: 'PrincipalEmpleado', params: { resultadoOperacion: "Usuario eliminado satisfactoriamente." }});
-                        } else if (res.data.resultado == 1101){
-                            this.resultadoOperacion = "El usuario seleccionado no existe.";
-                            this.alerta = true;
-                        }
-                    });
-            },
-            limpiarResultado(){
-                this.resultadoOperacion = '';
-                this.alerta = false;
-                this.informacion = false;
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "EliminarUsuario",
+  mounted() {
+    if (this.$route.params.usuario != null) {
+      this.usuario = this.$route.params.usuario;
+    } else {
+      this.$router.push("/empleado/principal-empleado");
     }
+  },
+  beforeCreate: function() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+      this.$router.push("/usuario/login");
+    }
+  },
+  data() {
+    return {
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: true,
+      usuario: {
+        id: 0,
+        nombre: "",
+        contrasena: "",
+        tipo: {
+          id: 0
+        },
+        idEmpleado: 0
+      },
+      loading: false,
+      alerta: false,
+      informacion: false
+    };
+  },
+  methods: {
+    eliminarUsuario() {
+      axios
+        .delete(`${process.env.BASE_URL}/api/usuario/eliminar-usuario`, {
+          data: { id: this.usuario.id }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 1100) {
+            this.$router.push({
+              name: "PrincipalEmpleado",
+              params: {
+                resultadoOperacion: "Usuario eliminado satisfactoriamente."
+              }
+            });
+          } else if (res.data.resultado == 1101) {
+            this.resultadoOperacion = "El usuario seleccionado no existe.";
+            this.alerta = true;
+          }
+        });
+    },
+    limpiarResultado() {
+      this.resultadoOperacion = "";
+      this.alerta = false;
+      this.informacion = false;
+    }
+  }
+};
 </script>

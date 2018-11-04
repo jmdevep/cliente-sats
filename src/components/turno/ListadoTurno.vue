@@ -1,61 +1,7 @@
 <template>
     <div>
         {{ resultadoOperacion }}
-        <br> 
-
-            <b-row>
-            <b-col md="6" class="my-1">
-        <b-form-group horizontal label="Fecha Inicio" class="mb-0">
-                <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}" v-model="fechaInicioSeleccionada"></datetime>
-        </b-form-group>
-      </b-col>
-
-              
-      <b-col md="6" class="my-1">
-        <b-form-group horizontal label="Fecha Fin" class="mb-0">
-<datetime type="datetime"   
-            value-zone="America/Montevideo"
-                  zone="America/Montevideo"
-                  format="yyyy-MM-dd HH:mm:ss"
-                  :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  v-model="fechaFinSeleccionada"></datetime>
-                          </b-form-group>
-      </b-col>
-      <b-col md="6" class="my-1">
-        <b-form-group horizontal label="Filtrar" class="mb-0">
-          <b-input-group>
-            <b-form-input v-model="filtrado" placeholder="Escribe para buscar" />
-            <b-input-group-append>
-              <b-btn :disabled="!filtrado" @keyup.enter="cargarDatos(0)" @click="filtrado = ''">Limpiar</b-btn>
-            </b-input-group-append>
-          </b-input-group>
-        </b-form-group>
-      </b-col>
-      <b-col md="6" class="my-1">
-        <b-form-group horizontal label="Ordenar" class="mb-0">
-          <b-input-group>
-            <b-form-select v-model="campoFiltrado" :options="opcionesFiltrado">
-              <option slot="first" :value="null">-- ninguno --</option>
-            </b-form-select>
-            <b-form-select :disabled="!campoFiltrado" v-model="ordenFiltradoAsc" slot="append">
-              <option :value="false">Asc</option>
-              <option :value="true">Desc</option>
-            </b-form-select>
-          </b-input-group>
-        </b-form-group>
-      </b-col>
-
-      <b-col md="6" class="my-1">
-        <b-form-group horizontal label="Por página" class="mb-0">
-          <b-form-select :options="paginasFiltrado" v-model="tamanoPagina" />
-        </b-form-group>
-      </b-col>
-
-    <b-col md="6" class="my-1">
-        <b-form-group horizontal label="" class="mb-0">
-            <b-btn class="btn btn-success" @click="cargarDatos(0)">Buscar <i class="fas fa-search"></i></b-btn>
-        </b-form-group>
-      </b-col>
-    </b-row>
+    
             <template v-if="verMarcar">
             <div v-for="(intercambio, index) in intercambios" :key="index">
               <template v-if="intercambio.empleadoIntercambio == idEmpleado && intercambio.estado == 2">
@@ -88,7 +34,7 @@
                   Has rechazado el intercambio con {{intercambio.puestoViejo.empleado.nombre}} {{intercambio.puestoViejo.empleado.apellido}}.
                 </div>
               </template>
-              <template v-else-if="intercambio.empleadoIntercambio == idEmpleado && intercambio.estado == 0">
+              <template v-else-if="intercambio.empleadoIntercambio != idEmpleado && intercambio.estado == 0">
                 <div class="alert alert-light" role="alert">
                   Intercambio con {{intercambio.empleadoIntercambio.nombre}} {{intercambio.empleadoIntercambio.apellido}} cancelado.
                 </div>
@@ -103,7 +49,7 @@
               ¿Confirma que desea cancelar el intercambio? Si no, cierre este mensaje.
               <div slot="modal-footer" class="w-100">
                   <p class="float-left"></p>
-                  <b-btn size="sm" id="btnCancelarIntercambio" :disabled="habilitarBotonResponderIntercambio" class="float-right" variant="primary" @click="cambiarEstadoIntercambio(intercambio,0)">
+                  <b-btn size="sm" id="btnCancelarIntercambio" :disabled="habilitarBotonResponderIntercambio" class="float-right" variant="primary" @click="cambiarEstadoIntercambio(intercambioSeleccionado,0)">
                       Cancelar intercambio
                   </b-btn>
               </div>
@@ -243,6 +189,62 @@
               </div>
           </b-modal>
         </template>
+
+            <br> 
+
+            <b-row>
+            <b-col md="6" class="my-1">
+        <b-form-group horizontal label="Fecha Inicio" class="mb-0">
+                <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}" v-model="fechaInicioSeleccionada"></datetime>
+        </b-form-group>
+      </b-col>
+
+              
+      <b-col md="6" class="my-1">
+        <b-form-group horizontal label="Fecha Fin" class="mb-0">
+<datetime type="datetime"   
+            value-zone="America/Montevideo"
+                  zone="America/Montevideo"
+                  format="yyyy-MM-dd HH:mm:ss"
+                  :phrases="{ok: 'Continuar', cancel: 'Cancelar'}"  v-model="fechaFinSeleccionada"></datetime>
+                          </b-form-group>
+      </b-col>
+      <b-col md="6" class="my-1">
+        <b-form-group horizontal label="Filtrar" class="mb-0">
+          <b-input-group>
+            <b-form-input v-model="filtrado" placeholder="Escribe para buscar" />
+            <b-input-group-append>
+              <b-btn :disabled="!filtrado" @keyup.enter="cargarDatos(0)" @click="filtrado = ''">Limpiar</b-btn>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
+      </b-col>
+      <b-col md="6" class="my-1">
+        <b-form-group horizontal label="Ordenar" class="mb-0">
+          <b-input-group>
+            <b-form-select v-model="campoFiltrado" :options="opcionesFiltrado">
+              <option slot="first" :value="null">-- ninguno --</option>
+            </b-form-select>
+            <b-form-select :disabled="!campoFiltrado" v-model="ordenFiltradoAsc" slot="append">
+              <option :value="false">Asc</option>
+              <option :value="true">Desc</option>
+            </b-form-select>
+          </b-input-group>
+        </b-form-group>
+      </b-col>
+
+      <b-col md="6" class="my-1">
+        <b-form-group horizontal label="Por página" class="mb-0">
+          <b-form-select :options="paginasFiltrado" v-model="tamanoPagina" />
+        </b-form-group>
+      </b-col>
+
+    <b-col md="6" class="my-1">
+        <b-form-group horizontal label="" class="mb-0">
+            <b-btn class="btn btn-success" @click="cargarDatos()">Buscar <i class="fas fa-search"></i></b-btn>
+        </b-form-group>
+      </b-col>
+    </b-row>
         <div class="row">
             <div class="col-sm-12">
                 <table class="table table-responsive table-hover">
@@ -261,7 +263,7 @@
                         </tr>
                     </thead>
                     <tbody v-for="(turno, index) in turnos" :key="index" class="tableBodyBackground">
-                        <tr v-for="(puesto, index) in turno.puestos" :key="index">
+                        <tr v-for="(puesto, indexPuestos) in turno.puestos" :key="indexPuestos">
                             <th scope="row">{{ index + 1 }}</th>
                             <td><p>Planificado: {{ obtenerFechaFormateadaMostrar(turno.inicio) }}</p>
                                   <p>Marcado: {{ obtenerFechaFormateadaMostrar(puesto.inicio) }}</p></td>
@@ -282,11 +284,16 @@
                             <td>{{ puesto.estado }}</td>
                             <td>
                                 <b-button-group>
-                                    <template v-if="verMarcar">
+                                    <template v-if="verMarcar && puesto.empleado.id == idEmpleado">
                                         <div>
                                             <b-btn class="btn btn-success" @click="guardarDatosParaMarcarHora(true, true, turno, puesto); mostrarModalHora=true;"><i class="fas fa-user-clock"></i></b-btn>
                                             <router-link :to="{ name: 'IntercambiarTurno', params: { puesto: puesto }}"><a class="btn btn-success whiteText" role="button"><i class="fas fa-sync"></i></a></router-link>
                                             <!--<b-btn class="btn btn-success"><i class="fas fa-sync"></i></b-btn>-->
+                                        </div>
+                                    </template> 
+                                    <template v-else-if="verMarcar && !verModificar && puesto.empleado.id != idEmpleado">
+                                        <div>
+                                            --
                                         </div>
                                     </template> 
                                     <template v-if="verModificar">
@@ -317,21 +324,21 @@
                         </b-btn>
                     </div>
                 </b-modal>
-                <ul class="pagination">
-                    <li class="page-item" v-bind:class="{ 'disabled' : (indexActualListadoGeneral==1) }">
-                        <a @click="cargarAnteriorListadoGeneral()" class="page-link"  aria-label="Previous">
+                 <ul class="pagination">
+                        <li class="page-item" v-bind:class="{ 'disabled' : (indexActual==0) }">
+                        <a @click="cargarAnteriorListadoGeneral()" class="page-link" href="#" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                             <span class="sr-only">Anterior</span>
                         </a>
-                    </li> 
-                    <li class="page-item" v-bind:class="{ 'disabled' : (index==indexActualListadoGeneral) }" v-for="index in cantidadPaginasListadoGeneral" :key="index"><a @click="cargarTurnos(index - 1)" class="page-link" >{{ index }}</a></li>
-                    <li class="page-item"  v-bind:class="{ 'disabled' : (indexActualListadoGeneral==cantidadPaginas) }">
-                        <a @click="cargarSiguienteListadoGeneral()" class="page-link"  aria-label="Next">
+                        </li> 
+                        <li class="page-item" v-bind:class="{ 'disabled' : (index - 1 == indexActual) }" v-for="index in cantidadPaginas" :key="index"><a @click="indexActual = index -1; cargarDatos()" class="page-link" href="#">{{ index }}</a></li>
+                        <li class="page-item"  v-bind:class="{ 'disabled' : (indexActual==cantidadPaginas) }">
+                        <a @click="cargarSiguienteListadoGeneral()" class="page-link" href="#" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                             <span class="sr-only">Siguiente</span>
                         </a>
-                    </li>
-                </ul>
+                        </li>
+                    </ul>
             </div>
         </div>
         <p class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> Estados de turno: 
@@ -498,12 +505,12 @@ export default {
         this.verModificar = true;
         this.verMarcar = false;
         this.idEmpleado = 0;
-        this.cargarTurnos(0);
+        this.cargarTurnos();
       } else if (this.usuarioLogueado.tipo.id == 3) {
         this.verModificar = true;
         this.verMarcar = false;
         this.idEmpleado = 0;
-        this.cargarTurnos(0);
+        this.cargarTurnos();
       }
       console.log(this.usuarioLogueado);
     },
@@ -566,8 +573,7 @@ export default {
           this.loading = false;
         });
     },
-    cargarTurnos(index) {
-      console.log("Index: ", index);
+    cargarTurnos() {
       console.log("Fecha Inicio antes de formatear: ", this.fechaInicioSeleccionada);
       var fechaInicio = this.obtenerFechaFormateada(
         this.fechaInicioSeleccionada
@@ -590,25 +596,19 @@ export default {
             }
           }
         })
-        .then(res => {
+   .then(res => {
           console.log(res);
-
           if (res.data.resultado == 100) {
-            this.servicios = res.data.listaServicios;
             this.turnos = res.data.listaTurnos;
-            this.indexActualListadoGeneral = index;
-            if (res.data.cantidadElementos <= this.tamanoPagina) {
-              this.cantidadPaginasListadoGeneral = 1;
-            } else {
-              this.cantidadPaginasListadoGeneral = Math.ceil(
-                res.data.cantidadElementos / this.tamanoPagina
-              );
-            }
-            console.log(this.cantidadPaginasListadoGeneral);
-            this.indexActualListadoGeneral = 1;
-          } else if (res.data.resultado == 101) {
-            this.turnos = [];
+            this.cantidadPaginas =
+              res.data.cantidadElementos <= this.tamanoPagina
+                ? 1
+                : Math.ceil(res.data.cantidadElementos / this.tamanoPagina);
+          } else {
+            this.servicios = [];
+            this.indexActual = 0;
           }
+          this.loading = false;
         });
       this.loading = false;
     },
@@ -627,14 +627,13 @@ export default {
         });
     },
     filtroActualizado() {
-      this.cargarTurnos(0);
+      this.cargarTurnos();
     },
-    cargarDatos(index) {
+    cargarDatos() {
       this.loading = true;
-      console.log(index);
       this.cargarTurnosActivos();
       this.cargarTurnosActivables();
-      this.cargarTurnos(index);
+      this.cargarTurnos();
       this.cargarIntercambios();
       this.loading = false;
     },
@@ -814,7 +813,9 @@ export default {
     },
     cambiarEstadoIntercambio(intercambio, estado) {
       var fecha = this.obtenerFechaFormateada(this.marcarFechaIngreso);
-    this.habilitarBotonResponderIntercambio = true;
+      console.log("intercambio");
+      console.log(intercambio);
+      this.habilitarBotonResponderIntercambio = true;
       console.log("fecha ingresa formateada", fecha);
       this.intercambioSeleccionado.estado = estado;
       var idPuesto = this.puestoSeleccionado.id;
@@ -885,10 +886,12 @@ export default {
       return true;
     },
     cargarSiguienteListadoGeneral() {
-      this.cargarTurnos(this.indexActualListadoGeneral + 1);
+      this.indexActual += 1;
+      this.cargarTurnos();
     },
     cargarAnteriorListadoGeneral() {
-      this.cargarTurnos(this.indexActualListadoGeneral - 1);
+      this.indexActual -= 1;
+      this.cargarTurnos();
     }
   }
 };

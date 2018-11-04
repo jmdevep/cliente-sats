@@ -41,7 +41,11 @@ export default {
   },
   mounted() {
     this.cargarPersonas();
-    this.persona = this.$route.params.cliente;
+    if (this.$route.params.cliente != null) {
+      this.persona = this.$route.params.cliente;
+    } else {
+      this.$router.push("/plan/principal-plan");
+    }
   },
   beforeCreate: function() {
     var usuario = this.$session.get("usuario");
@@ -58,7 +62,7 @@ export default {
       personas: [],
       errorDisponibilidad: "",
       persona: null,
-      personaSeleccionada: null,
+      personaSeleccionada: null
     };
   },
   methods: {
@@ -72,13 +76,24 @@ export default {
         var params = this.personaSeleccionada;
         console.log(params);
         axios
-          .post(`${process.env.BASE_URL}/api/cliente/asociar-cliente-grupo`, params)
+          .post(
+            `${process.env.BASE_URL}/api/cliente/asociar-cliente-grupo`,
+            params
+          )
           .then(res => {
             console.log(res.data.resultado);
             if (res.data.resultado == 5435) {
-                this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Cliente asociado satisfactoriamente." }});                               
+              this.$router.push({
+                name: "PrincipalPlan",
+                params: {
+                  resultadoOperacion: "Cliente asociado satisfactoriamente."
+                }
+              });
             } else if (res.data.resultado == 5434) {
-                this.$router.push({ name: 'PrincipalPlan', params: { resultadoOperacion: "Error al asociar cliente." }});                               
+              this.$router.push({
+                name: "PrincipalPlan",
+                params: { resultadoOperacion: "Error al asociar cliente." }
+              });
             }
           });
         this.loading = false;
@@ -95,15 +110,14 @@ export default {
             this.personas = res.data.listaPersonas;
 
             this.personas = this.personas.filter(p => p.sociedad == null);
-           
-            this.personas = this.personas.filter(p => p.id != this.persona.id);
 
+            this.personas = this.personas.filter(p => p.id != this.persona.id);
           }
           this.loading = false;
         });
     },
     checkForm() {
-    return true;
+      return true;
     }
   }
 };

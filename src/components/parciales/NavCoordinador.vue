@@ -1,4 +1,3 @@
-
 <template>
     <div id="navegacion">
         <nav class="navbar navbar-expand-lg navbar-dark greenBackground">
@@ -35,6 +34,9 @@
                      <li class="nav-item">
                         <router-link to="/plan/principal-plan"><a class="nav-link" href="#">Planes</a></router-link>
                     </li>
+                    <li class="nav-item">
+                        <router-link to="/empleado/listar-informe-horas"><a class="nav-link" href="#">Informe horas</a></router-link>
+                    </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <li v-if="this.$session.exists() && this.$session.get('usuario') != null" class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="cambiarContrasenaDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user-md"></i> {{ usuario.nombre }}</a>
@@ -53,7 +55,7 @@
 <script>
 
 export default {
-  name: 'NavAdmin',
+  name: 'NavCoordinador',
   data(){
       return{
           logeado: false,

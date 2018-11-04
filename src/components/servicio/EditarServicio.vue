@@ -29,7 +29,7 @@
                         <label for="costo" class="darkTextCustom">Costo</label>
                         <input type="text" :disabled="disabled" class="form-control border-success" v-model="servicio.costo" id="costo" placeholder="Costo">            
                     </div>
-                    <template v-if="disabled">
+                    <template v-if="!disabled">
                        <input type="submit" value="Modificar" @click="modificarServicio()" class="btn marginBefore tableHeadingBackground">
                     </template>
                 </form>
@@ -39,114 +39,133 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'RegistroServicio',
-        mounted(){
-            this.servicio = this.$parent.servicio;
-        	},
-        data(){
-            return{
-                loading: false,
-                resultadoOperacion: null,
-                erroresForm: [],
-            	servicio: {
-                    nombre: '',
-                    descripcion: '',
-                    costo: 0,
-                },
-                disabled: true,
-                alerta: false,
-                informacion: false,
-            }
-        },
-        methods: {
-            modificarServicio(){
-                this.loading = true;
-                this.limpiarResultado();
-                if(this.checkForm()){
-                    var params = this.servicio;
-                    console.log(params);
-                    axios.post(`${process.env.BASE_URL}/api/servicio/modificar-servicio`, params) 
-                        .then((res)=>{
-                            console.log(res);
-                            if(res.data.resultado == 5504){
-                            this.$router.push({ name: 'PrincipalEvento', params: { resultadoOperacion: "Servicio modificado satisfactoriamente." }});
-                                this.limpiarCajas();
-                            } else if (res.data.resultado == 5505){
-                                this.alerta = true;
-                                this.resultadoOperacion = "Error en la modificación.";
-                            }
-                            else {
-                               this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
-                               this.alerta = true;
-                            }
-                            this.loading = false;
-                        })
-                        .catch((error)=>{
-                            this.alerta = true;
-                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
-                            console.log(error);
-                            this.loading = false;
-                    });
-                        
-                }
-            },
-            verificarDisponibilidad() {
-                this.errorDisponibilidad = "Verificando...";
-                this.disabled = true;
-                if(this.localidad.nombre != ''){
-                    axios.get(`${process.env.BASE_URL}/api/servicio/existe-servicio`, {
-                        params: {
-                            nombre: this.servicio.nombre,
-                        }
-                    })
-                        .then((res)=>{
-                            console.log(res);
-                            if(res.data.existe == true || res.data.resultado == '5500'){
-                                this.disabled = true;
-                                this.errorDisponibilidad = "Servicio ya registrado.";
-                            } else {
-                                this.errorDisponibilidad = "";    
-                                this.disabled = false;                              
-                            }
-                    })
-                    .catch((error)=>{
-                        this.errorDisponibilidad = 'Ha surgido un error durante la verificación. Inténtelo nuevamente.';
-                        console.log(error);
-                        this.loading = false;
-                        this.disabled = true;
-                    });
-                }
-            },
-            limpiarResultado(){
-                this.resultadoOperacion = '';
-                this.alerta = false;
-                this.informacion = false;
-            },
-            limpiarCajas(){
-                this.servicio.nombre = '';
-                this.servicio.descripcion = '';
-                this.servicio.costo = '';
-            },
-            checkForm() {
-                if (this.servicio.nombre && this.servicio.descripcion && this.servicio.costo) {
-                    return true;
-                }
-
-                this.erroresForm = [];
-
-                if (!this.servicio.nombre) {
-                    this.erroresForm.push('Nombre requerido.');
-                }                
-                if (!this.servicio.descripcion) {
-                    this.erroresForm.push('Descripción requerida.');
-                }                
-                if (!this.servicio.costo) {
-                    this.erroresForm.push('Costo requerido.');
-                }      
-                return false;
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "RegistroServicio",
+  mounted() {
+    if (this.$route.params.servicio != null) {
+      this.servicio = this.$route.params.servicio;
+    } else {
+      this.$router.push("/servicio/principal-servicio");
     }
+  },
+  data() {
+    return {
+      loading: false,
+      resultadoOperacion: null,
+      erroresForm: [],
+      servicio: {
+        nombre: "",
+        descripcion: "",
+        costo: 0
+      },
+      disabled: true,
+      alerta: false,
+      informacion: false
+    };
+  },
+  methods: {
+    modificarServicio() {
+      this.loading = true;
+      this.limpiarResultado();
+      if (this.checkForm()) {
+        var params = this.servicio;
+        console.log(params);
+        axios
+          .post(
+            `${process.env.BASE_URL}/api/servicio/modificar-servicio`,
+            params
+          )
+          .then(res => {
+            console.log(res);
+            if (res.data.resultado == 5504) {
+              this.$router.push({
+                name: "PrincipalEvento",
+                params: {
+                  resultadoOperacion: "Servicio modificado satisfactoriamente."
+                }
+              });
+              this.limpiarCajas();
+            } else if (res.data.resultado == 5505) {
+              this.alerta = true;
+              this.resultadoOperacion = "Error en la modificación.";
+            } else {
+              this.resultadoOperacion =
+                "Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.";
+              this.alerta = true;
+            }
+            this.loading = false;
+          })
+          .catch(error => {
+            this.alerta = true;
+            this.resultadoOperacion =
+              "Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.";
+            console.log(error);
+            this.loading = false;
+          });
+      }
+    },
+    verificarDisponibilidad() {
+      this.errorDisponibilidad = "Verificando...";
+      //this.disabled = true;
+      if (this.localidad.nombre != "") {
+        axios
+          .get(`${process.env.BASE_URL}/api/servicio/existe-servicio`, {
+            params: {
+              nombre: this.servicio.nombre
+            }
+          })
+          .then(res => {
+            console.log(res);
+            if (res.data.existe == true || res.data.resultado == "5500") {
+              //this.disabled = true;
+              this.errorDisponibilidad = "Servicio ya registrado.";
+            } else {
+              this.errorDisponibilidad = "";
+              //this.disabled = false;
+            }
+          })
+          .catch(error => {
+            this.errorDisponibilidad =
+              "Ha surgido un error durante la verificación. Inténtelo nuevamente.";
+            console.log(error);
+            this.loading = false;
+            //this.disabled = true;
+          });
+      }
+    },
+    limpiarResultado() {
+      this.resultadoOperacion = "";
+      this.alerta = false;
+      this.informacion = false;
+    },
+    limpiarCajas() {
+      this.servicio.nombre = "";
+      this.servicio.descripcion = "";
+      this.servicio.costo = "";
+    },
+    checkForm() {
+      if (
+        this.servicio.nombre &&
+        this.servicio.descripcion &&
+        this.servicio.costo
+      ) {
+        return true;
+      }
+
+      this.erroresForm = [];
+
+      if (!this.servicio.nombre) {
+        this.erroresForm.push("Nombre requerido.");
+      }
+      if (!this.servicio.descripcion) {
+        this.erroresForm.push("Descripción requerida.");
+      }
+      if (!this.servicio.costo) {
+        this.erroresForm.push("Costo requerido.");
+      }
+      return false;
+    }
+  }
+};
 </script>

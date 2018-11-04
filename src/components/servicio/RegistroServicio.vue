@@ -53,7 +53,7 @@
                 },
                 informacion: false,
                 alerta: false,
-                disabled: true,
+                disabled: false,
             }
         },
         verificarDisponibilidad() {

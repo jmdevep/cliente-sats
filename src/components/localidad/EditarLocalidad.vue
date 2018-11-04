@@ -31,109 +31,131 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EditarLocalidad',
-        mounted(){
-            this.localidad = this.$route.params.localidad;
-            this.nombreAnterior = this.localidad.nombre;
-        	},
-        data(){
-            return{
-                loading: false,
-                resultadoOperacion: null,
-                erroresForm: [],
-                nombreAnterior: '',
-            	localidad: {
-                    nombre: '',
-                },
-                alerta: false,
-                informacion:false,
-                errorDisponibilidad: '',
-                disabled: false,
-            }
-        },
-        methods: {
-            modificarLocalidad(){
-                this.loading = true;
-                this.disabled = true;
-                if(this.checkForm()){
-                    var params = this.localidad;
-                    console.log(params);
-                    axios.post(`${process.env.BASE_URL}/api/localidad/modificar-localidad`, params) 
-                        .then((res)=>{
-                            console.log(res);
-                            if(res.data.resultado == 5604){
-                                this.resultadoOperacion = "Localidad modificada satisfactoriamente.";
-                                this.informacion = true;
-                                this.$router.push({ name: 'PrincipalTramo', params: { resultadoOperacion: "Localidad modificada satisfactoriamente." }});                               
-                                } else if(res.data.resultado == 5605){
-                                    this.resultadoOperacion = "Error en la modificación.";
-                                    this.alerta = true;
-                                }
-                                this.loading = false;
-                                this.disabled = false;
-                        })
-                        .catch((error)=>{
-                        this.alerta = true;
-                        this.resultadoOperacion = 'Ha surgido un error en el sistema. Inténtelo nuevamente.';
-                        console.log(error);
-                        this.loading = false;
-                        this.disabled = false;
-                    });
-                        
-                }
-            },
-            verificarDisponibilidad() {
-                this.errorDisponibilidad = "Verificando...";
-                this.disabled = true;
-                if(this.localidad.nombre != '' && this.localidad.nombre != this.nombreAnterior){
-                    axios.get(`${process.env.BASE_URL}/api/localidad/existe-localidad`, {
-                        params: {
-                            nombre: this.localidad.nombre,
-                        }
-                    })
-                        .then((res)=>{
-                            console.log(res);
-                            if(res.data.existe == true || res.data.resultado == '5600'){
-                                this.disabled = true;
-                                this.errorDisponibilidad = "Localidad ya registrada.";
-                            } else {
-                                this.errorDisponibilidad = "";    
-                                this.disabled = false;                              
-                            }
-                    })
-                    .catch((error)=>{
-                        this.errorDisponibilidad = 'Ha surgido un error durante la verificación. Inténtelo nuevamente.';
-                        console.log(error);
-                        this.loading = false;
-                        this.disabled = true;
-                    });
-                }else if(this.localidad && this.nombreAnterior != this.localidad.nombre){
-                    this.errorDisponibilidad = "No hay cambios.";
-                    this.disabled = false;
-                }
-            },
-            limpiarCajas(){
-                this.localidad.nombre = '';
-            },
-            limpiarResultado(){
-                this.alerta = false;
-                this.informacion = false;
-                this.resultadoOperacion = '';
-            },
-            checkForm() {
-                if (this.localidad.nombre) {
-                    return true;
-                }
-
-                this.erroresForm = [];
-
-                if (!this.localidad.nombre) {
-                    this.erroresForm.push('Nombre requerido.');
-                }                
-                return false;
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "EditarLocalidad",
+  mounted() {
+    if (this.$route.params.localidad != null) {
+      this.localidad = this.$route.params.localidad;
+    } else {
+      this.$router.push("/tramo/principal-tramo");
     }
+    this.nombreAnterior = this.localidad.nombre;
+  },
+  data() {
+    return {
+      loading: false,
+      resultadoOperacion: null,
+      erroresForm: [],
+      nombreAnterior: "",
+      localidad: {
+        nombre: ""
+      },
+      alerta: false,
+      informacion: false,
+      errorDisponibilidad: "",
+      disabled: false
+    };
+  },
+  methods: {
+    modificarLocalidad() {
+      this.loading = true;
+      this.disabled = true;
+      if (this.checkForm()) {
+        var params = this.localidad;
+        console.log(params);
+        axios
+          .post(
+            `${process.env.BASE_URL}/api/localidad/modificar-localidad`,
+            params
+          )
+          .then(res => {
+            console.log(res);
+            if (res.data.resultado == 5604) {
+              this.resultadoOperacion =
+                "Localidad modificada satisfactoriamente.";
+              this.informacion = true;
+              this.$router.push({
+                name: "PrincipalTramo",
+                params: {
+                  resultadoOperacion: "Localidad modificada satisfactoriamente."
+                }
+              });
+            } else if (res.data.resultado == 5605) {
+              this.resultadoOperacion = "Error en la modificación.";
+              this.alerta = true;
+            }
+            this.loading = false;
+            this.disabled = false;
+          })
+          .catch(error => {
+            this.alerta = true;
+            this.resultadoOperacion =
+              "Ha surgido un error en el sistema. Inténtelo nuevamente.";
+            console.log(error);
+            this.loading = false;
+            this.disabled = false;
+          });
+      }
+    },
+    verificarDisponibilidad() {
+      this.errorDisponibilidad = "Verificando...";
+      this.disabled = true;
+      if (
+        this.localidad.nombre != "" &&
+        this.localidad.nombre != this.nombreAnterior
+      ) {
+        axios
+          .get(`${process.env.BASE_URL}/api/localidad/existe-localidad`, {
+            params: {
+              nombre: this.localidad.nombre
+            }
+          })
+          .then(res => {
+            console.log(res);
+            if (res.data.existe == true || res.data.resultado == "5600") {
+              this.disabled = true;
+              this.errorDisponibilidad = "Localidad ya registrada.";
+            } else {
+              this.errorDisponibilidad = "";
+              this.disabled = false;
+            }
+          })
+          .catch(error => {
+            this.errorDisponibilidad =
+              "Ha surgido un error durante la verificación. Inténtelo nuevamente.";
+            console.log(error);
+            this.loading = false;
+            this.disabled = true;
+          });
+      } else if (
+        this.localidad &&
+        this.nombreAnterior != this.localidad.nombre
+      ) {
+        this.errorDisponibilidad = "No hay cambios.";
+        this.disabled = false;
+      }
+    },
+    limpiarCajas() {
+      this.localidad.nombre = "";
+    },
+    limpiarResultado() {
+      this.alerta = false;
+      this.informacion = false;
+      this.resultadoOperacion = "";
+    },
+    checkForm() {
+      if (this.localidad.nombre) {
+        return true;
+      }
+
+      this.erroresForm = [];
+
+      if (!this.localidad.nombre) {
+        this.erroresForm.push("Nombre requerido.");
+      }
+      return false;
+    }
+  }
+};
 </script>

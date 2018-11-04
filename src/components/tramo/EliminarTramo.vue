@@ -20,38 +20,53 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EliminarTramo',
-        mounted(){
-            this.tramo = this.$route.params.tramo;
-            this.textoTramo = this.tramo.localidadOrigen.nombre + " - " + this.tramo.localidadDestino.nombre;
-            },
-        data(){
-            return{
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: true,
-                tramo: {
-                    localidadOrigen: null,
-                    localidadDestino: null,
-                    cantidadKm: null
-                },
-                textoTramo: ''
-            }
-        },
-        methods: {
-            eliminarTramo(){
-                axios.delete(`${process.env.BASE_URL}/api/tramo/eliminar-tramo`, {data: { id: this.tramo.id }}) 
-                    .then((res)=>{
-                        console.log(res);
-                        if(res.data.resultado == 5700){
-                            this.$router.push({ name: 'PrincipalTramo', params: { resultadoOperacion: "Tramo eliminado satisfactoriamente." }});                            
-                        } else if (res.data.resultado == 5701){
-                            this.resultadoOperacion = "El tramo seleccionado no existe.";
-                        }
-                    });
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "EliminarTramo",
+  mounted() {
+    if (this.$route.params.tramo != null) {
+      this.tramo = this.$route.params.tramo;
+    } else {
+      this.$router.push("/tramo/principal-tramo");
     }
+    this.textoTramo =
+      this.tramo.localidadOrigen.nombre +
+      " - " +
+      this.tramo.localidadDestino.nombre;
+  },
+  data() {
+    return {
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: true,
+      tramo: {
+        localidadOrigen: null,
+        localidadDestino: null,
+        cantidadKm: null
+      },
+      textoTramo: ""
+    };
+  },
+  methods: {
+    eliminarTramo() {
+      axios
+        .delete(`${process.env.BASE_URL}/api/tramo/eliminar-tramo`, {
+          data: { id: this.tramo.id }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 5700) {
+            this.$router.push({
+              name: "PrincipalTramo",
+              params: {
+                resultadoOperacion: "Tramo eliminado satisfactoriamente."
+              }
+            });
+          } else if (res.data.resultado == 5701) {
+            this.resultadoOperacion = "El tramo seleccionado no existe.";
+          }
+        });
+    }
+  }
+};
 </script>

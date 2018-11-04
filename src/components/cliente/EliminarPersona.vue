@@ -20,37 +20,47 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EliminarPersona',
-        mounted(){
-            this.persona = this.$route.params.persona;
-            console.log(this.$route.params.persona);
-            console.log(this.persona);
-        	},
-        data(){
-            return{
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: true,
-            	persona: {
-                    id: 0,
-                    nombre: '',
-                },
-            }
-        },
-        methods: {
-            eliminarPersona(){
-                axios.delete(`${process.env.BASE_URL}/api/cliente/eliminar-persona`, {data: { id: this.persona.id }}) 
-                    .then((res)=>{
-                        console.log(res);
-                        if(res.data.resultado == 5300){
-                            this.$router.push({ name: 'PrincipalCliente', params: { resultadoOperacion: "Persona eliminada satisfactoriamente." }});                            
-                        } else if (res.data.resultado == 5301){
-                            this.resultadoOperacion = "La persona seleccionada existe.";
-                        }
-                    });
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "EliminarPersona",
+  mounted() {
+    if (this.$route.params.persona != null) {
+      this.persona = this.$route.params.persona;
+    } else {
+      this.$router.push("/cliente/principal-cliente");
     }
+  },
+  data() {
+    return {
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: true,
+      persona: {
+        id: 0,
+        nombre: ""
+      }
+    };
+  },
+  methods: {
+    eliminarPersona() {
+      axios
+        .delete(`${process.env.BASE_URL}/api/cliente/eliminar-persona`, {
+          data: { id: this.persona.id }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 5300) {
+            this.$router.push({
+              name: "PrincipalCliente",
+              params: {
+                resultadoOperacion: "Persona eliminada satisfactoriamente."
+              }
+            });
+          } else if (res.data.resultado == 5301) {
+            this.resultadoOperacion = "La persona seleccionada existe.";
+          }
+        });
+    }
+  }
+};
 </script>

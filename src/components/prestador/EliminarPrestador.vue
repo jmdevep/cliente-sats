@@ -20,37 +20,47 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EliminarPrestador',
-        mounted(){
-            this.prestador = this.$route.params.prestador;
-            console.log(this.$route.params.prestador);
-            console.log(this.prestador);
-        	},
-        data(){
-            return{
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: true,
-            	prestador: {
-                    id: 0,
-                    nombre: '',
-                },
-            }
-        },
-        methods: {
-            eliminarPrestador(){
-                axios.delete(`${process.env.BASE_URL}/api/cliente/eliminar-prestador`, {data: { id: this.prestador.id }}) 
-                    .then((res)=>{
-                        console.log(res);
-                        if(res.data.resultado == 5420){
-                            this.$router.push({ name: 'ListadoPrestador', params: { resultadoOperacion: "Prestador eliminado satisfactoriamente." }});                            
-                        } else if (res.data.resultado == 5421){
-                            this.resultadoOperacion = "El prestador seleccionado no existe.";
-                        }
-                    });
-            }
-        },    
+import axios from "axios";
+export default {
+  name: "EliminarPrestador",
+  mounted() {
+    if (this.$route.params.prestador != null) {
+      this.prestador = this.$route.params.prestador;
+    } else {
+      this.$router.push("/plan/principal-prestador");
     }
+  },
+  data() {
+    return {
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: true,
+      prestador: {
+        id: 0,
+        nombre: ""
+      }
+    };
+  },
+  methods: {
+    eliminarPrestador() {
+      axios
+        .delete(`${process.env.BASE_URL}/api/cliente/eliminar-prestador`, {
+          data: { id: this.prestador.id }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.resultado == 5420) {
+            this.$router.push({
+              name: "ListadoPrestador",
+              params: {
+                resultadoOperacion: "Prestador eliminado satisfactoriamente."
+              }
+            });
+          } else if (res.data.resultado == 5421) {
+            this.resultadoOperacion = "El prestador seleccionado no existe.";
+          }
+        });
+    }
+  }
+};
 </script>

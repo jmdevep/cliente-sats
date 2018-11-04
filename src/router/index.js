@@ -144,6 +144,8 @@ export default new Router({
     {path: '/empresa/registro-empresa', name: 'RegistroEmpresa', component: RegistroEmpresa},
     {path: '/empresa/listado-empresa', name: 'ListadoEmpresa', component: ListadoEmpresa},
     {path: '/empresa/eliminar-empresa', name: 'EliminarEmpresa', component: EliminarEmpresa},
+    {path: '/empresa/editar-empresa', name: 'EditarEmpresa', component: EditarEmpresa},
+
 
     //Descuento
     {path: '/cliente/carga-planilla-clientes', name: 'CargaPlanillaClientes', component: CargaPlanillaClientes},
