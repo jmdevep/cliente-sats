@@ -17,7 +17,7 @@
                         
                         <template slot="option" slot-scope="props">
                             <div class="option__desc">
-                                <span class="option__title">{{ props.option.motivoLLamado }}</span>
+                                <span class="option__title">{{ props.option.motivoLlamado }}</span>
                                 <br>
                                 <span class="option__small">{{ props.option.fechaRecibido }}</span>
                             </div>
@@ -119,17 +119,18 @@
                         <label for="horaI" class="darkTextCustom">Hora Inicio</label>
                         <input type="time"  class="form-control border-success" id="horaI" v-model="horaInicio"/>
                     </div>
+                                        <div class="form-group">
+                        <label for="direccion" class="darkTextCustom">Dirección</label>
+                        <input type="text" maxlength="150" class="form-control border-success" v-model="evento.direccion" id="direccion" placeholder="direccion">
+                    </div>
+
                     <div class="form-group">
-                        <label for="fechaF" class="darkTextCustom">Fecha Finalización</label>
+                        <label for="fechaF" class="darkTextCustom">Fecha Finalización (Opcional)</label>
                         <input type="date" class="form-control border-success" v-model="fechaFin" id="fechaF" placeholder="2019-12-05">
                     </div>
                     <div class="form-group">
                         <label for="horaF" class="darkTextCustom">Hora Finalización (Opcional) </label>
                         <input type="time"  class="form-control border-success" id="horaF" v-model="horaFin"/>
-                    </div>
-                    <div class="form-group">
-                        <label for="direccion" class="darkTextCustom">Dirección</label>
-                        <input type="text" maxlength="150" class="form-control border-success" v-model="evento.direccion" id="direccion" placeholder="direccion">
                     </div>
 
                     <button v-on:click.prevent="registrarEvento()" :disabled="disabled" class="btn marginBefore tableHeadingBackground"> Registrar </button>
@@ -168,6 +169,7 @@ export default {
       personaSeleccionada: null,
       servicioSeleccionado: null,
       tipoEventoSeleccionado: null,
+      llamadoSeleccionado: null,
       loading: false,
       resultadoOperacion: "",
       erroresForm: [],
@@ -204,7 +206,7 @@ export default {
       },
       personaDisabled: false,
       alerta: false,
-      informacion: false,
+      informacion: false
     };
   },
   methods: {
@@ -221,7 +223,7 @@ export default {
       return `${nombre}`;
     },
     customLabelLlamados({ motivoLlamado, fechaRecibido }) {
-      return `${motivoLlamado - fechaRecibido} `;
+      return `${motivoLlamado} ` + `` + `${fechaRecibido}`;
     },
     cargarPrestadores() {
       axios
@@ -301,7 +303,9 @@ export default {
       ).format();
       this.loading = true;
 
-      delete this.personaSeleccionada.fechaNacimiento;
+      if(this.personaSeleccionada.fechaNacimiento != null){
+        delete this.personaSeleccionada.fechaNacimiento;
+      }
 
       if (this.checkForm()) {
         this.evento.persona = this.personaSeleccionada;
@@ -320,27 +324,28 @@ export default {
               this.limpiarCajas();
             } else if (res.data.resultado == 5803) {
               this.resultadoOperacion = "Error en el alta.";
-            }else{
+            } else {
               this.alerta = true;
-              this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
-          }
-          this.loading = false;
-        })
-        .catch((error)=>{
+              this.resultadoOperacion =
+                "Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.";
+            }
+            this.loading = false;
+          })
+          .catch(error => {
             this.alerta = true;
-            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
+            this.resultadoOperacion =
+              "Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.";
             console.log(error);
             this.loading = false;
-        });
+          });
         this.loading = false;
       }
     },
-    limpiarResultado(){
+    limpiarResultado() {
       this.alerta = false;
       this.informacion = false;
-      this.resultadoOperacion = '';
-    }
-    ,
+      this.resultadoOperacion = "";
+    },
     limpiarCajas() {
       this.personaSeleccionada = null;
       this.servicioSeleccionado = null;
@@ -376,7 +381,7 @@ export default {
       if (aux % 10 === 0) {
         return 0 == verificador;
       } else {
-        return 10 - aux % 10 == verificador;
+        return 10 - (aux % 10) == verificador;
       }
     },
     verificarDisponibilidad() {

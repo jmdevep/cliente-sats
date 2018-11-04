@@ -209,7 +209,7 @@
                     </thead>
                     <tbody v-for="(turno, index) in turnos" :key="index" class="tableBodyBackground">
                         <tr v-for="(puesto, indexPuestos) in turno.puestos" :key="indexPuestos">
-                            <th scope="row">{{ index + 1 }}</th>
+                            <th scope="row">{{ indexPuestos + 1 }}</th>
                             <td>{{ turno.inicio }}</td>
                             <td>{{ turno.fin }}</td>
                             <template v-if="puesto.tipo == 1">
@@ -343,7 +343,6 @@ export default {
       turnos: [],
       turnosActivables: [],
       turnosActivos: [],
-      tamanoPagina: 10,
       indicePagina: 0,
       cantidadPaginas: 0,
       cantidadPaginasListadoGeneral: 0,
