@@ -3,6 +3,57 @@
         {{ resultadoOperacion }}
     
             <template v-if="verMarcar">
+            <div v-for="(intercambio, index) in intercambios" :key="index">
+              <template v-if="intercambio.empleadoIntercambio == idEmpleado && intercambio.estado == 2">
+                <div class="alert alert-warning" role="alert">
+                  {{intercambio.puestoViejo.empleado.nombre}} {{intercambio.puestoViejo.empleado.apellido}} quiere intercambiar su turno contigo.
+                </div>
+              </template>
+              <template v-else-if="intercambio.empleadoIntercambio != idEmpleado && intercambio.estado == 2">
+                <div class="alert alert-warning" role="alert">
+                  Has solicitado intercambio de turno a <span class="font-weight-bold"> {{intercambio.empleadoIntercambio.nombre}} {{intercambio.empleadoIntercambio.apellido}}</span>. <a href="#" class="alert-link pull-right" v-b-modal="'modalCancelar'" @click="intercambioSeleccionado = intercambio"> Cancelar solicitud <i class="fas fa-ban"></i></a>
+                </div>
+              </template>
+              <template v-else-if="intercambio.empleadoIntercambio != idEmpleado && intercambio.estado == 1">
+                <div class="alert alert-success" role="alert">
+                  {{intercambio.empleadoIntercambio.nombre}} {{intercambio.empleadoIntercambio.apellido}} ha aceptado el intercambio.
+                </div>
+              </template>
+              <template v-else-if="intercambio.empleadoIntercambio == idEmpleado && intercambio.estado == 1">
+                <div class="alert alert-success" role="alert">
+                  Has aceptado el intercambio con {{intercambio.puestoViejo.empleado.nombre}} {{intercambio.puestoViejo.empleado.apellido}}.
+                </div>
+              </template>
+              <template v-else-if="intercambio.empleadoIntercambio != idEmpleado && intercambio.estado == 3">
+                <div class="alert alert-danger" role="alert">
+                  {{intercambio.empleadoIntercambio.nombre}} {{intercambio.empleadoIntercambio.apellido}} ha rechazado el intercambio.
+                </div>
+              </template>
+              <template v-else-if="intercambio.empleadoIntercambio == idEmpleado && intercambio.estado == 3">
+                <div class="alert alert-danger" role="alert">
+                  Has rechazado el intercambio con {{intercambio.puestoViejo.empleado.nombre}} {{intercambio.puestoViejo.empleado.apellido}}.
+                </div>
+              </template>
+              <template v-else-if="intercambio.empleadoIntercambio != idEmpleado && intercambio.estado == 0">
+                <div class="alert alert-light" role="alert">
+                  Intercambio con {{intercambio.empleadoIntercambio.nombre}} {{intercambio.empleadoIntercambio.apellido}} cancelado.
+                </div>
+              </template>
+              <template v-else>
+                <div class="alert alert-danger" role="alert">
+                  Mensaje por defecto.
+                </div>
+              </template>
+              </div>
+            <b-modal id="modalCancelar">
+              ¿Confirma que desea cancelar el intercambio? Si no, cierre este mensaje.
+              <div slot="modal-footer" class="w-100">
+                  <p class="float-left"></p>
+                  <b-btn size="sm" id="btnCancelarIntercambio" :disabled="habilitarBotonResponderIntercambio" class="float-right" variant="primary" @click="cambiarEstadoIntercambio(intercambioSeleccionado,0)">
+                      Cancelar intercambio
+                  </b-btn>
+              </div>
+            </b-modal>
         <div class="row">
             <div class="col-sm-12">
 
@@ -25,8 +76,10 @@
                         <tbody v-for="(turno, index) in turnosActivos" :key="index" class="tableBodyBackground">
                             <tr v-for="(puesto, index) in turno.puestos" :key="index">
                                 <th scope="row">{{ index + 1 }}</th>
-                                <td>{{ puesto.inicio }} - {{ turno.inicio }}</td>
-                                <td>{{ puesto.fin }} - {{ turno.fin }}</td>
+                                <td><p>Planificado: {{ obtenerFechaFormateadaMostrar(turno.inicio) }}</p>
+                                  <p>Marcado: {{ obtenerFechaFormateadaMostrar(puesto.inicio) }}</p></td>
+                                <td><p>Planificado: {{ obtenerFechaFormateadaMostrar(turno.fin) }}</p> 
+                                  <p>Marcado: {{ obtenerFechaFormateadaMostrar(puesto.fin) }}</p></td>
                                 <template v-if="puesto.tipo == 1">
                                     <td>Guardia</td>
                                 </template>
@@ -73,8 +126,10 @@
                         <tbody v-for="(turno, index) in turnosActivables" :key="index" class="tableBodyBackground">
                             <tr v-for="(puesto, index) in turno.puestos" :key="index">
                                 <th scope="row">{{ index + 1 }}</th>
-                                <td>{{ turno.inicio }}</td>
-                                <td>{{ turno.fin }}</td>
+                                <td><p>Planificado: {{ obtenerFechaFormateadaMostrar(turno.inicio) }}</p>
+                                  <p>Marcado: {{ obtenerFechaFormateadaMostrar(puesto.inicio) }}</p></td>
+                                <td><p>Planificado: {{ obtenerFechaFormateadaMostrar(turno.fin) }}</p> 
+                                  <p>Marcado: {{ obtenerFechaFormateadaMostrar(puesto.fin) }}</p></td>
                                 <template v-if="puesto.tipo == 1">
                                     <td>Guardia</td>
                                 </template>
@@ -209,9 +264,10 @@
                     </thead>
                     <tbody v-for="(turno, index) in turnos" :key="index" class="tableBodyBackground">
                         <tr v-for="(puesto, indexPuestos) in turno.puestos" :key="indexPuestos">
-                            <th scope="row">{{ indexPuestos + 1 }}</th>
-                            <td>{{ turno.inicio }}</td>
-                            <td>{{ turno.fin }}</td>
+                            <td><p>Planificado: {{ obtenerFechaFormateadaMostrar(turno.inicio) }}</p>
+                                  <p>Marcado: {{ obtenerFechaFormateadaMostrar(puesto.inicio) }}</p></td>
+                                <td><p>Planificado: {{ obtenerFechaFormateadaMostrar(turno.fin) }}</p> 
+                                  <p>Marcado: {{ obtenerFechaFormateadaMostrar(puesto.fin) }}</p></td>
                             <template v-if="puesto.tipo == 1">
                                 <td>Guardia</td>
                             </template>
@@ -227,17 +283,29 @@
                             <td>{{ puesto.estado }}</td>
                             <td>
                                 <b-button-group>
-                                    <template v-if="verMarcar">
+                                  <template v-if="!estaPuestoCancelado(puesto.estado)">
+                                    <template v-if="verMarcar && puesto.empleado.id == idEmpleado">
                                         <div>
                                             <b-btn class="btn btn-success" @click="guardarDatosParaMarcarHora(true, true, turno, puesto); mostrarModalHora=true;"><i class="fas fa-user-clock"></i></b-btn>
                                             <router-link :to="{ name: 'IntercambiarTurno', params: { puesto: puesto }}"><a class="btn btn-success whiteText" role="button"><i class="fas fa-sync"></i></a></router-link>
                                             <!--<b-btn class="btn btn-success"><i class="fas fa-sync"></i></b-btn>-->
                                         </div>
                                     </template> 
+                                    <template v-else-if="verMarcar && !verModificar && puesto.empleado.id != idEmpleado">
+                                        <div>
+                                            --
+                                        </div>
+                                    </template> 
                                     <template v-if="verModificar">
                                         <router-link :to="{ name: 'EditarPuesto', params: { puesto: puesto }}"><a  class="btn btn-success whiteText" role="button"><i class="far fa-edit"></i></a></router-link>
                                         <router-link :to="{ name: 'EliminarPuesto', params: { puesto: puesto }}"><a  class="btn btn-danger whiteText" role="button"><i class="fas fa-trash-alt"></i></a></router-link>
                                     </template> 
+                                  </template>
+                                  <template v-else>
+                                    <div>
+                                      --
+                                    </div>
+                                  </template>
                                 </b-button-group>
                             </td>
                         </tr>
@@ -361,6 +429,7 @@ export default {
       habilitarBotonIngreso: false,
       habilitarBotonSalida: false,
       habilitarBotonHora: false,
+      habilitarBotonResponderIntercambio: false,
       idEmpleado: 0,
       puestoSeleccionado: {
         id: 0,
@@ -380,6 +449,39 @@ export default {
         id: 0,
         inicio: "",
         fin: ""
+      },
+      intercambios: [],
+      intercambioSeleccionado:{
+        id: 0,
+        puestoViejo:{
+          id: 0,
+          inicio: '',
+          fin: '',
+          rol:{
+            id: 0,
+            nombre: '',
+            descripcion: ''
+          },
+          empleado:{
+            id: 0,
+            nombre: '',
+            apellido: '',
+          },
+          estado: -1,
+          tipo: 0,
+          idTurno: 0,
+          intercambio: '',
+          },
+          empleadoIntercambio:{
+            id: 0,
+            nombre: '',
+            apellido: '',
+            estado: -1,
+            tipo: 0,
+            idTurno: 0,
+            intercambio: '',
+          },
+          estado: -1
       },
       //inicio propiedades tabla
       tamanoPagina: 5,
@@ -515,6 +617,20 @@ export default {
         });
       this.loading = false;
     },
+     cargarIntercambios() {
+      axios
+        .get(`${process.env.BASE_URL}/api/turno/lista-intercambios`, {
+          params: {
+            idEmpleado: String(this.idEmpleado)
+          }
+        })
+        .then(res => {
+          this.intercambios = res.data.listaIntercambios;
+          console.log(res);
+        }).catch(error=>{
+          console.log(error);
+        });
+    },
     filtroActualizado() {
       this.cargarTurnos();
     },
@@ -523,6 +639,7 @@ export default {
       this.cargarTurnosActivos();
       this.cargarTurnosActivables();
       this.cargarTurnos();
+      this.cargarIntercambios();
       this.loading = false;
     },
     limpiarCajas() {
@@ -574,20 +691,36 @@ export default {
       }
     },
     obtenerFechaFormateadaPuesto(fecha) {
-      fecha.replace("T", " ");
-      var fechaFormateada = moment(fecha, "DD/MM/YYYY HH:mm:ss");
-      fechaFormateada = moment(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
-      return fechaFormateada;
+      if(fecha != "" && fecha != null){
+        fecha.replace("T", " ");
+        var fechaFormateada = moment(fecha, "DD/MM/YYYY HH:mm:ss");
+        fechaFormateada = moment(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
+        return fechaFormateada;
+      }
+      return "";
     },
     obtenerFechaFormateada(fecha) {
+      if(fecha != "" && fecha != null){
+        console.log("Fecha sin formato: ", fecha);
+        var fechaFormateada = moment(fecha, "YYYY-MM-DD HH:mm:ss");
+        console.log("Fecha despues de formato: ", fechaFormateada);
+        console.log(
+          "Retorno: ",
+          moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss")
+        );
+        return moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
+      }
+      return "";
+    },
+    obtenerFechaFormateadaMostrar(fecha) {
       console.log("Fecha sin formato: ", fecha);
       var fechaFormateada = moment(fecha, "YYYY-MM-DD HH:mm:ss");
       console.log("Fecha despues de formato: ", fechaFormateada);
       console.log(
         "Retorno: ",
-        moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss")
+        moment.parseZone(fechaFormateada).format("DD-MM-YYYY HH:mm:ss")
       );
-      return moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
+      return moment.parseZone(fechaFormateada).format("DD-MM-YYYY HH:mm:ss");
     },
     marcarTurnoSalida() {
       this.puestoSeleccionado.fin = this.obtenerFechaFormateada(
@@ -688,6 +821,45 @@ export default {
           }
         });
       }
+    },
+    cambiarEstadoIntercambio(intercambio, estado) {
+      var fecha = this.obtenerFechaFormateada(this.marcarFechaIngreso);
+      console.log("intercambio");
+      console.log(intercambio);
+      this.habilitarBotonResponderIntercambio = true;
+      console.log("fecha ingresa formateada", fecha);
+      this.intercambioSeleccionado.estado = estado;
+      var idPuesto = this.puestoSeleccionado.id;
+      console.log(this.turnoSeleccionado);
+      return axios
+        .post(`${process.env.BASE_URL}/api/turno/cambiar-estado-intercambio`,
+            intercambio
+        )
+        .then(res => {
+          this.habilitarBotonResponderIntercambio = false;
+          console.log(res);
+          if (res.data.resultado == 3122) {
+            var resultado = res.data.filasAfectadas;
+            console.log(resultado);
+            if (resultado > 0) {
+              this.resultadoOperacionMarcar =
+                "Se ha marcado ingreso satisfactoriamente.";
+              return true;
+            } else {
+              this.resultadoOperacionMarcar = "No se han realizado cambios.";
+            }
+            console.log(resultado);
+          } else {
+            this.resultadoOperacionMarcar = "Ocurrió un error.";
+          }
+          return false;
+        })
+        .catch(error=>{
+          this.habilitarBotonResponderIntercambio = false;
+        });
+    },
+    estaPuestoCancelado(estado){
+      return estado != 0 && estado != 2;
     },
     ocultarModales() {
       this.mostrarModalIngreso = false;
