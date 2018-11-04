@@ -251,7 +251,6 @@
                     <caption class="captionCustom"><h3>Listado de turnos</h3> <i v-show="loading" class="fa fa-spinner fa-spin"></i> </caption>
                     <thead class="greenBackground">
                         <tr>
-                            <th scope="col">#</th>
                             <th scope="col">Inicio turno</th>
                             <th scope="col">Fin turno</th>
                             <th scope="col">Tipo turno</th>
