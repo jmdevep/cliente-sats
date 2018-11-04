@@ -284,6 +284,7 @@
                             <td>{{ puesto.estado }}</td>
                             <td>
                                 <b-button-group>
+                                  <template v-if="!estaPuestoCancelado(puesto.estado)">
                                     <template v-if="verMarcar && puesto.empleado.id == idEmpleado">
                                         <div>
                                             <b-btn class="btn btn-success" @click="guardarDatosParaMarcarHora(true, true, turno, puesto); mostrarModalHora=true;"><i class="fas fa-user-clock"></i></b-btn>
@@ -300,6 +301,12 @@
                                         <router-link :to="{ name: 'EditarPuesto', params: { puesto: puesto }}"><a  class="btn btn-success whiteText" role="button"><i class="far fa-edit"></i></a></router-link>
                                         <router-link :to="{ name: 'EliminarPuesto', params: { puesto: puesto }}"><a  class="btn btn-danger whiteText" role="button"><i class="fas fa-trash-alt"></i></a></router-link>
                                     </template> 
+                                  </template>
+                                  <template v-else>
+                                    <div>
+                                      --
+                                    </div>
+                                  </template>
                                 </b-button-group>
                             </td>
                         </tr>
@@ -686,20 +693,26 @@ export default {
       }
     },
     obtenerFechaFormateadaPuesto(fecha) {
-      fecha.replace("T", " ");
-      var fechaFormateada = moment(fecha, "DD/MM/YYYY HH:mm:ss");
-      fechaFormateada = moment(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
-      return fechaFormateada;
+      if(fecha != "" && fecha != null){
+        fecha.replace("T", " ");
+        var fechaFormateada = moment(fecha, "DD/MM/YYYY HH:mm:ss");
+        fechaFormateada = moment(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
+        return fechaFormateada;
+      }
+      return "";
     },
     obtenerFechaFormateada(fecha) {
-      console.log("Fecha sin formato: ", fecha);
-      var fechaFormateada = moment(fecha, "YYYY-MM-DD HH:mm:ss");
-      console.log("Fecha despues de formato: ", fechaFormateada);
-      console.log(
-        "Retorno: ",
-        moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss")
-      );
-      return moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
+      if(fecha != "" && fecha != null){
+        console.log("Fecha sin formato: ", fecha);
+        var fechaFormateada = moment(fecha, "YYYY-MM-DD HH:mm:ss");
+        console.log("Fecha despues de formato: ", fechaFormateada);
+        console.log(
+          "Retorno: ",
+          moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss")
+        );
+        return moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
+      }
+      return "";
     },
     obtenerFechaFormateadaMostrar(fecha) {
       console.log("Fecha sin formato: ", fecha);
@@ -846,6 +859,9 @@ export default {
         .catch(error=>{
           this.habilitarBotonResponderIntercambio = false;
         });
+    },
+    estaPuestoCancelado(estado){
+      return estado != 0 && estado != 2;
     },
     ocultarModales() {
       this.mostrarModalIngreso = false;
