@@ -79,7 +79,7 @@
                     <tbody class="tableBodyBackground">
                         <tr v-for="(evento, index) in eventos" :key="index">
                             <th scope="row">{{ index + 1 }}</th>
-                            <td>{{ obtenerFechaFormateadaMostrar(evento.inicioEvento) }}</td>
+                            <td>{{ evento.inicioEvento }}</td>
                             <td>{{ evento.direccion }}</td>
                             <td>{{ evento.estado.nombre }}</td>
                             <td>{{ evento.tipo.nombre }}</td>
