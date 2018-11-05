@@ -265,7 +265,6 @@
                     <caption class="captionCustom"><h3>Listado de turnos</h3> <i v-show="loading" class="fa fa-spinner fa-spin"></i> </caption>
                     <thead class="greenBackground">
                         <tr>
-                            <th scope="col">#</th>
                             <th scope="col">Inicio turno</th>
                             <th scope="col">Fin turno</th>
                             <th scope="col">Tipo turno</th>
@@ -278,7 +277,6 @@
                     </thead>
                     <tbody v-for="(turno, index) in turnos" :key="index" class="tableBodyBackground">
                         <tr v-for="(puesto, indexPuestos) in turno.puestos" :key="indexPuestos">
-                            <th scope="row">{{ index + 1 }}</th>
                             <td><p>Planificado: {{ obtenerFechaFormateadaMostrar(turno.inicio) }}</p>
                                   <p>Marcado: {{ obtenerFechaFormateadaMostrar(puesto.inicio) }}</p></td>
                                 <td><p>Planificado: {{ obtenerFechaFormateadaMostrar(turno.fin) }}</p> 
@@ -426,7 +424,6 @@ export default {
       turnos: [],
       turnosActivables: [],
       turnosActivos: [],
-      tamanoPagina: 10,
       indicePagina: 0,
       cantidadPaginas: 0,
       cantidadPaginasListadoGeneral: 0,

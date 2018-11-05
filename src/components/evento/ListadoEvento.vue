@@ -25,7 +25,7 @@
           <b-input-group>
             <b-form-input v-model="filtrado" placeholder="Escribe para buscar" />
             <b-input-group-append>
-              <b-btn :disabled="!filtrado" @keyup.enter="cargarDatos(0)" @click="filtrado = ''">Limpiar</b-btn>
+              <b-btn :disabled="!filtrado" @keyup.enter="cargarDatos()" @click="filtrado = ''">Limpiar</b-btn>
             </b-input-group-append>
           </b-input-group>
         </b-form-group>
@@ -52,7 +52,7 @@
 
     <b-col md="6" class="my-1">
         <b-form-group horizontal label="" class="mb-0">
-            <b-btn class="btn btn-success" @click="cargarDatos(0)">Buscar <i class="fas fa-search"></i></b-btn>
+            <b-btn class="btn btn-success" @click="cargarDatos()">Buscar <i class="fas fa-search"></i></b-btn>
         </b-form-group>
       </b-col>
     </b-row>
@@ -159,9 +159,8 @@ export default {
       this.$parent.evento = evento;
       this.$parent.currentTab = this.$parent.tabs[4].component;
     },
-    cargarDatos(index) {
+    cargarDatos() {
       this.loading = true;
-      console.log(index);
       var fechaInicio = this.obtenerFechaFormateada(this.fechaInicioSeleccionada);
       var fechaFin = this.obtenerFechaFormateada(this.fechaFinSeleccionada);
       axios

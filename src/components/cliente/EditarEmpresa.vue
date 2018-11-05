@@ -38,136 +38,151 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	 export default {
-        name: 'EditarEmpresa',
-        mounted(){
-            if(this.$route.params.empresa != null){
-            this.empresa = this.$route.params.empresa;
-            console.log(this.empresa);
-            }else{
-                alert("Parametro nulo");
-this.$router.push('/cliente/principal-cliente')
-            }
-            this.rutOriginal = this.$route.params.empresa.rut;
-            },
-        beforeCreate: function () {
-            var usuario = this.$session.get('usuario');
-            if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
-            this.$router.push('/usuario/login')
-            } 
-        },
-        data(){
-            return{
-                loading: false,
-                resultadoOperacion: '',
-                erroresForm: [],
-                disabled: false,
-            	empresa: {
-                    nombre: '',
-                    direccion: '',
-                    telefono: '',
-                    rut: '',
-                },
-                errorDisponibilidad: '',
-                alerta: false,
-                informacion: false,
-            }
-        },
-        methods: {
-            verificarDisponibilidad() {
-                if(this.empresa.rut != '' && this.empresa.rut != this.rutOriginal ){
-                    axios.get(`${process.env.BASE_URL}/api/cliente/existe-empresa`, {
-                        params: {
-                        rut: this.empresa.rut,
-                        }
-                    })
-                        .then((res)=>{
-                            console.log(res);
-                            if(res.data.existe == true){
-                                this.disabled = true;
-                                this.errorDisponibilidad = "Ya existe una empresa registrada con ese rut.";
-                            } else {
-                                this.errorDisponibilidad = "Rut disponible.";    
-                                this.disabled = false;                              
-                            }
-                    })
-                    .catch((error)=>{
-                        this.alerta = true;
-                        this.errorDisponibilidad = 'Ha surgido un error durante la verificación. Inténtelo nuevamente.';
-                        console.log(error);
-                        this.loading = false;
-                        this.disabled = true;
-                    });
-                }
-            },
-            modificarEmpresa(){
-                this.limpiarResultado();
-                this.loading = true;
-                if(this.checkForm()){
-                    var params = this.empresa;
-                    console.log(params);
-                    axios.post(`${process.env.BASE_URL}/api/cliente/modificar-empresa`, params) 
-                        .then((res)=>{
-                            console.log(res.data.resultado);                            
-                            if(res.data.resultado == 5204){
-                                this.resultadoOperacion = "Empresa agregada satisfactoriamente.";
-                                this.informacion = true;
-                                this.limpiarCajas();
-                                this.$router.push({ name: 'PrincipalCliente', params: { resultadoOperacion: "Empresa modificada satisfactoriamente." }});                                                                                            
-                            } else if (res.data.resultado == 5205){
-                                this.alerta = true;
-                                this.resultadoOperacion = "Ya existe una empresa con ese rut.";
-                            }else{
-                                this.alerta = true;
-                                this.resultadoOperacion = "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
-                            }
-                        })
-                        .catch((error)=>{
-                            this.alerta = true;
-                            this.resultadoOperacion = 'Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.';
-                            console.log(error);
-                            this.loading = false;
-                    });
-                    this.loading = false;
-                }
-            },
-            limpiarResultado(){
-                this.resultadoOperacion = '';
-                this.alerta = false;
-                this.informacion = false;
-            },
-            limpiarCajas(){
-                this.empresa.nombre = '',
-                this.empresa.direccion = '',
-                this.empresa.telefono = '',
-                this.empresa.rut = '',
-                this.errorDisponibilidad = '';
-            },
-            checkForm() {
-                if (this.empresa.nombre && this.empresa.direccion && this.empresa.telefono && this.empresa.rut) {
-                    return true;
-                }
-
-                this.erroresForm = [];
-
-                if (!this.empresa.nombre) {
-                    this.erroresForm.push('Razón Social Requerida.');
-                }
-                if (!this.empresa.direccion) {
-                    this.erroresForm.push('Dirección Requerida.');
-                }
-                if (!this.empresa.telefono) {
-                    this.erroresForm.push('Teléfono Requerido.');
-                }
-                if (!this.empresa.rut) {
-                    this.erroresForm.push('Rut Requerido.');
-                }
-
-                this.disabled = false;
-                return false;
-            }
-    
-        },    
+import axios from "axios";
+export default {
+  name: "EditarEmpresa",
+  mounted() {
+    if (this.$route.params.empresa != null) {
+      this.empresa = this.$route.params.empresa;
+      console.log(this.empresa);
+    } else {
+      alert("Parametro nulo");
+      this.$router.push("/cliente/principal-cliente");
     }
+    this.rutOriginal = this.$route.params.empresa.rut;
+  },
+  beforeCreate: function() {
+    var usuario = this.$session.get("usuario");
+    if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+      this.$router.push("/usuario/login");
+    }
+  },
+  data() {
+    return {
+      loading: false,
+      resultadoOperacion: "",
+      erroresForm: [],
+      disabled: false,
+      empresa: {
+        nombre: "",
+        direccion: "",
+        telefono: "",
+        rut: ""
+      },
+      errorDisponibilidad: "",
+      alerta: false,
+      informacion: false
+    };
+  },
+  methods: {
+    verificarDisponibilidad() {
+      if (this.empresa.rut != "" && this.empresa.rut != this.rutOriginal) {
+        axios
+          .get(`${process.env.BASE_URL}/api/cliente/existe-empresa`, {
+            params: {
+              rut: this.empresa.rut
+            }
+          })
+          .then(res => {
+            console.log(res);
+            if (res.data.existe == true) {
+              this.disabled = true;
+              this.errorDisponibilidad =
+                "Ya existe una empresa registrada con ese rut.";
+            } else {
+              this.errorDisponibilidad = "Rut disponible.";
+              this.disabled = false;
+            }
+          })
+          .catch(error => {
+            this.alerta = true;
+            this.errorDisponibilidad =
+              "Ha surgido un error durante la verificación. Inténtelo nuevamente.";
+            console.log(error);
+            this.loading = false;
+            this.disabled = true;
+          });
+      }
+    },
+    modificarEmpresa() {
+      this.limpiarResultado();
+      this.loading = true;
+      if (this.checkForm()) {
+        var params = this.empresa;
+        console.log(params);
+        axios
+          .post(`${process.env.BASE_URL}/api/cliente/modificar-empresa`, params)
+          .then(res => {
+            console.log(res.data.resultado);
+            if (res.data.resultado == 5204) {
+              this.resultadoOperacion = "Empresa agregada satisfactoriamente.";
+              this.informacion = true;
+              this.limpiarCajas();
+              this.$router.push({
+                name: "PrincipalCliente",
+                params: {
+                  resultadoOperacion: "Empresa modificada satisfactoriamente."
+                }
+              });
+            } else if (res.data.resultado == 5205) {
+              this.alerta = true;
+              this.resultadoOperacion = "Ya existe una empresa con ese rut.";
+            } else {
+              this.alerta = true;
+              this.resultadoOperacion =
+                "Hubo un error durante el proceso. Vuelve a intentarlo. Si persiste el problema, contacta al soporte.";
+            }
+          })
+          .catch(error => {
+            this.alerta = true;
+            this.resultadoOperacion =
+              "Ha surgido un error durante el proceso. Inténtelo nuevamente o contacte al soporte si el problema persiste.";
+            console.log(error);
+            this.loading = false;
+          });
+        this.loading = false;
+      }
+    },
+    limpiarResultado() {
+      this.resultadoOperacion = "";
+      this.alerta = false;
+      this.informacion = false;
+    },
+    limpiarCajas() {
+      (this.empresa.nombre = ""),
+        (this.empresa.direccion = ""),
+        (this.empresa.telefono = ""),
+        (this.empresa.rut = ""),
+        (this.errorDisponibilidad = "");
+    },
+    checkForm() {
+      if (
+        this.empresa.nombre &&
+        this.empresa.direccion &&
+        this.empresa.telefono &&
+        this.empresa.rut
+      ) {
+        return true;
+      }
+
+      this.erroresForm = [];
+
+      if (!this.empresa.nombre) {
+        this.erroresForm.push("Razón Social Requerida.");
+      }
+      if (!this.empresa.direccion) {
+        this.erroresForm.push("Dirección Requerida.");
+      }
+      if (!this.empresa.telefono) {
+        this.erroresForm.push("Teléfono Requerido.");
+      }
+      if (!this.empresa.rut) {
+        this.erroresForm.push("Rut Requerido.");
+      }
+
+      this.disabled = false;
+      return false;
+    }
+  }
+};
 </script>
