@@ -161,9 +161,9 @@ export default {
       console.log("Fecha despues de formato: ", fechaFormateada);
       console.log(
         "Retorno: ",
-        moment.parseZone(fechaFormateada).format("DD-MM-YYYY HH:mm:ss")
+        moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss")
       );
-      return moment.parseZone(fechaFormateada).format("DD-MM-YYYY HH:mm:ss");
+      return moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
     },
     detalleEvento(evento) {
       this.$parent.evento = evento;
