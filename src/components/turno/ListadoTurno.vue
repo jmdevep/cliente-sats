@@ -1,6 +1,7 @@
 <template>
     <div>
-        {{ resultadoOperacion }}
+        <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
+        <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
     
             <template v-if="verMarcar">
             <div v-for="(intercambio, index) in intercambios" :key="index">
@@ -393,6 +394,9 @@ export default {
       .endOf("day")
       .format("YYYY-MM-DD HH:mm:ss");
     this.resultadoOperacion = this.$route.params.resultadoOperacion;
+    if(this.resultadoOperacion != ''){
+      this.informacion = true;
+    }
     this.loading = true;
     this.cargarUsuarioLogueado();
     this.loaded = true;
@@ -421,6 +425,8 @@ export default {
       resultadoOperacion: "",
       loading: false,
       loaded: false,
+      alerta: false,
+      informacion: false,
       turnos: [],
       turnosActivables: [],
       turnosActivos: [],
@@ -532,7 +538,14 @@ export default {
       }
       console.log(this.usuarioLogueado);
     },
+    limpiarResultado(){
+      this.informacion = false;
+      this.alerta = false;
+      this.resultadoOperacion = '';
+      this.resultadoOperacionMarcar = '';
+    },
     cargarTurnosActivables() {
+      this.limpiarResultado();
       axios
         .get(`${process.env.BASE_URL}/api/turno/lista-turnos-activables`, {
           params: {
@@ -563,6 +576,7 @@ export default {
         });
     },
     cargarTurnosActivos() {
+      this.limpiarResultado();
       axios
         .get(`${process.env.BASE_URL}/api/turno/lista-turnos-activos`, {
           params: {
@@ -592,6 +606,7 @@ export default {
         });
     },
     cargarTurnos() {
+      this.limpiarResultado();
       console.log("Fecha Inicio antes de formatear: ", this.fechaInicioSeleccionada);
       var fechaInicio = this.obtenerFechaFormateada(
         this.fechaInicioSeleccionada
@@ -631,6 +646,7 @@ export default {
       this.loading = false;
     },
      cargarIntercambios() {
+       this.limpiarResultado();
       axios
         .get(`${process.env.BASE_URL}/api/turno/lista-intercambios`, {
           params: {
@@ -736,6 +752,7 @@ export default {
       return moment.parseZone(fechaFormateada).format("DD-MM-YYYY HH:mm:ss");
     },
     marcarTurnoSalida() {
+      this.limpiarResultado();
       this.puestoSeleccionado.fin = this.obtenerFechaFormateada(
         this.marcarFechaSalida
       );
@@ -777,6 +794,7 @@ export default {
         });
     },
     marcarTurnoEntrada() {
+      this.limpiarResultado();
       var fecha = this.obtenerFechaFormateada(this.marcarFechaIngreso);
       console.log("fecha ingresa formateada", fecha);
 
@@ -795,11 +813,9 @@ export default {
           console.log(res);
           if (res.data.resultado == 3004) {
             var resultado = res.data.filasAfectadas;
-            console.log("resullllll");
             console.log(resultado);
             if (resultado > 0) {
-              this.resultadoOperacionMarcar =
-                "Se ha marcado ingreso satisfactoriamente.";
+              this.resultadoOperacionMarcar = "Se ha marcado ingreso satisfactoriamente.";
               return true;
             } else {
               this.resultadoOperacionMarcar = "No se han realizado cambios.";
@@ -855,23 +871,29 @@ export default {
             var resultado = res.data.filasAfectadas;
             console.log(resultado);
             if (resultado > 0) {
-              this.resultadoOperacionMarcar =
-                "Se ha marcado ingreso satisfactoriamente.";
+              this.informacion = true;
+              this.resultadoOperacion =
+                "El intercambio se ha modificado exitosamente.";
               return true;
             } else {
-              this.resultadoOperacionMarcar = "No se han realizado cambios.";
+              this.alerta = true;
+              this.resultadoOperacion= "No se han realizado cambios.";
             }
             console.log(resultado);
           } else {
-            this.resultadoOperacionMarcar = "Ocurrió un error.";
+            this.alerta = true;
+            this.resultadoOperacion = "Ocurrió un error.";
           }
           return false;
         })
         .catch(error=>{
+          this.alerta = true;
+          this.resultadoOperacion = "Ocurrió un error.";
           this.habilitarBotonResponderIntercambio = false;
         });
     },
     aceptarIntercambio(intercambio) {
+      this.limpiarResultado();
       var fecha = this.obtenerFechaFormateada(this.marcarFechaIngreso);
       this.habilitarBotonResponderIntercambio = true;
       console.log("fecha ingresa formateada", fecha);
@@ -889,19 +911,24 @@ export default {
             var resultado = res.data.filasAfectadas;
             console.log(resultado);
             if (resultado > 0) {
-              this.resultadoOperacionMarcar =
-                "Se ha marcado ingreso satisfactoriamente.";
+              this.informacion = true;
+              this.resultadoOperacion =
+                "Intercambio aceptado satisfactoriamente.";
               return true;
             } else {
-              this.resultadoOperacionMarcar = "No se han realizado cambios.";
+              this.alerta = true;
+              this.resultadoOperacion = "No se han realizado cambios.";
             }
             console.log(resultado);
           } else {
-            this.resultadoOperacionMarcar = "Ocurrió un error.";
+            this.alerta = true;
+            this.resultadoOperacion = "Ocurrió un error.";
           }
           return false;
         })
         .catch(error=>{
+          this.alerta = true;
+          this.resultadoOperacion = "Ocurrió un error.";
           this.habilitarBotonResponderIntercambio = false;
         });
     },

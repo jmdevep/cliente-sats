@@ -112,12 +112,6 @@ export default {
       this.alerta = false;
       this.informacion = false;
     },
-    validarIngreso(fecha){
-
-    },
-    validarSalida(fecha){
-
-    },
     checkForm() {
       if (this.usuario.nombre && this.usuario.contrasena) {
         return true;

@@ -32,6 +32,7 @@ import axios from 'axios';
           this.resultadoOperacion = '';
           this.alerta = false;
           this.informacion = false;
+          this.errores = [];
       },
       checkForm(){
           if(!this.archivo || this.archivo == ''){
