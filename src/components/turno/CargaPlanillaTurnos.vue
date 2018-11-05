@@ -13,7 +13,7 @@
             <div class="card-header greenBackground">Carga de planilla</div>
             <div class="large-12 medium-12 small-12 cell">
                 <label>Planilla: 
-                    <input type="file" id="archivo" ref="archivo" required class="btn marginBefore" accept=".xls,.xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" v-on:change="cargarArchivo()"/>
+                    <input type="file" id="archivo" :disabled="disabled" ref="archivo" required class="btn marginBefore" accept=".xls,.xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" v-on:change="cargarArchivo()"/>
                 </label>
                 <input type="submit" :disabled="disabled" value="Subir archivo" v-on:click="enviarArchivo()" class="btn marginBefore btn-success">
             </div>
@@ -60,34 +60,45 @@ import axios from 'axios';
                         }
                     }
                     ).then((res)=>{
+                        this.informacion = true;
                         console.log(res);
                         if(res.data.resultado == 3002){
                             this.informacion = true;
-                            this.resultadoOperacion = 'Archivo cargado exitosamente.';
-                            this.errores = res.data.errores;
+                            this.resultadoOperacion = 'Archivo cargado exitosamente. ';
+                            this.errores = res.data.errores ? res.data.errores : [];
                             this.loading = false;
                             this.disabled = false;
                         }else if(res.data.resultado == 3012){
+                            this.informacion = false;
                             this.alerta = true;
-                            this.resultadoOperacion = 'Se han cargado algunos turnos.';
-                            this.errores = res.data.errores;
+                            this.resultadoOperacion = 'Se han cargado algunos turnos. ';
+                            this.errores = res.data.errores ? res.data.errores : [];
                             this.loading = false;
                             this.disabled = false;
                         }else if(res.data.resultado == 3013){
+                            this.informacion = false;
                             this.alerta = true;
                             this.resultadoOperacion = 'Ha surgido un error al cargar el archivo. Verifique el formato e inténtelo nuevamente. ';
-                            this.errores = res.data.errores;
+                            this.errores = res.data.errores ? res.data.errores : [];
+                            this.loading = false;
+                            this.disabled = false;
+                        }else if(res.data.resultado == 201){
+                            this.informacion = false;
+                            this.alerta = true;
+                            this.resultadoOperacion = 'No se han realizado cambios en la planificación de turnos. ';
+                            this.errores = res.data.errores ? res.data.errores : [];
                             this.loading = false;
                             this.disabled = false;
                         }else{
+                            this.informacion = false;
                             this.alerta = true;
                             this.resultadoOperacion = 'Ha surgido un error al cargar el archivo. Verifique el formato e inténtelo nuevamente. ';
                             this.loading = false;
                             this.disabled = false;
                         }
-                        
                     })
                     .catch((error)=>{
+                        this.informacion = false;
                         this.alerta = true;
                         this.resultadoOperacion = 'Ha surgido un error al cargar el archivo. Verifique el formato e inténtelo nuevamente. ';
                         console.log(error);
@@ -99,7 +110,7 @@ import axios from 'axios';
         },
                 beforeCreate: function () {
                 var usuario = this.$session.get('usuario');
-                if (!this.$session.exists() || usuario == null || usuario.tipo.id != 2) {
+                if (!this.$session.exists() || usuario == null || usuario.tipo.id != 3) {
                 this.$router.push('/usuario/login')
                 } 
         },
@@ -113,6 +124,5 @@ import axios from 'axios';
             errores: [],
         }
     },
-}
-  
+} 
 </script>

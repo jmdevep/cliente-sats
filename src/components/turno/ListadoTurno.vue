@@ -4,37 +4,37 @@
     
             <template v-if="verMarcar">
             <div v-for="(intercambio, index) in intercambios" :key="index">
-              <template v-if="intercambio.empleadoIntercambio == idEmpleado && intercambio.estado == 2">
+              <template v-if="intercambio.empleadoIntercambio.id == idEmpleado && intercambio.estado == 2">
                 <div class="alert alert-warning" role="alert">
-                  {{intercambio.puestoViejo.empleado.nombre}} {{intercambio.puestoViejo.empleado.apellido}} quiere intercambiar su turno contigo.
+                  {{intercambio.puestoViejo.empleado.nombre}} {{intercambio.puestoViejo.empleado.apellido}} quiere intercambiar su turno contigo. <a href="#" class="alert-link pull-right" v-b-modal="'modalAceptarIntercambio'" @click="intercambioSeleccionado = intercambio"> Aceptar <i class="far fa-thumbs-up"></i></a> o <a href="#" class="alert-link pull-right" v-b-modal="'modalRechazarIntercambio'" @click="intercambioSeleccionado = intercambio">Rechazar <i class="far fa-thumbs-down"></i></a>
                 </div>
               </template>
-              <template v-else-if="intercambio.empleadoIntercambio != idEmpleado && intercambio.estado == 2">
+              <template v-else-if="intercambio.empleadoIntercambio.id != idEmpleado && intercambio.estado == 2">
                 <div class="alert alert-warning" role="alert">
                   Has solicitado intercambio de turno a <span class="font-weight-bold"> {{intercambio.empleadoIntercambio.nombre}} {{intercambio.empleadoIntercambio.apellido}}</span>. <a href="#" class="alert-link pull-right" v-b-modal="'modalCancelar'" @click="intercambioSeleccionado = intercambio"> Cancelar solicitud <i class="fas fa-ban"></i></a>
                 </div>
               </template>
-              <template v-else-if="intercambio.empleadoIntercambio != idEmpleado && intercambio.estado == 1">
+              <template v-else-if="intercambio.empleadoIntercambio.id != idEmpleado && intercambio.estado == 1">
                 <div class="alert alert-success" role="alert">
                   {{intercambio.empleadoIntercambio.nombre}} {{intercambio.empleadoIntercambio.apellido}} ha aceptado el intercambio.
                 </div>
               </template>
-              <template v-else-if="intercambio.empleadoIntercambio == idEmpleado && intercambio.estado == 1">
+              <template v-else-if="intercambio.empleadoIntercambio.id == idEmpleado && intercambio.estado == 1">
                 <div class="alert alert-success" role="alert">
                   Has aceptado el intercambio con {{intercambio.puestoViejo.empleado.nombre}} {{intercambio.puestoViejo.empleado.apellido}}.
                 </div>
               </template>
-              <template v-else-if="intercambio.empleadoIntercambio != idEmpleado && intercambio.estado == 3">
+              <template v-else-if="intercambio.empleadoIntercambio.id != idEmpleado && intercambio.estado == 3">
                 <div class="alert alert-danger" role="alert">
                   {{intercambio.empleadoIntercambio.nombre}} {{intercambio.empleadoIntercambio.apellido}} ha rechazado el intercambio.
                 </div>
               </template>
-              <template v-else-if="intercambio.empleadoIntercambio == idEmpleado && intercambio.estado == 3">
+              <template v-else-if="intercambio.empleadoIntercambio.id == idEmpleado && intercambio.estado == 3">
                 <div class="alert alert-danger" role="alert">
                   Has rechazado el intercambio con {{intercambio.puestoViejo.empleado.nombre}} {{intercambio.puestoViejo.empleado.apellido}}.
                 </div>
               </template>
-              <template v-else-if="intercambio.empleadoIntercambio != idEmpleado && intercambio.estado == 0">
+              <template v-else-if="intercambio.empleadoIntercambio.id != idEmpleado && intercambio.estado == 0">
                 <div class="alert alert-light" role="alert">
                   Intercambio con {{intercambio.empleadoIntercambio.nombre}} {{intercambio.empleadoIntercambio.apellido}} cancelado.
                 </div>
@@ -54,9 +54,26 @@
                   </b-btn>
               </div>
             </b-modal>
+            <b-modal id="modalAceptarIntercambio">
+              ¿Confirma que desea aceptar el intercambio? Si no, cierre este mensaje.
+              <div slot="modal-footer" class="w-100">
+                  <p class="float-left"></p>
+                  <b-btn size="sm" id="btnAceptarIntercambio" :disabled="habilitarBotonResponderIntercambio" class="float-right" variant="primary" @click="aceptarIntercambio(intercambioSeleccionado)">
+                      Aceptar intercambio
+                  </b-btn>
+              </div>
+            </b-modal>
+            <b-modal id="modalRechazarIntercambio">
+              ¿Confirma que desea rechazar el intercambio? Si no, cierre este mensaje.
+              <div slot="modal-footer" class="w-100">
+                  <p class="float-left"></p>
+                  <b-btn size="sm" id="btnAceptarIntercambio" :disabled="habilitarBotonResponderIntercambio" class="float-right" variant="primary" @click="cambiarEstadoIntercambio(intercambioSeleccionado,3)">
+                      Rechazar intercambio
+                  </b-btn>
+              </div>
+            </b-modal>
         <div class="row">
             <div class="col-sm-12">
-
                 <template v-if="turnosActivos.length > 0">
                     <table class="table table-responsive table-hover">
                         <caption class="captionCustom"><h3>Turno activo</h3> <i v-show="loading" class="fa fa-spinner fa-spin"></i> </caption>
@@ -188,18 +205,15 @@
                   </b-btn>
               </div>
           </b-modal>
+          <br> 
+          <hr class="titleUnderline">
         </template>
-
-            <br> 
-
             <b-row>
             <b-col md="6" class="my-1">
         <b-form-group horizontal label="Fecha Inicio" class="mb-0">
                 <datetime type="datetime" value-zone="America/Montevideo" zone="America/Montevideo" format="yyyy-MM-dd HH:mm:ss" :phrases="{ok: 'Continuar', cancel: 'Cancelar'}" v-model="fechaInicioSeleccionada"></datetime>
         </b-form-group>
       </b-col>
-
-              
       <b-col md="6" class="my-1">
         <b-form-group horizontal label="Fecha Fin" class="mb-0">
 <datetime type="datetime"   
@@ -832,6 +846,40 @@ export default {
       console.log(this.turnoSeleccionado);
       return axios
         .post(`${process.env.BASE_URL}/api/turno/cambiar-estado-intercambio`,
+            intercambio
+        )
+        .then(res => {
+          this.habilitarBotonResponderIntercambio = false;
+          console.log(res);
+          if (res.data.resultado == 3122) {
+            var resultado = res.data.filasAfectadas;
+            console.log(resultado);
+            if (resultado > 0) {
+              this.resultadoOperacionMarcar =
+                "Se ha marcado ingreso satisfactoriamente.";
+              return true;
+            } else {
+              this.resultadoOperacionMarcar = "No se han realizado cambios.";
+            }
+            console.log(resultado);
+          } else {
+            this.resultadoOperacionMarcar = "Ocurrió un error.";
+          }
+          return false;
+        })
+        .catch(error=>{
+          this.habilitarBotonResponderIntercambio = false;
+        });
+    },
+    aceptarIntercambio(intercambio) {
+      var fecha = this.obtenerFechaFormateada(this.marcarFechaIngreso);
+      this.habilitarBotonResponderIntercambio = true;
+      console.log("fecha ingresa formateada", fecha);
+      this.intercambioSeleccionado.estado = estado;
+      var idPuesto = this.puestoSeleccionado.id;
+      console.log(this.turnoSeleccionado);
+      return axios
+        .post(`${process.env.BASE_URL}/api/turno/aceptar-intercambio`,
             intercambio
         )
         .then(res => {

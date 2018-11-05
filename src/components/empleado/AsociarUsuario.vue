@@ -14,7 +14,6 @@
                             <th scope="col">#</th>
                             <th scope="col">ID</th>
                             <th scope="col">Nombre</th>
-                            <th scope="col">Tipo de Usuario</th>
                             <th scope="col">Acciones</th>
                         </tr>
                     </thead>
@@ -23,7 +22,6 @@
                             <th scope="row">{{ index + 1 }}</th>
                             <td>{{ usuario.id }}</td>
                             <td>{{ usuario.nombre }}</td>
-                            <td>{{ usuario.tipo.nombre }}</td>
                             <td>
                                 <a href="#" @click="asociarUsuario(usuario.id)" class="btn btn-info" role="button">Asociar</a>                                
                             </td>
@@ -94,7 +92,7 @@ export default {
     return {
       loading: false,
       usuarios: [],
-      tamanoPagina: 2,
+      tamanoPagina: 10,
       indicePagina: 0,
       cantidadPaginas: 0,
       indexActual: 0,
