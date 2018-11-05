@@ -146,7 +146,11 @@ export default {
       indexActual: 0,
       filtrado: "",
       campoFiltrado: "",
-      opcionesFiltrado: [{ value: "id_evento", text: "Id de Evento" }],
+      opcionesFiltrado: [
+        { value: "id_estado_evento", text: "Estado de Evento" },
+        { value: "id_tipo_evento", text: "Tipo de Evento" },
+        { value: "inicio_evento", text: "Inicio de Evento" },
+        ],
       ordenFiltradoAsc: null,
       paginasFiltrado: [5, 10, 15],
       fechaInicioSeleccionada: null,
@@ -161,9 +165,9 @@ export default {
       console.log("Fecha despues de formato: ", fechaFormateada);
       console.log(
         "Retorno: ",
-        moment.parseZone(fechaFormateada).format("DD-MM-YYYY HH:mm:ss")
+        moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss")
       );
-      return moment.parseZone(fechaFormateada).format("DD-MM-YYYY HH:mm:ss");
+      return moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
     },
     detalleEvento(evento) {
       this.$parent.evento = evento;
