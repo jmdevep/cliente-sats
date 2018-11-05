@@ -159,7 +159,7 @@ export default {
     };
   },
   methods: {
-    obtenerFechaFormateadaMostrar(fecha) {
+     obtenerFechaFormateadaMostrar(fecha) {
       console.log("Fecha sin formato: ", fecha);
       var fechaFormateada = moment(fecha, "YYYY-MM-DD HH:mm:ss");
       console.log("Fecha despues de formato: ", fechaFormateada);
