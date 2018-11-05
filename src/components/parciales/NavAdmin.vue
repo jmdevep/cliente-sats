@@ -1,4 +1,3 @@
-
 <template>
     <div id="navegacion">
         <nav class="navbar navbar-expand-lg navbar-dark greenBackground">
@@ -51,37 +50,34 @@
 </template>
 
 <script>
-
 export default {
-  name: 'NavAdmin',
-  data(){
-      return{
-          logeado: false,
-          usuario: null
-      }
+  name: "NavAdmin",
+  data() {
+    return {
+      logeado: false,
+      usuario: null
+    };
   },
   methods: {
-      logout(){
-          console.log("logout");
-          this.logeado = false;
-          this.$session.destroy();
-          window.location.reload();
-          this.$router.push('/usuario/login');
-      },
-      checkLogin(){
-        var usuario = this.$session.get('usuario');
-        if (this.$session.exists() && usuario != null) {
-            this.logeado = true;
-            this.usuario = usuario;
-            console.log(this.logeado);
-        } 
-      }
-  }, 
-  mounted(){
-      this.checkLogin();
+    logout() {
+      console.log("logout");
+      this.logeado = false;
+      this.$session.destroy();
+      window.location.reload();
+      this.$router.push("/usuario/login");
     },
-    watch: {
-
+    checkLogin() {
+      var usuario = this.$session.get("usuario");
+      if (this.$session.exists() && usuario != null) {
+        this.logeado = true;
+        this.usuario = usuario;
+        console.log(this.logeado);
+      }
     }
-}
+  },
+  mounted() {
+    this.checkLogin();
+  },
+  watch: {}
+};
 </script>

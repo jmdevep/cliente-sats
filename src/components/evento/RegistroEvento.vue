@@ -9,6 +9,7 @@
                             <li v-for="(error, index) in erroresForm" :key="index">{{ error }}</li>
                         </ul>
                     </p>
+
                     <p v-show="alerta" class="text-danger"><i v-show="alerta" class="fas fa-exclamation-circle"></i> {{resultadoOperacion}}</p>
                     <p v-show="informacion" class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> {{resultadoOperacion}}</p>
                     <i v-show="loading" class="fa fa-spinner fa-spin"></i>   
@@ -26,7 +27,15 @@
                     <br/> 
 
 
-                    <multi-select v-model="personaSeleccionada" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
+
+                      <h3>Seleccionar Persona</h3>
+                      <input type="radio" v-model="mostrarPersona" value="seleccionar">Seleccionar
+                      <input type="radio" v-model="mostrarPersona" value="registrar">Registrar
+                      <br />
+                      <span>value: {{mostrarPersona}}</span>
+                    
+
+                    <multi-select :disabled="seleccionarPersona" v-model="personaSeleccionada" placeholder="Personas"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="personas" :option-height="104" :custom-label="customLabelPersonas" :show-labels="false">
                         
                         <template slot="option" slot-scope="props">
                             <div class="option__desc">
@@ -38,34 +47,32 @@
                     </multi-select>
                     <br/> 
 
-                    <b-button @click="modalShow = !modalShow">
-                    Agregar Persona
-                    </b-button>
-                    <b-modal v-model="modalShow">
+
+                      <b-modal v-model="modalShow">
                                    <div class="form-group">
                         <label for="nombre" class="darkTextCustom">Nombre Completo</label>
-                        <input type="text" class="form-control border-success" v-model="persona.nombre" id="nombre" placeholder="Nombre">
+                        <input type="text" class="form-control border-success" v-model="personaIngresada.nombre" id="nombre" placeholder="Nombre">
                         </div>
                         <div class="form-group">
                             <label for="direccion" class="darkTextCustom">Dirección</label>
-                            <input type="text" class="form-control border-success" v-model="persona.direccion" id="direccion" placeholder="Dirección">
+                            <input type="text" class="form-control border-success" v-model="personaIngresada.direccion" id="direccion" placeholder="Dirección">
                         </div>
                         <div class="form-group">
                             <label for="telefono" class="darkTextCustom">Teléfono</label>
-                            <input type="text" class="form-control border-success" v-model="persona.telefono" id="telefono" placeholder="Teléfono">
+                            <input type="text" class="form-control border-success" v-model="personaIngresada.telefono" id="telefono" placeholder="Teléfono">
                         </div>
                         <div class="form-group">
                             <label for="documento" class="darkTextCustom">Documento</label>
-                            <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="persona.documento" id="documento" placeholder="Documento">
+                            <input type="text" @blur="verificarDisponibilidad()" class="form-control border-success" v-model="personaIngresada.documento" id="documento" placeholder="Documento">
                             <small id="emailHelp" class="form-text textMutedCustom">{{ errorDisponibilidad }}</small>
                         </div>
                         <div class="form-group">
                             <label for="fechaNacimiento" class="darkTextCustom">Fecha de Nacimiento</label>
-                            <input type="date" class="form-control border-success" v-model="persona.fechaNacimiento" id="fechaNacimiento" placeholder="2019-12-05">
+                            <input type="date" class="form-control border-success" v-model="personaIngresada.fechaNacimiento" id="fechaNacimiento" placeholder="2019-12-05">
                         </div>
                         <div class="form-group">
                             <label for="sexos">Seleccione el género</label>
-                            <select id="sexos" class="form-control" v-model="persona.sexo">
+                            <select id="sexos" class="form-control" v-model="personaIngresada.sexo">
                                 <option value="" selected> 
                                     Sin seleccionar
                                 </option>
@@ -78,7 +85,7 @@
                             </select>
                         </div>
                         <p>Prestador de Salud: </p>
-                        <multi-select v-model="persona.prestador" placeholder="Prestador de Salud"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="prestadores" :option-height="104" :custom-label="customLabelPrestadores" :show-labels="false">    
+                        <multi-select v-model="personaIngresada.prestador" placeholder="Prestador de Salud"  :optionsLimit="3" :tabindex="1"  track-by="nombre" :options="prestadores" :option-height="104" :custom-label="customLabelPrestadores" :show-labels="false">    
                             <template slot="option" slot-scope="props">
                                 <div class="option__desc">
                                     <span class="option__title">Nombre: {{ props.option.nombreDescriptivo }}</span>
@@ -119,7 +126,7 @@
                         <label for="horaI" class="darkTextCustom">Hora Inicio</label>
                         <input type="time"  class="form-control border-success" id="horaI" v-model="horaInicio"/>
                     </div>
-                                        <div class="form-group">
+                    <div class="form-group">
                         <label for="direccion" class="darkTextCustom">Dirección</label>
                         <input type="text" maxlength="150" class="form-control border-success" v-model="evento.direccion" id="direccion" placeholder="direccion">
                     </div>
@@ -164,9 +171,28 @@ export default {
   },
   data() {
     return {
+      mostrarPersona: "seleccionar",
       modalShow: false,
       agregarPersona: null,
-      personaSeleccionada: null,
+      seleccionarPersona: false,
+      personaSeleccionada: {
+        documento: "",
+        fechaNacimiento: "",
+        prestador: null,
+        nombre: "",
+        direccion: "",
+        telefono: "",
+        estado: 1
+      },
+      personaIngresada: {
+        documento: "",
+        fechaNacimiento: "",
+        prestador: null,
+        nombre: "",
+        direccion: "",
+        telefono: "",
+        estado: 1
+      },
       servicioSeleccionado: null,
       tipoEventoSeleccionado: null,
       llamadoSeleccionado: null,
@@ -208,6 +234,19 @@ export default {
       alerta: false,
       informacion: false
     };
+  },
+  watch: {
+    mostrarPersona: function(val) {
+      // watch it
+      console.log("watcher triggered");
+      if (val == "registrar") {
+        this.modalShow = true;
+        this.seleccionarPersona = true;
+      } else {
+        this.seleccionarPersona = false;
+        this.modalShow = false;
+      }
+    }
   },
   methods: {
     togglePersona() {
@@ -303,12 +342,14 @@ export default {
       ).format();
       this.loading = true;
 
-      if(this.personaSeleccionada.fechaNacimiento != null){
-        delete this.personaSeleccionada.fechaNacimiento;
-      }
-
       if (this.checkForm()) {
-        this.evento.persona = this.personaSeleccionada;
+        if (this.seleccionarPersona == false) {
+          this.evento.persona = this.personaSeleccionada;
+          console.log("personaSeleccionada");
+        } else {
+          this.evento.persona = this.personaIngresada;
+          console.log("personaIngresada");
+        }
         this.evento.tipo = this.tipoEventoSeleccionado;
         this.evento.servicio = this.servicioSeleccionado;
 
@@ -322,6 +363,7 @@ export default {
             if (res.data.resultado == 5802) {
               this.resultadoOperacion = "Evento agregado satisfactoriamente.";
               this.limpiarCajas();
+              this.informacion = true;
             } else if (res.data.resultado == 5803) {
               this.resultadoOperacion = "Error en el alta.";
             } else {
