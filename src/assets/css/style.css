@@ -94,6 +94,15 @@ hr{
 .whiteText:hover{
     color: #ffffff !important;
 }
-a:not([href]):not([tabindex]){
+.whiteText:visited {
+    color: #ffffff !important;
+}
+.whiteText:focus {
+    color: #ffffff !important;
+}
+.whiteText:active {
+    color: #ffffff !important;
+}
+.whiteText:not([href]):not([tabindex]){
     color: #ffffff !important;
 }

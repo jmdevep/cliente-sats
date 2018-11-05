@@ -362,7 +362,8 @@
             </div>
         </div>
         <p class="text-info"><i v-show="informacion" class="fas fa-info-circle"></i> Estados de turno: 
-          <ol>
+          <ol start="0">
+            <li>Cancelado (planificado)</li>
             <li>Planificado</li>
             <li>Cancelado (intercambiado)</li>
             <li>Activo (guardia)</li>
@@ -405,16 +406,6 @@ export default {
     var usuario = this.$session.get("usuario");
     if (!this.$session.exists() || usuario == null) {
       this.$router.push("/usuario/login");
-    }
-    if (usuario.tipo.id == 1) {
-      this.verModificar = false;
-      this.verMarcar = true;
-    } else if (usuario.tipo.id == 2) {
-      this.verModificar = true;
-      this.verMarcar = false;
-    } else if (usuario.tipo.id == 3) {
-      this.verModificar = true;
-      this.verMarcar = false;
     }
   },
   data() {
@@ -510,7 +501,11 @@ export default {
       filtrado: "",
       campoFiltrado: "",
       opcionesFiltrado: [
-        { value: "id_empleado", text: "Id empleado" }
+        { value: "id_empleado", text: "Id empleado" },
+        { value: "apellido_empleado", text: "Apellido empleado" },
+        { value: "nombre_empleado", text: "Nombre empleado" },
+        { value: "inicio_turno", text: "Inicio turno planificado" },
+        { value: "inicio_puesto", text: "Inicio turno marcado" }
       ],
       ordenFiltradoAsc: null,
       paginasFiltrado: [5, 10, 15]
@@ -536,6 +531,7 @@ export default {
         this.idEmpleado = 0;
         this.cargarTurnos();
       }
+      console.log("usuario logueado");
       console.log(this.usuarioLogueado);
     },
     limpiarResultado(){
@@ -583,8 +579,8 @@ export default {
             condiciones: {
               campo: "id_empleado",
               valor: String(this.idEmpleado),
-              fechaInicio: this.fechaInicioSeleccionada,
-              fechaFin: this.fechaFinSeleccionada
+              fechaInicio: this.obtenerFechaFormateada(this.obtenerFechaActual()),
+              fechaFin: this.obtenerFechaFormateada(this.obtenerFechaActual())
             }
           }
         })
@@ -611,6 +607,7 @@ export default {
       var fechaInicio = this.obtenerFechaFormateada(
         this.fechaInicioSeleccionada
       );
+      this.loading= true;
       console.log("Fecha Inicio Formateada: ", fechaInicio);
       var fechaFin = this.obtenerFechaFormateada(this.fechaFinSeleccionada);
       console.log(fechaInicio);
@@ -642,8 +639,9 @@ export default {
             this.indexActual = 0;
           }
           this.loading = false;
+        }).catch(error=>{
+          this.loading = false;
         });
-      this.loading = false;
     },
      cargarIntercambios() {
        this.limpiarResultado();
@@ -720,16 +718,16 @@ export default {
       }
     },
     obtenerFechaFormateadaPuesto(fecha) {
-      if(fecha != "" && fecha != null){
+      if(fecha != "" && fecha != null && fecha != "Invalid date"){
         fecha.replace("T", " ");
         var fechaFormateada = moment(fecha, "DD/MM/YYYY HH:mm:ss");
         fechaFormateada = moment(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
         return fechaFormateada;
       }
-      return "";
+      return "--";
     },
     obtenerFechaFormateada(fecha) {
-      if(fecha != "" && fecha != null){
+      if(fecha != "" && fecha != null && fecha != "Invalid date"){
         console.log("Fecha sin formato: ", fecha);
         var fechaFormateada = moment(fecha, "YYYY-MM-DD HH:mm:ss");
         console.log("Fecha despues de formato: ", fechaFormateada);
@@ -739,17 +737,20 @@ export default {
         );
         return moment.parseZone(fechaFormateada).format("YYYY-MM-DD HH:mm:ss");
       }
-      return "";
+      return "--";
     },
     obtenerFechaFormateadaMostrar(fecha) {
-      console.log("Fecha sin formato: ", fecha);
-      var fechaFormateada = moment(fecha, "YYYY-MM-DD HH:mm:ss");
-      console.log("Fecha despues de formato: ", fechaFormateada);
-      console.log(
-        "Retorno: ",
-        moment.parseZone(fechaFormateada).format("DD-MM-YYYY HH:mm:ss")
-      );
-      return moment.parseZone(fechaFormateada).format("DD-MM-YYYY HH:mm:ss");
+      if(fecha != "" && fecha != null && fecha != "Invalid date"){
+        console.log("Fecha sin formato: ", fecha);
+        var fechaFormateada = moment(fecha, "YYYY-MM-DD HH:mm:ss");
+        console.log("Fecha despues de formato: ", fechaFormateada);
+        console.log(
+          "Retorno: ",
+          moment.parseZone(fechaFormateada).format("DD-MM-YYYY HH:mm:ss")
+        );
+        return moment.parseZone(fechaFormateada).format("DD-MM-YYYY HH:mm:ss");
+      }
+      return "--";
     },
     marcarTurnoSalida() {
       this.limpiarResultado();
@@ -776,7 +777,6 @@ export default {
           console.log(res);
           if (res.data.resultado == 3004) {
             var resultado = res.data.filasAfectadas;
-            console.log("resullllll");
             console.log(resultado);
             if (resultado > 0) {
               /*this.ocultarModales();*/
@@ -933,7 +933,7 @@ export default {
         });
     },
     estaPuestoCancelado(estado){
-      return estado != 0 && estado != 2;
+      return estado == 0 || estado == 2;
     },
     ocultarModales() {
       this.mostrarModalIngreso = false;
