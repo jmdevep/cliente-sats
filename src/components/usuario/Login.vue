@@ -25,7 +25,7 @@
                         <label for="contrasena" class="darkTextCustom">Contraseña</label>
                         <input type="password" class="form-control border-success" v-model="usuario.contrasena" id="contrasena" placeholder="Contraseña">
                     </div>
-                    <input type="submit" value="Iniciar Sesión" class="btn marginBefore tableHeadingBackground">
+                    <input type="submit" value="Iniciar Sesión" :disabled="disabled" class="btn marginBefore btn-success">
                 </form>
             </div>
         </div>
@@ -44,10 +44,10 @@ export default {
   },
   data() {
     return {
+      disabled: false,
       loading: false,
       resultadoOperacion: "",
       erroresForm: [],
-      disabled: true,
       usuario: {
         nombre: "",
         contrasena: "",
@@ -65,6 +65,7 @@ export default {
     login() {
       this.limpiarResultado();
       this.loading = true;
+      this.disabled = true;
       if (this.usuario.nombre != "") {
         var params = this.usuario;
         console.log(params);
@@ -84,6 +85,9 @@ export default {
               this.alerta = true;
               this.resultadoOperacion = "Error en los datos de acceso.";
             }
+            this.disabled = false;
+          }).catch(error=>{
+            this.disabled = false;
           });
       }
     },
@@ -107,6 +111,12 @@ export default {
       this.resultadoOperacion = "";
       this.alerta = false;
       this.informacion = false;
+    },
+    validarIngreso(fecha){
+
+    },
+    validarSalida(fecha){
+
     },
     checkForm() {
       if (this.usuario.nombre && this.usuario.contrasena) {

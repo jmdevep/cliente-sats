@@ -56,6 +56,7 @@ export default {
     //console.log(this.usuario);
     if (this.$route.params.usuario != null) {
       this.usuario = this.$route.params.usuario;
+    }else{
       this.$router.push("/empleado/principal-empleado");
     }
     this.nombreOriginal = this.$route.params.usuario.nombre;
