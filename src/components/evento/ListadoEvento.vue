@@ -79,7 +79,7 @@
                     <tbody class="tableBodyBackground">
                         <tr v-for="(evento, index) in eventos" :key="index">
                             <th scope="row">{{ index + 1 }}</th>
-                            <td>{{ evento.inicioEvento }}</td>
+                            <td>{{ obtenerFechaFormateadaMostrar(evento.inicioEvento) }}</td>
                             <td>{{ evento.direccion }}</td>
                             <td>{{ evento.estado.nombre }}</td>
                             <td>{{ evento.tipo.nombre }}</td>
@@ -155,13 +155,25 @@ export default {
     };
   },
   methods: {
+    obtenerFechaFormateadaMostrar(fecha) {
+      console.log("Fecha sin formato: ", fecha);
+      var fechaFormateada = moment(fecha, "YYYY-MM-DD HH:mm:ss");
+      console.log("Fecha despues de formato: ", fechaFormateada);
+      console.log(
+        "Retorno: ",
+        moment.parseZone(fechaFormateada).format("DD-MM-YYYY HH:mm:ss")
+      );
+      return moment.parseZone(fechaFormateada).format("DD-MM-YYYY HH:mm:ss");
+    },
     detalleEvento(evento) {
       this.$parent.evento = evento;
       this.$parent.currentTab = this.$parent.tabs[4].component;
     },
     cargarDatos() {
       this.loading = true;
-      var fechaInicio = this.obtenerFechaFormateada(this.fechaInicioSeleccionada);
+      var fechaInicio = this.obtenerFechaFormateada(
+        this.fechaInicioSeleccionada
+      );
       var fechaFin = this.obtenerFechaFormateada(this.fechaFinSeleccionada);
       axios
         .get(`${process.env.BASE_URL}/api/evento/lista-eventos`, {
